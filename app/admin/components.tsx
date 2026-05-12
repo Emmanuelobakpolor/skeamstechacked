@@ -9,6 +9,16 @@ import {
   Trash2,
   X,
   AlertCircle,
+  LayoutList,
+  FolderOpen,
+  Package,
+  CheckCircle2,
+  XCircle,
+  Shield,
+  Search,
+  ImageIcon,
+  Upload,
+  Zap,
 } from 'lucide-react';
 import {
   AdminTab,
@@ -29,6 +39,140 @@ import {
 } from './api';
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+const INPUT_CLS =
+  'w-full bg-blue-900/50 border border-blue-700/50 hover:border-blue-600 focus:border-cyan-400 rounded-xl px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-blue-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all';
+
+// ============================================================================
+// Shared Sub-Components
+// ============================================================================
+
+interface StatusBadgeProps {
+  active: boolean;
+  labelOn?: string;
+  labelOff?: string;
+}
+
+function StatusBadge({ active, labelOn = 'Active', labelOff = 'Inactive' }: StatusBadgeProps) {
+  return active ? (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+      <CheckCircle2 size={10} /> {labelOn}
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500/15 text-red-400 border border-red-500/30">
+      <XCircle size={10} /> {labelOff}
+    </span>
+  );
+}
+
+function HardcodedBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/30">
+      <Shield size={10} /> Hardcoded
+    </span>
+  );
+}
+
+interface EmptyStateProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  action?: React.ReactNode;
+}
+
+function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+  return (
+    <div className="glass-effect-dark rounded-2xl p-12 text-center flex flex-col items-center gap-4">
+      <div className="w-16 h-16 rounded-2xl bg-blue-900/40 border border-blue-700/40 flex items-center justify-center text-blue-400">
+        {icon}
+      </div>
+      <div>
+        <p className="text-blue-100 font-semibold text-base mb-1">{title}</p>
+        <p className="text-blue-400 text-sm">{description}</p>
+      </div>
+      {action && <div className="mt-2">{action}</div>}
+    </div>
+  );
+}
+
+interface SectionSkeletonProps {
+  rows?: number;
+  grid?: boolean;
+}
+
+function SectionSkeleton({ rows = 3, grid = false }: SectionSkeletonProps) {
+  const items = Array.from({ length: rows });
+  if (grid) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        {items.map((_, i) => (
+          <div key={i} className="glass-effect-dark rounded-2xl overflow-hidden animate-pulse">
+            <div className="h-40 bg-blue-900/40" />
+            <div className="p-4 space-y-2">
+              <div className="h-4 bg-blue-800/50 rounded w-3/4" />
+              <div className="h-3 bg-blue-800/30 rounded w-1/2" />
+              <div className="h-3 bg-blue-800/30 rounded w-5/6" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-3">
+      {items.map((_, i) => (
+        <div key={i} className="glass-effect-dark rounded-2xl p-4 animate-pulse flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-blue-800/50 flex-shrink-0" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-blue-800/50 rounded w-1/2" />
+            <div className="h-3 bg-blue-800/30 rounded w-3/4" />
+          </div>
+          <div className="h-7 w-16 bg-blue-800/30 rounded-lg flex-shrink-0" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+interface SectionHeaderProps {
+  title: string;
+  count: number;
+  icon: React.ReactNode;
+  onAdd: () => void;
+  addLabel: string;
+  children?: React.ReactNode;
+}
+
+function SectionHeader({ title, count, icon, onAdd, addLabel, children }: SectionHeaderProps) {
+  return (
+    <div className="mb-6 space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-blue-800/50 border border-blue-600/40 flex items-center justify-center text-cyan-400">
+            {icon}
+          </div>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight">{title}</h2>
+          </div>
+          <span className="px-2.5 py-0.5 rounded-full bg-blue-800/60 border border-blue-600/40 text-blue-300 text-xs font-semibold">
+            {count}
+          </span>
+        </div>
+        <button
+          onClick={onAdd}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-4 py-2.5 rounded-xl hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-200 text-sm font-semibold"
+        >
+          <Plus size={15} /> {addLabel}
+        </button>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ============================================================================
 // Modal Component
 // ============================================================================
 
@@ -43,18 +187,20 @@ function Modal({ title, isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-3 sm:px-4">
-      <div className="bg-gradient-to-br from-slate-800 via-slate-800 to-slate-900 border border-slate-700/50 shadow-2xl rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 flex justify-between items-center px-4 sm:px-8 py-5 sm:py-7 border-b border-slate-700/50 bg-gradient-to-r from-slate-800 via-slate-800 to-slate-900/50 backdrop-blur-xl rounded-t-3xl sm:rounded-t-3xl">
-          <h2 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-cyan-400 hover:bg-slate-700/50 rounded-lg p-2 transition-all flex-shrink-0 ml-4"
-          >
-            <X size={20} className="sm:w-[24px] sm:h-[24px]" />
-          </button>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto pt-20">
+      <div className="flex justify-center px-4 pb-8">
+        <div className="glass-morphism-dark shadow-2xl shadow-blue-900/50 max-w-lg w-full rounded-2xl animate-scale-up">
+          <div className="flex justify-between items-center px-5 sm:px-8 py-4 sm:py-5 border-b border-blue-400/20 bg-blue-900/20">
+            <h2 className="gradient-text text-lg sm:text-xl font-bold truncate">{title}</h2>
+            <button
+              onClick={onClose}
+              className="text-blue-400 hover:text-cyan-300 hover:bg-blue-800/60 rounded-xl p-1.5 transition-all flex-shrink-0 ml-4"
+            >
+              <X size={18} />
+            </button>
+          </div>
+          <div className="p-5 sm:p-7 custom-scrollbar max-h-[75vh] overflow-y-auto">{children}</div>
         </div>
-        <div className="p-4 sm:p-8">{children}</div>
       </div>
     </div>
   );
@@ -72,23 +218,35 @@ interface ToastProps {
 
 function Toast({ message, type, onClose }: ToastProps) {
   useEffect(() => {
-    const timer = setTimeout(onClose, 3000);
+    const timer = setTimeout(onClose, 4000);
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const bgColor =
-    type === 'success'
-      ? 'bg-green-500/20 text-green-300 border-green-500/30'
-      : 'bg-red-500/20 text-red-300 border-red-500/30';
+  const isSuccess = type === 'success';
 
   return (
     <div
-      className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-4 px-3 sm:px-4 py-3 rounded-lg border ${bgColor} max-w-sm z-40`}
+      className={`fixed top-5 right-5 z-50 flex items-start gap-3 px-4 py-3 rounded-xl border shadow-lg animate-slide-down max-w-sm w-[calc(100vw-2.5rem)] sm:w-auto
+        ${
+          isSuccess
+            ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300 backdrop-blur-md'
+            : 'bg-red-950/80 border-red-500/40 text-red-300 backdrop-blur-md'
+        }`}
     >
-      <div className="flex items-center gap-2 text-sm sm:text-base">
-        {type === 'error' && <AlertCircle size={16} className="sm:w-[18px] sm:h-[18px] flex-shrink-0" />}
-        <span className="line-clamp-2">{message}</span>
-      </div>
+      <span className="flex-shrink-0 mt-0.5">
+        {isSuccess ? (
+          <CheckCircle2 size={16} className="text-emerald-400" />
+        ) : (
+          <AlertCircle size={16} className="text-red-400" />
+        )}
+      </span>
+      <span className="flex-1 text-sm font-medium">{message}</span>
+      <button
+        onClick={onClose}
+        className="flex-shrink-0 ml-1 opacity-60 hover:opacity-100 transition-opacity"
+      >
+        <X size={14} />
+      </button>
     </div>
   );
 }
@@ -115,6 +273,7 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
     }
   );
   const [loading, setLoading] = useState(false);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,73 +288,83 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Name <span className="text-cyan-400">*</span></label>
-        <div className="relative">
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
-            placeholder="e.g., automation"
-            required
-          />
-        </div>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Name <span className="text-cyan-400">*</span></label>
+        <input
+          type="text"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          onBlur={() => setTouched((p) => ({ ...p, name: true }))}
+          className={`${INPUT_CLS} ${touched.name && !formData.name ? 'border-red-500/70 focus:border-red-500' : ''}`}
+          placeholder="e.g., automation"
+          required
+        />
+        {touched.name && !formData.name && (
+          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+            <AlertCircle size={10} /> Required
+          </p>
+        )}
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Display Name <span className="text-cyan-400">*</span></label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Display Name <span className="text-cyan-400">*</span></label>
         <input
           type="text"
           value={formData.display_name}
           onChange={(e) =>
             setFormData({ ...formData, display_name: e.target.value })
           }
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+          onBlur={() => setTouched((p) => ({ ...p, display_name: true }))}
+          className={`${INPUT_CLS} ${touched.display_name && !formData.display_name ? 'border-red-500/70 focus:border-red-500' : ''}`}
           placeholder="e.g., Automation Systems"
           required
         />
+        {touched.display_name && !formData.display_name && (
+          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+            <AlertCircle size={10} /> Required
+          </p>
+        )}
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Description</label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Description</label>
         <input
           type="text"
           value={formData.description}
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
           }
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+          className={INPUT_CLS}
           placeholder="Optional description"
         />
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Display Order</label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Display Order</label>
         <input
           type="number"
           value={formData.order}
           onChange={(e) =>
             setFormData({ ...formData, order: parseInt(e.target.value) })
           }
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+          className={INPUT_CLS}
           placeholder="0"
         />
       </div>
-      <div className="space-y-2 bg-slate-700/20 rounded-xl p-3 sm:p-4 border border-slate-600/30 mt-2">
-        <label className="flex items-center gap-3 text-slate-300 cursor-pointer hover:text-cyan-300 transition-colors group">
+      <div className="space-y-2 bg-blue-900/30 rounded-xl p-3 sm:p-4 border border-blue-700/40 mt-2">
+        <label className="flex items-center gap-3 text-blue-300 cursor-pointer hover:text-cyan-300 transition-colors group">
           <input
             type="checkbox"
             checked={formData.is_active}
             onChange={(e) =>
               setFormData({ ...formData, is_active: e.target.checked })
             }
-            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-slate-600 group-hover:border-cyan-400"
+            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-blue-600 group-hover:border-cyan-400"
           />
           <span className="text-xs sm:text-sm font-medium">Active</span>
         </label>
-        <label className="flex items-center gap-3 text-slate-500 cursor-not-allowed opacity-60">
+        <label className="flex items-center gap-3 text-blue-500 cursor-not-allowed opacity-60">
           <input
             type="checkbox"
             checked={formData.is_hardcoded}
             disabled
-            className="rounded-md w-5 h-5 border border-slate-600"
+            className="rounded-md w-5 h-5 border border-blue-600"
           />
           <span className="text-xs sm:text-sm font-medium">Hardcoded (read-only)</span>
         </label>
@@ -230,7 +399,11 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
 // Tabs Section
 // ============================================================================
 
-export function TabsSection() {
+interface TabsSectionProps {
+  onCountChange?: (count: number) => void;
+}
+
+export function TabsSection({ onCountChange }: TabsSectionProps) {
   const [tabs, setTabs] = useState<AdminTab[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -247,6 +420,7 @@ export function TabsSection() {
       setLoading(true);
       const data = await fetchTabs();
       setTabs(data);
+      onCountChange?.(data.length);
     } catch (error) {
       setToast({
         message: error instanceof Error ? error.message : 'Failed to load tabs',
@@ -292,76 +466,96 @@ export function TabsSection() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader className="animate-spin text-cyan-400" size={32} />
-      </div>
-    );
+    return <SectionSkeleton rows={3} />;
   }
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-white">Shop Tabs</h2>
-        <button
-          onClick={() => {
-            setEditingTab(null);
-            setIsModalOpen(true);
-          }}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all text-sm sm:text-base"
-        >
-          <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-          Add New Tab
-        </button>
-      </div>
+      <SectionHeader
+        title="Shop Tabs"
+        count={tabs.length}
+        icon={<LayoutList size={16} />}
+        onAdd={() => {
+          setEditingTab(null);
+          setIsModalOpen(true);
+        }}
+        addLabel="Add New Tab"
+      />
 
-      <div className="space-y-2">
-        {tabs.map((tab) =>
-          deletingId === tab.id ? (
-            <div key={tab.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-              <span className="text-red-300 text-sm sm:text-base">Delete "{tab.display_name}"?</span>
-              <div className="flex gap-2 flex-shrink-0">
-                <button
-                  onClick={() => handleDelete(tab.id)}
-                  className="flex-1 sm:flex-none px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-                >
-                  Confirm
-                </button>
-                <button
-                  onClick={() => setDeletingId(null)}
-                  className="flex-1 sm:flex-none px-3 py-1 bg-slate-600 text-white rounded text-sm hover:bg-slate-500"
-                >
-                  Cancel
-                </button>
+      {tabs.length === 0 ? (
+        <EmptyState
+          icon={<LayoutList size={28} />}
+          title="No tabs yet"
+          description="Create your first shop tab to organise categories."
+        />
+      ) : (
+        <div className="space-y-3">
+          {tabs.map((tab) =>
+            deletingId === tab.id ? (
+              <div
+                key={tab.id}
+                className="bg-red-950/40 border border-red-500/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3"
+              >
+                <AlertCircle size={18} className="text-red-400 flex-shrink-0" />
+                <p className="flex-1 text-sm text-red-300">
+                  Permanently delete <span className="font-semibold text-white">"{tab.display_name}"</span>? This cannot be undone.
+                </p>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => handleDelete(tab.id)}
+                    className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-semibold transition-colors"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => setDeletingId(null)}
+                    className="px-3 py-1.5 bg-blue-800/50 hover:bg-blue-700 text-blue-300 rounded-lg text-xs font-semibold border border-blue-600/50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div key={tab.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-white truncate">{tab.display_name}</h3>
-                <p className="text-xs sm:text-sm text-slate-400 line-clamp-1">{tab.description}</p>
+            ) : (
+              <div
+                key={tab.id}
+                className="group bg-blue-800/40 border border-blue-600/50 hover:border-blue-400 hover:bg-blue-800/70 rounded-2xl p-4 transition-all duration-200 flex flex-col sm:flex-row sm:items-center gap-3"
+              >
+                <div className="hidden sm:flex w-9 h-9 rounded-xl bg-blue-900/50 items-center justify-center text-cyan-400 flex-shrink-0">
+                  <LayoutList size={15} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                    <h3 className="font-semibold text-white text-sm sm:text-base truncate">{tab.display_name}</h3>
+                    <StatusBadge active={tab.is_active} />
+                    {tab.is_hardcoded && <HardcodedBadge />}
+                  </div>
+                  <p className="text-xs text-blue-400 truncate">{tab.description || 'No description'}</p>
+                  <p className="text-xs text-blue-500 mt-0.5">Order: {tab.order}</p>
+                </div>
+                <div className="flex gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => {
+                      setEditingTab(tab);
+                      setIsModalOpen(true);
+                    }}
+                    className="p-2 rounded-lg text-blue-300 hover:text-cyan-300 hover:bg-blue-700/50 transition-all"
+                    title="Edit"
+                  >
+                    <Pencil size={15} />
+                  </button>
+                  <button
+                    onClick={() => setDeletingId(tab.id)}
+                    className="p-2 rounded-lg text-blue-400 hover:text-red-400 hover:bg-red-900/20 transition-all"
+                    title="Delete"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-2 flex-shrink-0">
-                <button
-                  onClick={() => {
-                    setEditingTab(tab);
-                    setIsModalOpen(true);
-                  }}
-                  className="p-2 text-blue-400 hover:text-cyan-300 transition-colors"
-                >
-                  <Pencil size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
-                <button
-                  onClick={() => setDeletingId(tab.id)}
-                  className="p-2 text-red-400 hover:text-red-300 transition-colors"
-                >
-                  <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
-              </div>
-            </div>
-          )
-        )}
-      </div>
+            )
+          )}
+        </div>
+      )}
 
       <Modal
         title={editingTab ? 'Edit Tab' : 'Create Tab'}
@@ -418,6 +612,7 @@ function CategoryForm({
     }
   );
   const [loading, setLoading] = useState(false);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -432,7 +627,7 @@ function CategoryForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Tab</label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Tab</label>
         <select
           value={formData.tab || ''}
           onChange={(e) =>
@@ -441,7 +636,7 @@ function CategoryForm({
               tab: e.target.value ? parseInt(e.target.value) : null,
             })
           }
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+          className={INPUT_CLS}
         >
           <option value="">None</option>
           {tabs.map((tab) => (
@@ -452,37 +647,43 @@ function CategoryForm({
         </select>
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Name <span className="text-cyan-400">*</span></label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Name <span className="text-cyan-400">*</span></label>
         <input
           type="text"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+          onBlur={() => setTouched((p) => ({ ...p, name: true }))}
+          className={`${INPUT_CLS} ${touched.name && !formData.name ? 'border-red-500/70 focus:border-red-500' : ''}`}
           placeholder="e.g., Solar Panels"
           required
         />
+        {touched.name && !formData.name && (
+          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+            <AlertCircle size={10} /> Required
+          </p>
+        )}
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Subtitle</label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Subtitle</label>
         <input
           type="text"
           value={formData.subtitle}
           onChange={(e) =>
             setFormData({ ...formData, subtitle: e.target.value })
           }
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+          className={INPUT_CLS}
           placeholder="Optional subtitle"
         />
       </div>
-      <div className="bg-slate-700/20 rounded-xl p-3 sm:p-4 border border-slate-600/30">
-        <label className="flex items-center gap-3 text-slate-300 cursor-pointer hover:text-cyan-300 transition-colors group">
+      <div className="bg-blue-900/30 rounded-xl p-3 sm:p-4 border border-blue-700/40">
+        <label className="flex items-center gap-3 text-blue-300 cursor-pointer hover:text-cyan-300 transition-colors group">
           <input
             type="checkbox"
             checked={formData.is_active}
             onChange={(e) =>
               setFormData({ ...formData, is_active: e.target.checked })
             }
-            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-slate-600 group-hover:border-cyan-400"
+            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-blue-600 group-hover:border-cyan-400"
           />
           <span className="text-xs sm:text-sm font-medium">Active</span>
         </label>
@@ -517,7 +718,11 @@ function CategoryForm({
 // Categories Section
 // ============================================================================
 
-export function CategoriesSection() {
+interface CategoriesSectionProps {
+  onCountChange?: (count: number) => void;
+}
+
+export function CategoriesSection({ onCountChange }: CategoriesSectionProps) {
   const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [tabs, setTabs] = useState<AdminTab[]>([]);
   const [loading, setLoading] = useState(true);
@@ -539,6 +744,7 @@ export function CategoriesSection() {
       ]);
       setCategories(catData);
       setTabs(tabData);
+      onCountChange?.(catData.length);
     } catch (error) {
       setToast({
         message: error instanceof Error ? error.message : 'Failed to load data',
@@ -584,79 +790,101 @@ export function CategoriesSection() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader className="animate-spin text-cyan-400" size={32} />
-      </div>
-    );
+    return <SectionSkeleton rows={4} />;
   }
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-white">Categories</h2>
-        <button
-          onClick={() => {
-            setEditingCategory(null);
-            setIsModalOpen(true);
-          }}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all text-sm sm:text-base"
-        >
-          <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-          Add New Category
-        </button>
-      </div>
+      <SectionHeader
+        title="Categories"
+        count={categories.length}
+        icon={<FolderOpen size={16} />}
+        onAdd={() => {
+          setEditingCategory(null);
+          setIsModalOpen(true);
+        }}
+        addLabel="Add Category"
+      />
 
-      <div className="space-y-2">
-        {categories.map((category) =>
-          deletingId === category.id ? (
-            <div key={category.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-              <span className="text-red-300 text-sm sm:text-base">Delete "{category.name}"?</span>
-              <div className="flex gap-2 flex-shrink-0">
-                <button
-                  onClick={() => handleDelete(category.id)}
-                  className="flex-1 sm:flex-none px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-                >
-                  Confirm
-                </button>
-                <button
-                  onClick={() => setDeletingId(null)}
-                  className="flex-1 sm:flex-none px-3 py-1 bg-slate-600 text-white rounded text-sm hover:bg-slate-500"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div key={category.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-white truncate">{category.name}</h3>
-                <p className="text-xs sm:text-sm text-slate-400 line-clamp-1">
-                  {category.tab_name ? `${category.tab_name} - ` : ''}
-                  {category.subtitle}
+      {categories.length === 0 ? (
+        <EmptyState
+          icon={<FolderOpen size={28} />}
+          title="No categories yet"
+          description="Add a category and associate it with a tab."
+        />
+      ) : (
+        <div className="space-y-3">
+          {categories.map((category) =>
+            deletingId === category.id ? (
+              <div
+                key={category.id}
+                className="bg-red-950/40 border border-red-500/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3"
+              >
+                <AlertCircle size={18} className="text-red-400 flex-shrink-0" />
+                <p className="flex-1 text-sm text-red-300">
+                  Permanently delete <span className="font-semibold text-white">"{category.name}"</span>? This cannot be undone.
                 </p>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => handleDelete(category.id)}
+                    className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-semibold transition-colors"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => setDeletingId(null)}
+                    className="px-3 py-1.5 bg-blue-800/50 hover:bg-blue-700 text-blue-300 rounded-lg text-xs font-semibold border border-blue-600/50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-2 flex-shrink-0">
-                <button
-                  onClick={() => {
-                    setEditingCategory(category);
-                    setIsModalOpen(true);
-                  }}
-                  className="p-2 text-blue-400 hover:text-cyan-300 transition-colors"
-                >
-                  <Pencil size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
-                <button
-                  onClick={() => setDeletingId(category.id)}
-                  className="p-2 text-red-400 hover:text-red-300 transition-colors"
-                >
-                  <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
+            ) : (
+              <div
+                key={category.id}
+                className="group bg-blue-800/40 border border-blue-600/50 hover:border-blue-400 hover:bg-blue-800/70 rounded-2xl p-4 transition-all duration-200 flex flex-col sm:flex-row sm:items-center gap-3"
+              >
+                <div className="hidden sm:flex w-9 h-9 rounded-xl bg-blue-900/50 items-center justify-center text-cyan-400 flex-shrink-0">
+                  <FolderOpen size={15} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                    <h3 className="font-semibold text-white text-sm sm:text-base truncate">{category.name}</h3>
+                    <StatusBadge active={category.is_active} />
+                  </div>
+                  {category.subtitle && (
+                    <p className="text-xs text-blue-300 truncate">{category.subtitle}</p>
+                  )}
+                  {category.tab_name && (
+                    <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-blue-700/40 border border-blue-600/40 text-blue-300">
+                      {category.tab_name}
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => {
+                      setEditingCategory(category);
+                      setIsModalOpen(true);
+                    }}
+                    className="p-2 rounded-lg text-blue-300 hover:text-cyan-300 hover:bg-blue-700/50 transition-all"
+                    title="Edit"
+                  >
+                    <Pencil size={15} />
+                  </button>
+                  <button
+                    onClick={() => setDeletingId(category.id)}
+                    className="p-2 rounded-lg text-blue-400 hover:text-red-400 hover:bg-red-900/20 transition-all"
+                    title="Delete"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
               </div>
-            </div>
-          )
-        )}
-      </div>
+            )
+          )}
+        </div>
+      )}
 
       <Modal
         title={editingCategory ? 'Edit Category' : 'Create Category'}
@@ -722,6 +950,7 @@ function ProductForm({
   });
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -751,11 +980,11 @@ function ProductForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 max-h-[70vh] overflow-y-auto pr-2 sm:pr-0">
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Category <span className="text-cyan-400">*</span></label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Category <span className="text-cyan-400">*</span></label>
         <select
           value={formData.category}
           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+          className={INPUT_CLS}
           required
         >
           <option value="">Select category</option>
@@ -774,45 +1003,59 @@ function ProductForm({
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Product Name <span className="text-cyan-400">*</span></label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Product Name <span className="text-cyan-400">*</span></label>
         <input
           type="text"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+          onBlur={() => setTouched((p) => ({ ...p, name: true }))}
+          className={`${INPUT_CLS} ${touched.name && !formData.name ? 'border-red-500/70 focus:border-red-500' : ''}`}
           placeholder="Product name"
           required
         />
+        {touched.name && !formData.name && (
+          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+            <AlertCircle size={10} /> Required
+          </p>
+        )}
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Description <span className="text-cyan-400">*</span></label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Description <span className="text-cyan-400">*</span></label>
         <textarea
           value={formData.description}
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
           }
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all h-16 sm:h-20 resize-none"
+          onBlur={() => setTouched((p) => ({ ...p, description: true }))}
+          className={`${INPUT_CLS} h-20 sm:h-24 resize-none`}
           placeholder="Product description"
           required
         />
+        {touched.description && !formData.description && (
+          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+            <AlertCircle size={10} /> Required
+          </p>
+        )}
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Application</label>
+        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Application</label>
         <input
           type="text"
           value={formData.application}
           onChange={(e) =>
             setFormData({ ...formData, application: e.target.value })
           }
-          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+          className={INPUT_CLS}
           placeholder="Where it's used"
         />
       </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Specifications</label>
+      <div className="bg-blue-900/30 border border-blue-700/40 rounded-2xl p-4 space-y-3">
+        <p className="text-xs font-semibold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
+          <Zap size={12} className="text-cyan-400" /> Technical Specifications
+        </p>
         <div className="grid grid-cols-2 gap-2">
           {[
             { key: 'spec_speed', label: 'Speed' },
@@ -833,59 +1076,51 @@ function ProductForm({
                   [key]: e.target.value,
                 })
               }
-              className="bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+              className="bg-blue-900/40 border border-blue-700/40 hover:border-blue-600 focus:border-cyan-400 rounded-xl px-3 py-2 text-xs text-white placeholder-blue-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
             />
           ))}
         </div>
       </div>
 
-      <div className="space-y-2 bg-slate-700/20 rounded-xl p-3 sm:p-4 border border-slate-600/30">
-        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Product Image</label>
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          <div className="flex gap-2">
-            {product?.image_url && !newImageFile && (
-              <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-slate-700 border border-slate-600 flex-shrink-0 shadow-md">
-                <Image
-                  src={product.image_url}
-                  alt="Current"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            )}
-            {newImageFile && (
-              <img
-                src={URL.createObjectURL(newImageFile)}
-                alt="New"
-                className="w-14 h-14 sm:w-16 sm:h-16 object-contain rounded-lg border border-cyan-400/50 flex-shrink-0 shadow-md shadow-cyan-500/20"
-              />
-            )}
-          </div>
-          <label className="flex-1 flex items-center justify-center px-3 py-2.5 sm:py-3 bg-slate-700/50 border-2 border-dashed border-slate-600/50 hover:border-cyan-400 rounded-lg transition-all cursor-pointer group">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setNewImageFile(e.target.files?.[0] || null)}
-              className="hidden"
+      <div className="space-y-2">
+        <label className="text-xs sm:text-sm font-semibold text-blue-200 flex items-center gap-1.5">
+          <ImageIcon size={14} className="text-cyan-400" /> Product Image
+        </label>
+
+        {(product?.image_url || newImageFile) && (
+          <div className="relative w-full h-32 rounded-xl overflow-hidden bg-blue-900/40 border border-blue-600/40">
+            <Image
+              src={newImageFile ? URL.createObjectURL(newImageFile) : product!.image_url!}
+              alt="Preview"
+              fill
+              className="object-contain"
             />
-            <div className="text-center">
-              <p className="text-xs text-slate-400 group-hover:text-cyan-300 font-medium">
-                {newImageFile ? '✓ Image selected' : 'Click to upload'}
-              </p>
-            </div>
-          </label>
-        </div>
+          </div>
+        )}
+
+        <label className="flex flex-col items-center justify-center w-full h-24 rounded-xl border-2 border-dashed border-blue-600/50 hover:border-cyan-400/60 bg-blue-900/20 hover:bg-blue-900/40 transition-all cursor-pointer group">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setNewImageFile(e.target.files?.[0] || null)}
+            className="hidden"
+          />
+          <Upload size={20} className="text-blue-400 group-hover:text-cyan-400 transition-colors mb-1.5" />
+          <p className="text-xs text-blue-400 group-hover:text-cyan-300 font-medium">
+            {newImageFile ? `✓ ${newImageFile.name}` : 'Click to upload image'}
+          </p>
+        </label>
       </div>
 
-      <div className="bg-slate-700/20 rounded-xl p-3 sm:p-4 border border-slate-600/30">
-        <label className="flex items-center gap-3 text-slate-300 cursor-pointer hover:text-cyan-300 transition-colors group">
+      <div className="bg-blue-900/30 rounded-xl p-3 sm:p-4 border border-blue-700/40">
+        <label className="flex items-center gap-3 text-blue-300 cursor-pointer hover:text-cyan-300 transition-colors group">
           <input
             type="checkbox"
             checked={formData.is_active}
             onChange={(e) =>
               setFormData({ ...formData, is_active: e.target.checked })
             }
-            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-slate-600 group-hover:border-cyan-400"
+            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-blue-600 group-hover:border-cyan-400"
           />
           <span className="text-xs sm:text-sm font-medium">Active Product</span>
         </label>
@@ -921,7 +1156,11 @@ function ProductForm({
 // Products Section
 // ============================================================================
 
-export function ProductsSection() {
+interface ProductsSectionProps {
+  onCountChange?: (count: number) => void;
+}
+
+export function ProductsSection({ onCountChange }: ProductsSectionProps) {
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [tabs, setTabs] = useState<AdminTab[]>([]);
@@ -930,6 +1169,8 @@ export function ProductsSection() {
   const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterCategoryId, setFilterCategoryId] = useState<number | ''>('');
 
   useEffect(() => {
     loadData();
@@ -946,6 +1187,7 @@ export function ProductsSection() {
       setProducts(prodData);
       setCategories(catData);
       setTabs(tabData);
+      onCountChange?.(prodData.length);
     } catch (error) {
       setToast({
         message: error instanceof Error ? error.message : 'Failed to load data',
@@ -955,6 +1197,14 @@ export function ProductsSection() {
       setLoading(false);
     }
   }
+
+  const filteredProducts = products.filter((p) => {
+    const matchesSearch =
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.category_name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = filterCategoryId === '' || p.category === filterCategoryId;
+    return matchesSearch && matchesCategory;
+  });
 
   async function handleSubmit(formData: FormData) {
     try {
@@ -991,90 +1241,130 @@ export function ProductsSection() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader className="animate-spin text-cyan-400" size={32} />
-      </div>
-    );
+    return <SectionSkeleton rows={6} grid={true} />;
   }
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-white">Products</h2>
-        <button
-          onClick={() => {
-            setEditingProduct(null);
-            setIsModalOpen(true);
-          }}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all text-sm sm:text-base"
-        >
-          <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-          Add New Product
-        </button>
-      </div>
+      <SectionHeader
+        title="Products"
+        count={products.length}
+        icon={<Package size={16} />}
+        onAdd={() => {
+          setEditingProduct(null);
+          setIsModalOpen(true);
+        }}
+        addLabel="Add Product"
+      >
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-blue-900/50 border border-blue-700/50 focus:border-cyan-400 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-blue-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+            />
+          </div>
+          <select
+            value={filterCategoryId}
+            onChange={(e) => setFilterCategoryId(e.target.value === '' ? '' : Number(e.target.value))}
+            className="bg-blue-900/50 border border-blue-700/50 focus:border-cyan-400 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition-all sm:w-44"
+          >
+            <option value="">All Categories</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </SectionHeader>
 
-      <div className="space-y-2">
-        {products.map((product) =>
-          deletingId === product.id ? (
-            <div key={product.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-              <span className="text-red-300 text-sm sm:text-base">Delete "{product.name}"?</span>
-              <div className="flex gap-2 flex-shrink-0">
-                <button
-                  onClick={() => handleDelete(product.id)}
-                  className="flex-1 sm:flex-none px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-                >
-                  Confirm
-                </button>
-                <button
-                  onClick={() => setDeletingId(null)}
-                  className="flex-1 sm:flex-none px-3 py-1 bg-slate-600 text-white rounded text-sm hover:bg-slate-500"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div key={product.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:gap-4 gap-3 justify-between sm:items-center">
-              {product.image_url && (
-                <div className="w-12 sm:w-16 h-12 sm:h-16 flex-shrink-0 rounded overflow-hidden bg-slate-600">
-                  <Image
-                    src={product.image_url}
-                    alt={product.name}
-                    width={64}
-                    height={64}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-white truncate text-sm sm:text-base">{product.name}</h3>
-                <p className="text-xs sm:text-sm text-slate-400 truncate">{product.category_name}</p>
-                <p className="text-xs text-slate-500 mt-1 line-clamp-1">
-                  {product.description}
+      {filteredProducts.length === 0 && !loading ? (
+        <EmptyState
+          icon={<Package size={28} />}
+          title={searchQuery || filterCategoryId ? 'No products match your filter' : 'No products yet'}
+          description={
+            searchQuery || filterCategoryId
+              ? 'Try clearing the search or category filter.'
+              : 'Add your first product to get started.'
+          }
+        />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          {filteredProducts.map((product) =>
+            deletingId === product.id ? (
+              <div
+                key={product.id}
+                className="bg-red-950/40 border border-red-500/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 col-span-full sm:col-span-1"
+              >
+                <AlertCircle size={18} className="text-red-400 flex-shrink-0" />
+                <p className="flex-1 text-sm text-red-300">
+                  Permanently delete <span className="font-semibold text-white">"{product.name}"</span>? This cannot be undone.
                 </p>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => handleDelete(product.id)}
+                    className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-semibold transition-colors"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => setDeletingId(null)}
+                    className="px-3 py-1.5 bg-blue-800/50 hover:bg-blue-700 text-blue-300 rounded-lg text-xs font-semibold border border-blue-600/50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-2 flex-shrink-0">
-                <button
-                  onClick={() => {
-                    setEditingProduct(product);
-                    setIsModalOpen(true);
-                  }}
-                  className="p-2 text-blue-400 hover:text-cyan-300 transition-colors"
-                >
-                  <Pencil size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
-                <button
-                  onClick={() => setDeletingId(product.id)}
-                  className="p-2 text-red-400 hover:text-red-300 transition-colors"
-                >
-                  <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
-                </button>
+            ) : (
+              <div
+                key={product.id}
+                className="group relative bg-blue-800/40 border border-blue-600/50 hover:border-blue-400 rounded-2xl overflow-hidden transition-all duration-200 flex flex-col"
+              >
+                <div className="relative h-40 bg-blue-900/40 flex-shrink-0">
+                  {product.image_url ? (
+                    <Image src={product.image_url} alt={product.name} fill className="object-contain p-2" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-blue-600">
+                      <ImageIcon size={32} />
+                    </div>
+                  )}
+                  <div className="absolute top-2 right-2">
+                    <StatusBadge active={product.is_active} />
+                  </div>
+                </div>
+
+                <div className="p-4 flex-1 flex flex-col gap-1">
+                  <h3 className="font-semibold text-white text-sm truncate">{product.name}</h3>
+                  <span className="text-xs text-cyan-400 font-medium">{product.category_name}</span>
+                  <p className="text-xs text-blue-400 line-clamp-2 mt-1 flex-1">{product.description}</p>
+                </div>
+
+                <div className="absolute inset-0 bg-blue-950/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => {
+                      setEditingProduct(product);
+                      setIsModalOpen(true);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-semibold transition-colors"
+                  >
+                    <Pencil size={14} /> Edit
+                  </button>
+                  <button
+                    onClick={() => setDeletingId(product.id)}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-800/80 hover:bg-red-700 text-red-200 rounded-xl text-sm font-semibold transition-colors"
+                  >
+                    <Trash2 size={14} /> Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          )
-        )}
-      </div>
+            )
+          )}
+        </div>
+      )}
 
       <Modal
         title={editingProduct ? 'Edit Product' : 'Create Product'}
