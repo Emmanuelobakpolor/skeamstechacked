@@ -213,7 +213,7 @@ const categories = [
   },
 ];
 
-function ProductCarousel({ products }: { products: Product[] }) {
+function ProductCarousel({ products }: { products: (Product | AdminProduct)[] }) {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
