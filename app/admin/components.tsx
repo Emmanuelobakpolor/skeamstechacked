@@ -198,7 +198,7 @@ function Modal({ title, isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className=" overflow-y-auto pt-20">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-100 overflow-y-auto pt-20">
       <div className="flex justify-center px-4 pb-8">
         <div className="bg-slate-900/80 backdrop-blur-md max-w-lg w-full rounded-2xl animate-scale-up">
           <div className="flex justify-between items-center px-5 sm:px-8 py-4 sm:py-5 border-b border-blue-400/20 bg-blue-900/20">
