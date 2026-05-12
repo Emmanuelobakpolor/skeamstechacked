@@ -19,11 +19,15 @@ import {
   ImageIcon,
   Upload,
   Zap,
+  ChevronDown,
 } from 'lucide-react';
 import {
   AdminTab,
   AdminCategory,
   AdminProduct,
+  AdminProductModel,
+  ProductImageItem,
+  ProductModelImageItem,
   fetchTabs,
   fetchCategories,
   fetchProducts,
@@ -36,6 +40,13 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  addProductImage,
+  deleteProductImage,
+  createProductModel,
+  updateProductModel,
+  deleteProductModel,
+  addProductModelImage,
+  deleteProductModelImage,
 } from './api';
 
 // ============================================================================
@@ -341,7 +352,7 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
           type="number"
           value={formData.order}
           onChange={(e) =>
-            setFormData({ ...formData, order: parseInt(e.target.value) })
+            setFormData({ ...formData, order: e.target.value === '' ? 0 : parseInt(e.target.value) })
           }
           className={INPUT_CLS}
           placeholder="0"
@@ -474,7 +485,7 @@ export function TabsSection({ onCountChange }: TabsSectionProps) {
       <SectionHeader
         title="Shop Tabs"
         count={tabs.length}
-        icon={<LayoutList size={16} />}
+        icon={<LayoutList size={20} />}
         onAdd={() => {
           setEditingTab(null);
           setIsModalOpen(true);
@@ -917,6 +928,408 @@ export function CategoriesSection({ onCountChange }: CategoriesSectionProps) {
 }
 
 // ============================================================================
+// Product Image Gallery Component
+// ============================================================================
+
+interface ProductImageGalleryProps {
+  productId: number;
+  images: ProductImageItem[];
+  onChange: (updated: ProductImageItem[]) => void;
+}
+
+function ProductImageGallery({ productId, images, onChange }: ProductImageGalleryProps) {
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const uploaded = await Promise.all(
+        files.map((f) => addProductImage(productId, f))
+      );
+      onChange([...images, ...uploaded]);
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('Failed to upload images');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  }
+
+  async function handleDelete(imageId: number) {
+    try {
+      await deleteProductImage(productId, imageId);
+      onChange(images.filter((img) => img.id !== imageId));
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      alert('Failed to delete image');
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      {images.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {images.map((img) => (
+            <div
+              key={img.id}
+              className="relative w-20 h-20 rounded-xl overflow-hidden border border-blue-600/40 group"
+            >
+              <Image src={img.image_url} alt="" fill className="object-cover" />
+              <button
+                type="button"
+                onClick={() => handleDelete(img.id)}
+                className="absolute top-1 right-1 p-0.5 bg-red-600/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X size={10} className="text-white" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <label className="flex items-center gap-2 px-3 py-2 rounded-lg border border-blue-600/40 hover:border-cyan-400 bg-blue-900/20 hover:bg-blue-900/40 cursor-pointer transition-all">
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleFileChange}
+          disabled={uploading}
+          className="hidden"
+        />
+        {uploading ? (
+          <>
+            <Loader size={14} className="animate-spin text-cyan-400" />
+            <span className="text-xs text-blue-300">Uploading...</span>
+          </>
+        ) : (
+          <>
+            <Upload size={14} className="text-blue-400" />
+            <span className="text-xs text-blue-300">Add images</span>
+          </>
+        )}
+      </label>
+    </div>
+  );
+}
+
+// ============================================================================
+// Product Model Image Gallery Component
+// ============================================================================
+
+interface ProductModelImageGalleryProps {
+  productId: number;
+  modelId: number;
+  images: ProductModelImageItem[];
+  onChange: (updated: ProductModelImageItem[]) => void;
+}
+
+function ProductModelImageGallery({
+  productId,
+  modelId,
+  images,
+  onChange,
+}: ProductModelImageGalleryProps) {
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const uploaded = await Promise.all(
+        files.map((f) => addProductModelImage(productId, modelId, f))
+      );
+      onChange([...images, ...uploaded]);
+    } catch (error) {
+      console.error('Error uploading model images:', error);
+      alert('Failed to upload images');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  }
+
+  async function handleDelete(imageId: number) {
+    try {
+      await deleteProductModelImage(productId, modelId, imageId);
+      onChange(images.filter((img) => img.id !== imageId));
+    } catch (error) {
+      console.error('Error deleting model image:', error);
+      alert('Failed to delete image');
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      {images.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {images.map((img) => (
+            <div
+              key={img.id}
+              className="relative w-16 h-16 rounded-lg overflow-hidden border border-blue-700/40 group"
+            >
+              <Image src={img.image_url} alt="" fill className="object-cover" />
+              <button
+                type="button"
+                onClick={() => handleDelete(img.id)}
+                className="absolute top-0.5 right-0.5 p-0.5 bg-red-600/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X size={8} className="text-white" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <label className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-blue-700/30 hover:border-cyan-400/60 bg-blue-900/10 hover:bg-blue-900/30 cursor-pointer transition-all">
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleFileChange}
+          disabled={uploading}
+          className="hidden"
+        />
+        {uploading ? (
+          <>
+            <Loader size={12} className="animate-spin text-cyan-400" />
+            <span className="text-xs text-blue-300">Uploading...</span>
+          </>
+        ) : (
+          <>
+            <Upload size={12} className="text-blue-400" />
+            <span className="text-xs text-blue-300">Add images</span>
+          </>
+        )}
+      </label>
+    </div>
+  );
+}
+
+// ============================================================================
+// Product Models Section Component
+// ============================================================================
+
+interface ProductModelsSectionProps {
+  productId: number;
+  models: AdminProductModel[];
+  onChange: (updated: AdminProductModel[]) => void;
+}
+
+function ProductModelsSection({
+  productId,
+  models,
+  onChange,
+}: ProductModelsSectionProps) {
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [editingSpecs, setEditingSpecs] = useState<Record<number, AdminProductModel>>({});
+
+  const SPEC_FIELDS = [
+    { key: 'spec_speed', label: 'Speed' },
+    { key: 'spec_weight', label: 'Weight' },
+    { key: 'spec_voltage', label: 'Voltage' },
+    { key: 'spec_power', label: 'Power' },
+    { key: 'spec_storage', label: 'Storage' },
+    { key: 'spec_connectivity', label: 'Connectivity' },
+  ];
+
+  async function handleAddModel() {
+    setCreating(true);
+    try {
+      const newModel = await createProductModel(productId, {
+        name: 'New Model',
+        spec_speed: '',
+        spec_weight: '',
+        spec_voltage: '',
+        spec_power: '',
+        spec_storage: '',
+        spec_connectivity: '',
+        order: models.length,
+      });
+      const updated = [...models, newModel];
+      onChange(updated);
+      setExpandedId(newModel.id);
+      setEditingSpecs({ [newModel.id]: newModel });
+    } catch (error) {
+      console.error('Error creating model:', error);
+      alert('Failed to create model');
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function handleSaveModel(modelId: number) {
+    const edited = editingSpecs[modelId];
+    if (!edited) return;
+    try {
+      const updated = await updateProductModel(productId, modelId, {
+        name: edited.name,
+        spec_speed: edited.spec_speed,
+        spec_weight: edited.spec_weight,
+        spec_voltage: edited.spec_voltage,
+        spec_power: edited.spec_power,
+        spec_storage: edited.spec_storage,
+        spec_connectivity: edited.spec_connectivity,
+        order: edited.order,
+      });
+      onChange(models.map((m) => (m.id === modelId ? updated : m)));
+      setEditingSpecs({ ...editingSpecs, [modelId]: updated });
+    } catch (error) {
+      console.error('Error saving model:', error);
+      alert('Failed to save model');
+    }
+  }
+
+  async function handleDeleteModel(modelId: number) {
+    if (!confirm('Delete this model and all its images?')) return;
+    try {
+      await deleteProductModel(productId, modelId);
+      onChange(models.filter((m) => m.id !== modelId));
+      setExpandedId(null);
+    } catch (error) {
+      console.error('Error deleting model:', error);
+      alert('Failed to delete model');
+    }
+  }
+
+  function handleModelImageChange(modelId: number, images: ProductModelImageItem[]) {
+    onChange(
+      models.map((m) =>
+        m.id === modelId ? { ...m, images } : m
+      )
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {models.map((model) => {
+        const edited = editingSpecs[model.id] || model;
+        const isExpanded = expandedId === model.id;
+
+        return (
+          <div
+            key={model.id}
+            className="border border-blue-700/40 rounded-xl overflow-hidden bg-blue-900/20"
+          >
+            <button
+              type="button"
+              onClick={() => setExpandedId(isExpanded ? null : model.id)}
+              className="w-full p-3 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
+            >
+              <div className="text-left">
+                <p className="text-sm font-semibold text-blue-200">{edited.name}</p>
+                {Object.keys(edited)
+                  .filter((k) => k.startsWith('spec_'))
+                  .some((k) => (edited as any)[k]) && (
+                  <p className="text-xs text-blue-400 mt-1">
+                    {Object.keys(edited)
+                      .filter((k) => k.startsWith('spec_') && (edited as any)[k])
+                      .map((k) => `${k.replace('spec_', '')}: ${(edited as any)[k]}`)
+                      .join(' • ')}
+                  </p>
+                )}
+              </div>
+              <ChevronDown
+                size={16}
+                className={`text-blue-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {isExpanded && (
+              <div className="border-t border-blue-700/40 p-3 space-y-3 bg-blue-900/10">
+                {/* Model name */}
+                <div>
+                  <label className="text-xs font-semibold text-blue-300 block mb-1.5">
+                    Model Name
+                  </label>
+                  <input
+                    type="text"
+                    value={edited.name}
+                    onChange={(e) =>
+                      setEditingSpecs({ ...editingSpecs, [model.id]: { ...edited, name: e.target.value } })
+                    }
+                    className={INPUT_CLS}
+                    placeholder="e.g. Model X"
+                  />
+                </div>
+
+                {/* Specs grid */}
+                <div>
+                  <label className="text-xs font-semibold text-blue-300 block mb-1.5">
+                    Specifications
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {SPEC_FIELDS.map(({ key, label }) => (
+                      <input
+                        key={key}
+                        type="text"
+                        placeholder={label}
+                        value={(edited as any)[key] || ''}
+                        onChange={(e) =>
+                          setEditingSpecs({
+                            ...editingSpecs,
+                            [model.id]: { ...edited, [key]: e.target.value },
+                          })
+                        }
+                        className="bg-blue-900/40 border border-blue-700/40 hover:border-blue-600 focus:border-cyan-400 rounded-lg px-2 py-1.5 text-xs text-white placeholder-blue-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Images */}
+                <div>
+                  <label className="text-xs font-semibold text-blue-300 block mb-1.5">
+                    Model Images
+                  </label>
+                  <ProductModelImageGallery
+                    productId={productId}
+                    modelId={model.id}
+                    images={edited.images}
+                    onChange={(images) => handleModelImageChange(model.id, images)}
+                  />
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleSaveModel(model.id)}
+                    className="flex-1 px-3 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 hover:text-cyan-200 font-medium rounded-lg text-xs transition-colors"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteModel(model.id)}
+                    className="flex-1 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-red-200 font-medium rounded-lg text-xs transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      <button
+        type="button"
+        onClick={handleAddModel}
+        disabled={creating}
+        className="w-full p-2.5 border border-dashed border-blue-600/40 hover:border-cyan-400/60 rounded-lg text-blue-300 hover:text-cyan-300 font-medium text-xs transition-colors disabled:opacity-50"
+      >
+        {creating ? <Loader size={12} className="inline animate-spin mr-1" /> : '+'}
+        {' '}
+        Add Model
+      </button>
+    </div>
+  );
+}
+
+// ============================================================================
 // Product Form
 // ============================================================================
 
@@ -924,7 +1337,7 @@ interface ProductFormProps {
   product?: AdminProduct;
   categories: AdminCategory[];
   tabs: AdminTab[];
-  onSubmit: (formData: FormData) => Promise<void>;
+  onSubmit: (formData: FormData) => Promise<AdminProduct>;
   onCancel: () => void;
 }
 
@@ -948,8 +1361,13 @@ function ProductForm({
     spec_connectivity: product?.spec_connectivity || '',
     is_active: product?.is_active ?? true,
   });
+  const [savedProductId, setSavedProductId] = useState<number | null>(product?.id ?? null);
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
+  const [galleryImages, setGalleryImages] = useState<ProductImageItem[]>(product?.images ?? []);
+  const [pendingImages, setPendingImages] = useState<File[]>([]);
+  const [productModels, setProductModels] = useState<AdminProductModel[]>(product?.product_models ?? []);
   const [loading, setLoading] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -971,7 +1389,25 @@ function ProductForm({
       if (newImageFile) {
         fd.append('image', newImageFile);
       }
-      await onSubmit(fd);
+      const savedProduct = await onSubmit(fd);
+      setSavedProductId(savedProduct.id);
+
+      // Upload any pending images from before first save
+      if (pendingImages.length > 0 && savedProduct.id) {
+        setUploadingImages(true);
+        try {
+          const uploaded = await Promise.all(
+            pendingImages.map((f) => addProductImage(savedProduct.id, f))
+          );
+          setGalleryImages((prev) => [...prev, ...uploaded]);
+          setPendingImages([]);
+        } catch (error) {
+          console.error('Error uploading pending images:', error);
+          alert('Some images failed to upload');
+        } finally {
+          setUploadingImages(false);
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -1084,32 +1520,75 @@ function ProductForm({
 
       <div className="space-y-2">
         <label className="text-xs sm:text-sm font-semibold text-blue-200 flex items-center gap-1.5">
-          <ImageIcon size={14} className="text-cyan-400" /> Product Image
+          <ImageIcon size={14} className="text-cyan-400" /> Product Images
         </label>
 
-        {(product?.image_url || newImageFile) && (
-          <div className="relative w-full h-32 rounded-xl overflow-hidden bg-blue-900/40 border border-blue-600/40">
-            <Image
-              src={newImageFile ? URL.createObjectURL(newImageFile) : product!.image_url!}
-              alt="Preview"
-              fill
-              className="object-contain"
+        {savedProductId ? (
+          <>
+            <ProductImageGallery
+              productId={savedProductId}
+              images={galleryImages}
+              onChange={setGalleryImages}
             />
-          </div>
+            {uploadingImages && (
+              <p className="text-xs text-blue-300 flex items-center gap-1">
+                <Loader size={12} className="animate-spin" /> Uploading...
+              </p>
+            )}
+          </>
+        ) : (
+          <>
+            {pendingImages.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {pendingImages.map((file, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-2 px-2.5 py-1.5 bg-blue-900/40 border border-blue-600/40 rounded-lg"
+                  >
+                    <span className="text-xs text-blue-300">{file.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => setPendingImages((p) => p.filter((_, i) => i !== idx))}
+                      className="text-red-400 hover:text-red-300"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <label className="flex flex-col items-center justify-center w-full h-24 rounded-xl border-2 border-dashed border-blue-600/50 hover:border-cyan-400/60 bg-blue-900/20 hover:bg-blue-900/40 transition-all cursor-pointer group">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) =>
+                  setPendingImages((p) => [...p, ...Array.from(e.target.files ?? [])])
+                }
+                className="hidden"
+              />
+              <Upload size={20} className="text-blue-400 group-hover:text-cyan-400 transition-colors mb-1.5" />
+              <p className="text-xs text-blue-400 group-hover:text-cyan-300 font-medium">
+                Add images (will upload after saving)
+              </p>
+            </label>
+          </>
         )}
+      </div>
 
-        <label className="flex flex-col items-center justify-center w-full h-24 rounded-xl border-2 border-dashed border-blue-600/50 hover:border-cyan-400/60 bg-blue-900/20 hover:bg-blue-900/40 transition-all cursor-pointer group">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setNewImageFile(e.target.files?.[0] || null)}
-            className="hidden"
+      <div className="bg-blue-900/30 border border-blue-700/40 rounded-2xl p-4 space-y-3">
+        <p className="text-xs font-semibold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
+          <Package size={12} className="text-cyan-400" /> Available Models
+        </p>
+        {savedProductId ? (
+          <ProductModelsSection
+            productId={savedProductId}
+            models={productModels}
+            onChange={setProductModels}
           />
-          <Upload size={20} className="text-blue-400 group-hover:text-cyan-400 transition-colors mb-1.5" />
-          <p className="text-xs text-blue-400 group-hover:text-cyan-300 font-medium">
-            {newImageFile ? `✓ ${newImageFile.name}` : 'Click to upload image'}
-          </p>
-        </label>
+        ) : (
+          <p className="text-xs text-blue-400/60">Save the product first to add models.</p>
+        )}
       </div>
 
       <div className="bg-blue-900/30 rounded-xl p-3 sm:p-4 border border-blue-700/40">
@@ -1206,23 +1685,28 @@ export function ProductsSection({ onCountChange }: ProductsSectionProps) {
     return matchesSearch && matchesCategory;
   });
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData): Promise<AdminProduct> {
     try {
+      let result: AdminProduct;
       if (editingProduct) {
-        await updateProduct(editingProduct.id, formData);
+        result = await updateProduct(editingProduct.id, formData);
         setToast({ message: 'Product updated', type: 'success' });
+        setIsModalOpen(false);
+        setEditingProduct(null);
+        loadData();
       } else {
-        await createProduct(formData);
-        setToast({ message: 'Product created', type: 'success' });
+        result = await createProduct(formData);
+        setToast({ message: 'Product created — add images and models now', type: 'success' });
+        setEditingProduct(result);
+        // Keep modal open for new products so user can add images/models immediately
       }
-      setIsModalOpen(false);
-      setEditingProduct(null);
-      loadData();
+      return result;
     } catch (error) {
       setToast({
         message: error instanceof Error ? error.message : 'Operation failed',
         type: 'error',
       });
+      throw error;
     }
   }
 
