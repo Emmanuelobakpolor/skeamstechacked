@@ -1205,7 +1205,10 @@ export default function Shop() {
                                     {productImages.map((_, imgIdx) => (
                                       <button
                                         key={imgIdx}
-                                        onClick={() => setCurrentImageIdx(imgIdx)}
+                                        onClick={() => setCurrentImageIndices(prev => ({
+                                          ...prev,
+                                          [product.id]: imgIdx
+                                        }))}
                                         className={`rounded-full transition-all duration-300 ${
                                           imgIdx === currentImageIdx
                                             ? 'bg-cyan-400 w-5 h-2'
