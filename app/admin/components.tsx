@@ -1488,7 +1488,7 @@ function ProductForm({
         />
       </div>
 
-      <div className="bg-blue-900/30 border border-blue-700/40 rounded-2xl p-4 space-y-3">
+      <div className="space-y-2">
         <p className="text-xs font-semibold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
           <Zap size={12} className="text-cyan-400" /> Technical Specifications
         </p>
@@ -1512,7 +1512,7 @@ function ProductForm({
                   [key]: e.target.value,
                 })
               }
-              className="bg-blue-900/40 border border-blue-700/40 hover:border-blue-600 focus:border-cyan-400 rounded-xl px-3 py-2 text-xs text-white placeholder-blue-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+              className={INPUT_CLS}
             />
           ))}
         </div>
@@ -1576,7 +1576,7 @@ function ProductForm({
         )}
       </div>
 
-      <div className="bg-blue-900/30 border border-blue-700/40 rounded-2xl p-4 space-y-3">
+      <div className="space-y-2">
         <p className="text-xs font-semibold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
           <Package size={12} className="text-cyan-400" /> Available Models
         </p>
@@ -1591,19 +1591,17 @@ function ProductForm({
         )}
       </div>
 
-      <div className="bg-blue-900/30 rounded-xl p-3 sm:p-4 border border-blue-700/40">
-        <label className="flex items-center gap-3 text-blue-300 cursor-pointer hover:text-cyan-300 transition-colors group">
-          <input
-            type="checkbox"
-            checked={formData.is_active}
-            onChange={(e) =>
-              setFormData({ ...formData, is_active: e.target.checked })
-            }
-            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-blue-600 group-hover:border-cyan-400"
-          />
-          <span className="text-xs sm:text-sm font-medium">Active Product</span>
-        </label>
-      </div>
+      <label className="flex items-center gap-3 text-blue-300 cursor-pointer hover:text-cyan-300 transition-colors group">
+        <input
+          type="checkbox"
+          checked={formData.is_active}
+          onChange={(e) =>
+            setFormData({ ...formData, is_active: e.target.checked })
+          }
+          className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-blue-600 group-hover:border-cyan-400"
+        />
+        <span className="text-xs sm:text-sm font-medium">Active Product</span>
+      </label>
 
       <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
         <button
