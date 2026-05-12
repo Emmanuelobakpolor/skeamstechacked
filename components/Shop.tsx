@@ -214,146 +214,218 @@ const categories = [
 ];
 
 function ProductCarousel({ products }: { products: (Product | AdminProduct)[] }) {
-  const [current, setCurrent] = useState(0);
+  const [currentProduct, setCurrentProduct] = useState(0);
+  const [currentImage, setCurrentImage] = useState(0);
 
+  const currentProductData = products[currentProduct];
+  // Get all images for current product (both hardcoded and admin products)
+  const productImages = ((currentProductData as any).images || []).map((img: any) => img.image_url || img.image);
+  const mainImage = (currentProductData as any).image || (currentProductData as any).image_url;
+  const allImages = productImages.length > 0 ? productImages : mainImage ? [mainImage] : [];
+
+  // Auto-slide through images within a product
+  useEffect(() => {
+    if (allImages.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentImage(prev => (prev + 1) % allImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [allImages.length]);
+
+  // Auto-slide through products every 8 seconds (or when images finish cycling)
   useEffect(() => {
     if (products.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrent(prev => (prev + 1) % products.length);
-    }, 5000);
+      setCurrentProduct(prev => (prev + 1) % products.length);
+      setCurrentImage(0);
+    }, 8000);
     return () => clearInterval(timer);
   }, [products.length]);
 
-  const nextSlide = () => {
-    setCurrent(prev => (prev + 1) % products.length);
+  const nextProduct = () => {
+    setCurrentProduct(prev => (prev + 1) % products.length);
+    setCurrentImage(0);
   };
 
-  const prevSlide = () => {
-    setCurrent(prev => (prev - 1 + products.length) % products.length);
+  const prevProduct = () => {
+    setCurrentProduct(prev => (prev - 1 + products.length) % products.length);
+    setCurrentImage(0);
+  };
+
+  const nextImage = () => {
+    if (allImages.length > 0) {
+      setCurrentImage(prev => (prev + 1) % allImages.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (allImages.length > 0) {
+      setCurrentImage(prev => (prev - 1 + allImages.length) % allImages.length);
+    }
   };
 
   if (products.length === 0) return null;
 
   return (
     <div className="relative w-full group">
-      {/* Carousel */}
-      <div className="relative h-96 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900/20 to-slate-900/40">
-        <div
-          className="flex h-full transition-transform duration-700 ease-in-out"
-          style={{ transform: `translateX(-${current * 100}%)` }}
-        >
-          {products.map((product) => {
-            // Handle both hardcoded (product.image) and admin (product.image_url) products
-            const imageUrl = (product as any).image || (product as any).image_url;
-            return (
-              <div
-                key={product.id}
-                className="relative w-full h-full flex-shrink-0 bg-blue-950 flex items-center justify-center p-8"
-              >
-                {imageUrl && (
-                  <Image
-                    src={imageUrl}
-                    alt={product.name}
-                    fill
-                    className="object-contain p-4"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    priority={product.id === products[current].id}
-                  />
-                )}
+      {/* Carousel - Images within Product */}
+      <div className="relative h-80 sm:h-96 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900/20 to-slate-900/40">
+        <div className="relative w-full h-full">
+          {/* Images */}
+          <div
+            className="flex h-full transition-transform duration-500 ease-out"
+            style={{ transform: `translateX(-${currentImage * 100}%)` }}
+          >
+            {allImages.length > 0 ? (
+              allImages.map((imageUrl, idx) => (
+                <div
+                  key={idx}
+                  className="relative w-full h-full flex-shrink-0 bg-blue-950 flex items-center justify-center p-4 sm:p-8"
+                >
+                  {imageUrl && (
+                    <Image
+                      src={imageUrl}
+                      alt={`${currentProductData.name} - Image ${idx + 1}`}
+                      fill
+                      className="object-contain p-4"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      priority={idx === currentImage}
+                    />
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="relative w-full h-full bg-blue-950 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-blue-600 mb-2">No image available</div>
+                </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Left Gradient */}
-        <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black/40 to-transparent z-10 pointer-events-none" />
-
-        {/* Right Gradient */}
-        <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-black/40 to-transparent z-10 pointer-events-none" />
-
-        {/* Navigation Arrows */}
-        {products.length > 1 && (
-          <>
-            <button
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 backdrop-blur-sm text-white w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
-              aria-label="Previous product"
-            >
-              ‹
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 backdrop-blur-sm text-white w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
-              aria-label="Next product"
-            >
-              ›
-            </button>
-          </>
-        )}
-
-        {/* Indicator Dots */}
-        {products.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-            {products.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrent(index)}
-                className={`rounded-full transition-all duration-300 ${
-                  index === current
-                    ? 'bg-cyan-400 w-6 h-2'
-                    : 'bg-white/40 w-2 h-2 hover:bg-white/60'
-                }`}
-                aria-label={`Product ${index + 1}`}
-              />
-            ))}
+            )}
           </div>
-        )}
+
+          {/* Left Gradient */}
+          <div className="absolute inset-y-0 left-0 w-12 sm:w-16 bg-gradient-to-r from-black/40 to-transparent z-10 pointer-events-none" />
+
+          {/* Right Gradient */}
+          <div className="absolute inset-y-0 right-0 w-12 sm:w-16 bg-gradient-to-l from-black/40 to-transparent z-10 pointer-events-none" />
+
+          {/* Image Navigation - Only show if multiple images */}
+          {allImages.length > 1 && (
+            <>
+              <button
+                onClick={prevImage}
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 backdrop-blur-sm text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+                aria-label="Previous image"
+              >
+                ‹
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 backdrop-blur-sm text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+                aria-label="Next image"
+              >
+                ›
+              </button>
+            </>
+          )}
+
+          {/* Image Indicator Dots - Bottom left */}
+          {allImages.length > 1 && (
+            <div className="absolute bottom-4 left-4 flex gap-1.5 z-20">
+              {allImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImage(index)}
+                  className={`rounded-full transition-all duration-300 ${
+                    index === currentImage
+                      ? 'bg-cyan-400 w-5 h-2'
+                      : 'bg-white/40 w-2 h-2 hover:bg-white/60'
+                  }`}
+                  aria-label={`Image ${index + 1}`}
+                  title={`Image ${index + 1} of ${allImages.length}`}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Product Indicator - Bottom right (only if multiple products) */}
+          {products.length > 1 && (
+            <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs text-white font-medium z-20">
+              {currentProduct + 1} / {products.length}
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Product Navigation Arrows - Below image carousel */}
+      {products.length > 1 && (
+        <div className="flex items-center justify-between mt-3 gap-2">
+          <button
+            onClick={prevProduct}
+            className="flex-shrink-0 bg-blue-800/50 hover:bg-blue-700 backdrop-blur-sm text-white w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+            aria-label="Previous product"
+          >
+            ‹
+          </button>
+          <h3 className="text-base sm:text-lg font-bold text-white flex-1 line-clamp-2 px-2">
+            {currentProductData.name}
+          </h3>
+          <button
+            onClick={nextProduct}
+            className="flex-shrink-0 bg-blue-800/50 hover:bg-blue-700 backdrop-blur-sm text-white w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+            aria-label="Next product"
+          >
+            ›
+          </button>
+        </div>
+      )}
+
       {/* Product Info */}
-      <div className="mt-6 space-y-4">
+      <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
         <div>
-          <h3 className="text-2xl font-bold text-white mb-2">{products[current].name}</h3>
-          <p className="text-blue-200 mb-3">{products[current].description}</p>
-          <p className="text-sm text-cyan-300 font-semibold">✓ {products[current].application}</p>
+          {products.length === 1 && (
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{currentProductData.name}</h3>
+          )}
+          <p className="text-blue-200 text-sm sm:text-base mb-2 sm:mb-3 line-clamp-2">{currentProductData.description}</p>
+          <p className="text-xs sm:text-sm text-cyan-300 font-semibold">✓ {currentProductData.application}</p>
         </div>
 
         {/* Specs Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {products[current].specs.speed && (
-            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-xl p-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+          {currentProductData.specs.speed && (
+            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-lg sm:rounded-xl p-2 sm:p-3">
               <p className="text-blue-300 text-xs font-semibold uppercase">Speed</p>
-              <p className="text-cyan-300 font-bold text-sm mt-1">{products[current].specs.speed}</p>
+              <p className="text-cyan-300 font-bold text-xs sm:text-sm mt-1">{currentProductData.specs.speed}</p>
             </div>
           )}
-          {products[current].specs.weight && (
-            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-xl p-3">
+          {currentProductData.specs.weight && (
+            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-lg sm:rounded-xl p-2 sm:p-3">
               <p className="text-blue-300 text-xs font-semibold uppercase">Weight</p>
-              <p className="text-cyan-300 font-bold text-sm mt-1">{products[current].specs.weight}</p>
+              <p className="text-cyan-300 font-bold text-xs sm:text-sm mt-1">{currentProductData.specs.weight}</p>
             </div>
           )}
-          {products[current].specs.voltage && (
-            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-xl p-3">
+          {currentProductData.specs.voltage && (
+            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-lg sm:rounded-xl p-2 sm:p-3">
               <p className="text-blue-300 text-xs font-semibold uppercase">Voltage</p>
-              <p className="text-cyan-300 font-bold text-sm mt-1">{products[current].specs.voltage}</p>
+              <p className="text-cyan-300 font-bold text-xs sm:text-sm mt-1">{currentProductData.specs.voltage}</p>
             </div>
           )}
-          {products[current].specs.power && (
-            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-xl p-3">
+          {currentProductData.specs.power && (
+            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-lg sm:rounded-xl p-2 sm:p-3">
               <p className="text-blue-300 text-xs font-semibold uppercase">Power</p>
-              <p className="text-cyan-300 font-bold text-sm mt-1">{products[current].specs.power}</p>
+              <p className="text-cyan-300 font-bold text-xs sm:text-sm mt-1">{currentProductData.specs.power}</p>
             </div>
           )}
-          {products[current].specs.storage && (
-            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-xl p-3">
+          {currentProductData.specs.storage && (
+            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-lg sm:rounded-xl p-2 sm:p-3">
               <p className="text-blue-300 text-xs font-semibold uppercase">Storage</p>
-              <p className="text-cyan-300 font-bold text-sm mt-1">{products[current].specs.storage}</p>
+              <p className="text-cyan-300 font-bold text-xs sm:text-sm mt-1">{currentProductData.specs.storage}</p>
             </div>
           )}
-          {products[current].specs.connectivity && (
-            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-xl p-3">
+          {currentProductData.specs.connectivity && (
+            <div className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-lg sm:rounded-xl p-2 sm:p-3">
               <p className="text-blue-300 text-xs font-semibold uppercase">Connectivity</p>
-              <p className="text-cyan-300 font-bold text-sm mt-1">{products[current].specs.connectivity}</p>
+              <p className="text-cyan-300 font-bold text-xs sm:text-sm mt-1">{currentProductData.specs.connectivity}</p>
             </div>
           )}
         </div>
