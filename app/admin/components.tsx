@@ -1043,7 +1043,6 @@ function ProductForm({
     is_active: product?.is_active ?? true,
   });
   const [savedProductId, setSavedProductId] = useState<number | null>(product?.id ?? null);
-  const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [galleryImages, setGalleryImages] = useState<ProductImageItem[]>(product?.images ?? []);
   const [pendingImages, setPendingImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
@@ -1071,9 +1070,6 @@ function ProductForm({
       fd.append('spec_storage', formData.spec_storage);
       fd.append('spec_connectivity', formData.spec_connectivity);
       fd.append('is_active', String(formData.is_active));
-      if (newImageFile) {
-        fd.append('image', newImageFile);
-      }
       const savedProduct = await onSubmit(fd);
       setSavedProductId(savedProduct.id);
 

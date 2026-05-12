@@ -1113,111 +1113,163 @@ export default function Shop() {
                         {adminCategory.subtitle && <p className="text-lg text-blue-200">{adminCategory.subtitle}</p>}
                       </div>
 
-                      {/* Products List */}
-                      <div className="space-y-4">
-                        {/* Clear selections button */}
-                        <div className="flex items-center justify-between mb-6">
-                          <h3 className="text-2xl font-bold text-white">Available Products</h3>
-                          {selections[`admin-cat-${adminCategory.id}`]?.length > 0 && (
-                            <button
-                              onClick={() => setSelections(prev => ({ ...prev, [`admin-cat-${adminCategory.id}`]: [] }))}
-                              className="text-xs text-blue-400 hover:text-cyan-300 transition-colors underline"
-                            >
-                              Clear {selections[`admin-cat-${adminCategory.id}`].length} selected
-                            </button>
-                          )}
-                        </div>
+                      {/* Products with Carousel */}
+                      {adminCategory.products.map((product, productIdx) => {
+                        const categoryKey = `admin-cat-${adminCategory.id}`;
+                        const isSelected = selections[categoryKey]?.includes(product.name) ?? false;
+                        const [currentImageIdx, setCurrentImageIdx] = useState(0);
 
-                        {/* Product cards list */}
-                        <div className="space-y-3">
-                          {adminCategory.products.map((product) => {
-                            const categoryKey = `admin-cat-${adminCategory.id}`;
-                            const isSelected = selections[categoryKey]?.includes(product.name) ?? false;
+                        const productImages = product.images && product.images.length > 0
+                          ? product.images.map(img => img.image_url)
+                          : product.image_url
+                            ? [product.image_url]
+                            : [];
 
-                            return (
-                              <motion.button
-                                key={product.id}
-                                onClick={() => toggleProduct(categoryKey, product.name)}
-                                className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 group flex gap-4 ${
-                                  isSelected
-                                    ? 'bg-cyan-500/15 border-cyan-500 shadow-lg shadow-cyan-500/10'
-                                    : 'bg-gradient-to-r from-blue-800/40 to-blue-700/20 border-blue-600/40 hover:border-blue-400 hover:from-blue-700/60 hover:to-blue-600/40'
-                                }`}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                aria-pressed={isSelected}
-                                aria-label={`${isSelected ? 'Deselect' : 'Select'} ${product.name}`}
-                              >
-                                {/* Checkbox */}
+                        const nextImage = () => {
+                          setCurrentImageIdx((prev) => (prev + 1) % productImages.length);
+                        };
+
+                        const prevImage = () => {
+                          setCurrentImageIdx((prev) => (prev - 1 + productImages.length) % productImages.length);
+                        };
+
+                        return (
+                          <div key={product.id} className="space-y-4">
+                            {/* Image Carousel */}
+                            <div className="relative w-full group">
+                              <div className="relative h-80 sm:h-96 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900/20 to-slate-900/40">
+                                {/* Image Track */}
                                 <div
-                                  className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
-                                    isSelected
-                                      ? 'bg-cyan-500 border-cyan-500'
-                                      : 'border-blue-400 bg-transparent group-hover:border-cyan-400'
-                                  }`}
+                                  className="flex h-full transition-transform duration-500 ease-out"
+                                  style={{ transform: `translateX(-${currentImageIdx * 100}%)` }}
                                 >
-                                  {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
-                                </div>
-
-                                {/* Product Image Thumbnail */}
-                                {product.image_url && (
-                                  <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-blue-950 flex-shrink-0">
-                                    <Image
-                                      src={product.image_url}
-                                      alt={product.name}
-                                      fill
-                                      className="object-contain p-1"
-                                    />
-                                  </div>
-                                )}
-
-                                {/* Content */}
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between mb-1">
-                                    <h4 className={`text-base font-semibold transition-colors ${
-                                      isSelected ? 'text-cyan-300' : 'text-white group-hover:text-cyan-300'
-                                    }`}>
-                                      {product.name}
-                                    </h4>
-                                    {isSelected && (
-                                      <span className="text-xs text-cyan-400 font-medium bg-cyan-500/10 px-2 py-0.5 rounded-full flex-shrink-0">
-                                        Selected
-                                      </span>
-                                    )}
-                                  </div>
-                                  {product.application && <p className="text-xs text-blue-300 mb-2">{product.application}</p>}
-                                  {product.description && <p className="text-xs text-blue-400 line-clamp-1 mb-2">{product.description}</p>}
-                                  {Object.keys(product.specs).length > 0 && (
-                                    <div className="grid grid-cols-2 gap-1.5 text-xs">
-                                      {Object.entries(product.specs).map(([key, value]) =>
-                                        value ? (
-                                          <div key={key} className="text-blue-200">
-                                            <span className="text-cyan-300 font-semibold capitalize">{key}:</span> {value}
-                                          </div>
-                                        ) : null
-                                      )}
+                                  {productImages.length > 0 ? (
+                                    productImages.map((url, imgIdx) => (
+                                      <div
+                                        key={imgIdx}
+                                        className="relative w-full h-full flex-shrink-0 bg-blue-950 flex items-center justify-center p-4 sm:p-8"
+                                      >
+                                        <Image
+                                          src={url}
+                                          alt={`${product.name} - Image ${imgIdx + 1}`}
+                                          fill
+                                          className="object-contain p-4"
+                                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                          priority={imgIdx === currentImageIdx}
+                                        />
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="relative w-full h-full bg-blue-950 flex items-center justify-center">
+                                      <span className="text-blue-600">No image available</span>
                                     </div>
                                   )}
                                 </div>
-                              </motion.button>
-                            );
-                          })}
-                        </div>
-                      </div>
 
-                      <div className="flex justify-center mt-8">
-                        <motion.button
-                          onClick={() => {
-                            const categoryKey = `admin-cat-${adminCategory.id}`;
-                            openQuoteModal(adminCategory.id.toString(), selections[categoryKey] ?? []);
-                          }}
-                          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-cyan-500/30"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          Get Quote for {adminCategory.name}
-                        </motion.button>
-                      </div>
+                                {/* Left Gradient */}
+                                <div className="absolute inset-y-0 left-0 w-12 sm:w-16 bg-gradient-to-r from-black/40 to-transparent z-10 pointer-events-none" />
+
+                                {/* Right Gradient */}
+                                <div className="absolute inset-y-0 right-0 w-12 sm:w-16 bg-gradient-to-l from-black/40 to-transparent z-10 pointer-events-none" />
+
+                                {/* Navigation Arrows — only if multiple images */}
+                                {productImages.length > 1 && (
+                                  <>
+                                    <button
+                                      onClick={prevImage}
+                                      className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 backdrop-blur-sm text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+                                      aria-label="Previous image"
+                                    >
+                                      ‹
+                                    </button>
+                                    <button
+                                      onClick={nextImage}
+                                      className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 backdrop-blur-sm text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+                                      aria-label="Next image"
+                                    >
+                                      ›
+                                    </button>
+                                  </>
+                                )}
+
+                                {/* Image Indicator Dots — bottom-left */}
+                                {productImages.length > 1 && (
+                                  <div className="absolute bottom-4 left-4 flex gap-1.5 z-20">
+                                    {productImages.map((_, imgIdx) => (
+                                      <button
+                                        key={imgIdx}
+                                        onClick={() => setCurrentImageIdx(imgIdx)}
+                                        className={`rounded-full transition-all duration-300 ${
+                                          imgIdx === currentImageIdx
+                                            ? 'bg-cyan-400 w-5 h-2'
+                                            : 'bg-white/40 w-2 h-2 hover:bg-white/60'
+                                        }`}
+                                        aria-label={`Image ${imgIdx + 1}`}
+                                      />
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Product Info */}
+                            <div className="space-y-3 sm:space-y-4">
+                              <div>
+                                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{product.name}</h3>
+                                <p className="text-blue-200 text-sm sm:text-base mb-2 sm:mb-3 line-clamp-2">{product.description}</p>
+                                {product.application && <p className="text-xs sm:text-sm text-cyan-300 font-semibold">✓ {product.application}</p>}
+                              </div>
+
+                              {/* Specs Grid */}
+                              {Object.keys(product.specs).length > 0 && (
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+                                  {Object.entries(product.specs).map(([key, value]) =>
+                                    value ? (
+                                      <div key={key} className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-lg sm:rounded-xl p-2 sm:p-3">
+                                        <p className="text-blue-300 text-xs font-semibold uppercase">{key}</p>
+                                        <p className="text-cyan-300 font-bold text-xs sm:text-sm mt-1">{value}</p>
+                                      </div>
+                                    ) : null
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Get Quote Button */}
+                            <div className="flex justify-center">
+                              <motion.button
+                                onClick={() => {
+                                  setSelections(prev => ({
+                                    ...prev,
+                                    [categoryKey]: isSelected
+                                      ? selections[categoryKey]?.filter(name => name !== product.name) ?? []
+                                      : [...(selections[categoryKey] ?? []), product.name]
+                                  }));
+                                  openQuoteModal(adminCategory.id.toString(),
+                                    isSelected
+                                      ? selections[categoryKey]?.filter(name => name !== product.name) ?? []
+                                      : [...(selections[categoryKey] ?? []), product.name]
+                                  );
+                                }}
+                                className={`px-8 py-3 rounded-lg font-bold transition-all duration-200 ${
+                                  isSelected
+                                    ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30'
+                                    : 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white'
+                                }`}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                {isSelected ? '✓ Selected - Get Quote' : 'Get Quote'}
+                              </motion.button>
+                            </div>
+
+                            {/* Divider between products */}
+                            {productIdx < adminCategory.products.length - 1 && (
+                              <div className="border-t border-blue-600/40 pt-8" />
+                            )}
+                          </div>
+                        );
+                      })}
                     </motion.div>
                   );
                 })
