@@ -1669,7 +1669,7 @@ function ProductForm({
           >
             <div className="flex items-center gap-2">
               <Package size={16} className="text-cyan-400" />
-              <span className="text-sm font-semibold text-blue-200">Product Models</span>
+              <span className="text-sm font-semibold text-blue-200">Product Models <span className="text-xs font-normal text-blue-400">(variants)</span></span>
             </div>
             <ChevronDown
               size={16}
@@ -1678,7 +1678,10 @@ function ProductForm({
           </button>
 
           {expandedSections.models && (
-            <div className="border-t border-blue-700/40 p-4 bg-blue-900/10">
+            <div className="border-t border-blue-700/40 p-4 bg-blue-900/10 space-y-3">
+              <p className="text-xs text-blue-400">
+                Add named variants of <span className="font-semibold text-blue-200">{formData.name || 'this product'}</span> (e.g. different sizes or configurations). To add a <span className="font-semibold text-blue-200">separate product</span>, close this modal and click <span className="font-semibold text-cyan-400">+ Add Product</span>.
+              </p>
               <ProductModelsSection
                 productId={savedProductId}
                 models={productModels}
