@@ -43,18 +43,18 @@ function Modal({ title, isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full mx-4">
-        <div className="flex justify-between items-center p-6 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-white">{title}</h2>
+    <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-50 px-3 sm:px-4">
+      <div className="bg-slate-800 border border-slate-700 rounded-t-2xl sm:rounded-2xl max-w-md w-full max-h-[90vh] sm:max-h-none overflow-y-auto">
+        <div className="flex justify-between items-center p-4 sm:p-6 border-b border-slate-700">
+          <h2 className="text-lg sm:text-xl font-bold text-white truncate">{title}</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors"
+            className="text-slate-400 hover:text-white transition-colors flex-shrink-0 ml-4"
           >
-            <X size={24} />
+            <X size={20} className="sm:w-[24px] sm:h-[24px]" />
           </button>
         </div>
-        <div className="p-6">{children}</div>
+        <div className="p-4 sm:p-6">{children}</div>
       </div>
     </div>
   );
@@ -83,11 +83,11 @@ function Toast({ message, type, onClose }: ToastProps) {
 
   return (
     <div
-      className={`fixed top-4 right-4 px-4 py-3 rounded-lg border ${bgColor} max-w-sm z-40`}
+      className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-4 px-3 sm:px-4 py-3 rounded-lg border ${bgColor} max-w-sm z-40`}
     >
-      <div className="flex items-center gap-2">
-        {type === 'error' && <AlertCircle size={18} />}
-        <span>{message}</span>
+      <div className="flex items-center gap-2 text-sm sm:text-base">
+        {type === 'error' && <AlertCircle size={16} className="sm:w-[18px] sm:h-[18px] flex-shrink-0" />}
+        <span className="line-clamp-2">{message}</span>
       </div>
     </div>
   );
@@ -289,16 +289,16 @@ export function TabsSection() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Shop Tabs</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">Shop Tabs</h2>
         <button
           onClick={() => {
             setEditingTab(null);
             setIsModalOpen(true);
           }}
-          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all text-sm sm:text-base"
         >
-          <Plus size={18} />
+          <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
           Add New Tab
         </button>
       </div>
@@ -306,30 +306,30 @@ export function TabsSection() {
       <div className="space-y-2">
         {tabs.map((tab) =>
           deletingId === tab.id ? (
-            <div key={tab.id} className="bg-slate-700 p-4 rounded-lg flex justify-between items-center">
-              <span className="text-red-300">Delete "{tab.display_name}"?</span>
-              <div className="flex gap-2">
+            <div key={tab.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              <span className="text-red-300 text-sm sm:text-base">Delete "{tab.display_name}"?</span>
+              <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => handleDelete(tab.id)}
-                  className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                  className="flex-1 sm:flex-none px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
                 >
                   Confirm
                 </button>
                 <button
                   onClick={() => setDeletingId(null)}
-                  className="px-3 py-1 bg-slate-600 text-white rounded text-sm hover:bg-slate-500"
+                  className="flex-1 sm:flex-none px-3 py-1 bg-slate-600 text-white rounded text-sm hover:bg-slate-500"
                 >
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
-            <div key={tab.id} className="bg-slate-700 p-4 rounded-lg flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold text-white">{tab.display_name}</h3>
-                <p className="text-sm text-slate-400">{tab.description}</p>
+            <div key={tab.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-white truncate">{tab.display_name}</h3>
+                <p className="text-xs sm:text-sm text-slate-400 line-clamp-1">{tab.description}</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => {
                     setEditingTab(tab);
@@ -337,13 +337,13 @@ export function TabsSection() {
                   }}
                   className="p-2 text-blue-400 hover:text-cyan-300 transition-colors"
                 >
-                  <Pencil size={18} />
+                  <Pencil size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
                 <button
                   onClick={() => setDeletingId(tab.id)}
                   className="p-2 text-red-400 hover:text-red-300 transition-colors"
                 >
-                  <Trash2 size={18} />
+                  <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
               </div>
             </div>
@@ -571,16 +571,16 @@ export function CategoriesSection() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Categories</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">Categories</h2>
         <button
           onClick={() => {
             setEditingCategory(null);
             setIsModalOpen(true);
           }}
-          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all text-sm sm:text-base"
         >
-          <Plus size={18} />
+          <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
           Add New Category
         </button>
       </div>
@@ -588,33 +588,33 @@ export function CategoriesSection() {
       <div className="space-y-2">
         {categories.map((category) =>
           deletingId === category.id ? (
-            <div key={category.id} className="bg-slate-700 p-4 rounded-lg flex justify-between items-center">
-              <span className="text-red-300">Delete "{category.name}"?</span>
-              <div className="flex gap-2">
+            <div key={category.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              <span className="text-red-300 text-sm sm:text-base">Delete "{category.name}"?</span>
+              <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => handleDelete(category.id)}
-                  className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                  className="flex-1 sm:flex-none px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
                 >
                   Confirm
                 </button>
                 <button
                   onClick={() => setDeletingId(null)}
-                  className="px-3 py-1 bg-slate-600 text-white rounded text-sm hover:bg-slate-500"
+                  className="flex-1 sm:flex-none px-3 py-1 bg-slate-600 text-white rounded text-sm hover:bg-slate-500"
                 >
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
-            <div key={category.id} className="bg-slate-700 p-4 rounded-lg flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold text-white">{category.name}</h3>
-                <p className="text-sm text-slate-400">
+            <div key={category.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-white truncate">{category.name}</h3>
+                <p className="text-xs sm:text-sm text-slate-400 line-clamp-1">
                   {category.tab_name ? `${category.tab_name} - ` : ''}
                   {category.subtitle}
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => {
                     setEditingCategory(category);
@@ -622,13 +622,13 @@ export function CategoriesSection() {
                   }}
                   className="p-2 text-blue-400 hover:text-cyan-300 transition-colors"
                 >
-                  <Pencil size={18} />
+                  <Pencil size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
                 <button
                   onClick={() => setDeletingId(category.id)}
                   className="p-2 text-red-400 hover:text-red-300 transition-colors"
                 >
-                  <Trash2 size={18} />
+                  <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
               </div>
             </div>
@@ -956,16 +956,16 @@ export function ProductsSection() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Products</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">Products</h2>
         <button
           onClick={() => {
             setEditingProduct(null);
             setIsModalOpen(true);
           }}
-          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all text-sm sm:text-base"
         >
-          <Plus size={18} />
+          <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
           Add New Product
         </button>
       </div>
@@ -973,27 +973,27 @@ export function ProductsSection() {
       <div className="space-y-2">
         {products.map((product) =>
           deletingId === product.id ? (
-            <div key={product.id} className="bg-slate-700 p-4 rounded-lg flex justify-between items-center">
-              <span className="text-red-300">Delete "{product.name}"?</span>
-              <div className="flex gap-2">
+            <div key={product.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              <span className="text-red-300 text-sm sm:text-base">Delete "{product.name}"?</span>
+              <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => handleDelete(product.id)}
-                  className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                  className="flex-1 sm:flex-none px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
                 >
                   Confirm
                 </button>
                 <button
                   onClick={() => setDeletingId(null)}
-                  className="px-3 py-1 bg-slate-600 text-white rounded text-sm hover:bg-slate-500"
+                  className="flex-1 sm:flex-none px-3 py-1 bg-slate-600 text-white rounded text-sm hover:bg-slate-500"
                 >
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
-            <div key={product.id} className="bg-slate-700 p-4 rounded-lg flex gap-4 justify-between items-center">
+            <div key={product.id} className="bg-slate-700 p-3 sm:p-4 rounded-lg flex flex-col sm:flex-row sm:gap-4 gap-3 justify-between sm:items-center">
               {product.image_url && (
-                <div className="w-16 h-16 flex-shrink-0 rounded overflow-hidden bg-slate-600">
+                <div className="w-12 sm:w-16 h-12 sm:h-16 flex-shrink-0 rounded overflow-hidden bg-slate-600">
                   <Image
                     src={product.image_url}
                     alt={product.name}
@@ -1003,14 +1003,14 @@ export function ProductsSection() {
                   />
                 </div>
               )}
-              <div className="flex-1">
-                <h3 className="font-semibold text-white">{product.name}</h3>
-                <p className="text-sm text-slate-400">{product.category_name}</p>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-white truncate text-sm sm:text-base">{product.name}</h3>
+                <p className="text-xs sm:text-sm text-slate-400 truncate">{product.category_name}</p>
                 <p className="text-xs text-slate-500 mt-1 line-clamp-1">
                   {product.description}
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => {
                     setEditingProduct(product);
@@ -1018,13 +1018,13 @@ export function ProductsSection() {
                   }}
                   className="p-2 text-blue-400 hover:text-cyan-300 transition-colors"
                 >
-                  <Pencil size={18} />
+                  <Pencil size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
                 <button
                   onClick={() => setDeletingId(product.id)}
                   className="p-2 text-red-400 hover:text-red-300 transition-colors"
                 >
-                  <Trash2 size={18} />
+                  <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
               </div>
             </div>

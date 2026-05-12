@@ -129,21 +129,40 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
       {/* Header */}
       <header className="bg-slate-800/50 border-b border-slate-700 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Admin Dashboard</h1>
           <button
             onClick={onLogout}
-            className="flex items-center gap-2 text-slate-400 hover:text-red-400 transition-colors"
+            className="flex items-center gap-1 sm:gap-2 text-slate-400 hover:text-red-400 transition-colors text-sm sm:text-base"
           >
-            <LogOut size={18} />
-            Logout
+            <LogOut size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <span className="hidden sm:inline">Logout</span>
           </button>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar Navigation */}
-          <aside className="lg:col-span-1">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        {/* Mobile Nav Tabs */}
+        <div className="lg:hidden mb-6">
+          <div className="bg-slate-800 rounded-2xl border border-slate-700 p-2 flex gap-1 overflow-x-auto">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                className={`flex-1 px-3 py-2 rounded-lg font-semibold text-sm transition-all whitespace-nowrap ${
+                  activeSection === section.id
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg'
+                    : 'text-slate-300 hover:bg-slate-700'
+                }`}
+              >
+                {section.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-8">
+          {/* Sidebar Navigation (Desktop) */}
+          <aside className="hidden lg:block lg:col-span-1">
             <nav className="bg-slate-800 rounded-2xl border border-slate-700 p-4 space-y-2 sticky top-24">
               {sections.map((section) => (
                 <button
