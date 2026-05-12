@@ -43,18 +43,18 @@ function Modal({ title, isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-50 px-3 sm:px-4">
-      <div className="bg-slate-800 border border-slate-700 rounded-t-2xl sm:rounded-2xl max-w-md w-full max-h-[90vh] sm:max-h-none overflow-y-auto">
-        <div className="flex justify-between items-center p-4 sm:p-6 border-b border-slate-700">
-          <h2 className="text-lg sm:text-xl font-bold text-white truncate">{title}</h2>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 px-3 sm:px-4">
+      <div className="bg-gradient-to-br from-slate-800 via-slate-800 to-slate-900 border border-slate-700/50 shadow-2xl rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[90vh] sm:max-h-none overflow-y-auto">
+        <div className="sticky top-0 flex justify-between items-center px-4 sm:px-8 py-5 sm:py-7 border-b border-slate-700/50 bg-gradient-to-r from-slate-800 via-slate-800 to-slate-900/50 backdrop-blur-xl rounded-t-3xl">
+          <h2 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate">{title}</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors flex-shrink-0 ml-4"
+            className="text-slate-400 hover:text-cyan-400 hover:bg-slate-700/50 rounded-lg p-2 transition-all flex-shrink-0 ml-4"
           >
             <X size={20} className="sm:w-[24px] sm:h-[24px]" />
           </button>
         </div>
-        <div className="p-4 sm:p-6">{children}</div>
+        <div className="p-4 sm:p-8">{children}</div>
       </div>
     </div>
   );
@@ -127,89 +127,97 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Name *</label>
-        <input
-          type="text"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
-          placeholder="e.g., automation"
-          required
-        />
+    <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Name <span className="text-cyan-400">*</span></label>
+        <div className="relative">
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+            placeholder="e.g., automation"
+            required
+          />
+        </div>
       </div>
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Display Name *</label>
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Display Name <span className="text-cyan-400">*</span></label>
         <input
           type="text"
           value={formData.display_name}
           onChange={(e) =>
             setFormData({ ...formData, display_name: e.target.value })
           }
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
           placeholder="e.g., Automation Systems"
           required
         />
       </div>
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Description</label>
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Description</label>
         <input
           type="text"
           value={formData.description}
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
           }
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
           placeholder="Optional description"
         />
       </div>
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Order</label>
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Display Order</label>
         <input
           type="number"
           value={formData.order}
           onChange={(e) =>
             setFormData({ ...formData, order: parseInt(e.target.value) })
           }
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
           placeholder="0"
         />
       </div>
-      <div className="space-y-2.5 pt-2">
-        <label className="flex items-center gap-3 text-slate-300 cursor-pointer hover:text-white transition-colors">
+      <div className="space-y-3 pt-2 bg-slate-700/20 rounded-xl p-4 border border-slate-600/30">
+        <label className="flex items-center gap-3 text-slate-300 cursor-pointer hover:text-cyan-300 transition-colors group">
           <input
             type="checkbox"
             checked={formData.is_active}
             onChange={(e) =>
               setFormData({ ...formData, is_active: e.target.checked })
             }
-            className="rounded w-4 h-4 cursor-pointer accent-cyan-500"
+            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-slate-600 group-hover:border-cyan-400"
           />
-          <span className="text-sm sm:text-base">Active</span>
+          <span className="text-sm sm:text-base font-medium">Active</span>
         </label>
-        <label className="flex items-center gap-3 text-slate-400 cursor-not-allowed">
+        <label className="flex items-center gap-3 text-slate-500 cursor-not-allowed opacity-60">
           <input
             type="checkbox"
             checked={formData.is_hardcoded}
             disabled
-            className="rounded w-4 h-4 opacity-50 cursor-not-allowed"
+            className="rounded-md w-5 h-5 border border-slate-600"
           />
-          <span className="text-sm sm:text-base">Hardcoded (read-only)</span>
+          <span className="text-sm sm:text-base font-medium">Hardcoded (read-only)</span>
         </label>
       </div>
-      <div className="flex gap-2 sm:gap-3 pt-4 sm:pt-6">
+      <div className="flex gap-3 pt-6 sm:pt-8">
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 text-white font-semibold py-2.5 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-cyan-500/30 disabled:opacity-50 transition-all text-sm sm:text-base"
+          className="flex-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-3 sm:py-4 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 disabled:opacity-50 disabled:shadow-none transition-all text-sm sm:text-base"
         >
-          {loading ? 'Saving...' : 'Save'}
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader size={16} className="animate-spin" /> Saving...
+            </span>
+          ) : (
+            'Save Tab'
+          )}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 bg-slate-700 text-white font-semibold py-2.5 sm:py-3 rounded-lg hover:bg-slate-600 transition-all text-sm sm:text-base"
+          className="flex-1 bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold py-3 sm:py-4 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all text-sm sm:text-base"
         >
           Cancel
         </button>
@@ -422,9 +430,9 @@ function CategoryForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Tab</label>
+    <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Tab</label>
         <select
           value={formData.tab || ''}
           onChange={(e) =>
@@ -433,7 +441,7 @@ function CategoryForm({
               tab: e.target.value ? parseInt(e.target.value) : null,
             })
           }
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
         >
           <option value="">None</option>
           {tabs.map((tab) => (
@@ -443,52 +451,60 @@ function CategoryForm({
           ))}
         </select>
       </div>
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Name *</label>
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Name <span className="text-cyan-400">*</span></label>
         <input
           type="text"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
           placeholder="e.g., Solar Panels"
           required
         />
       </div>
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Subtitle</label>
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Subtitle</label>
         <input
           type="text"
           value={formData.subtitle}
           onChange={(e) =>
             setFormData({ ...formData, subtitle: e.target.value })
           }
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
           placeholder="Optional subtitle"
         />
       </div>
-      <label className="flex items-center gap-3 text-slate-300 cursor-pointer hover:text-white transition-colors pt-2">
-        <input
-          type="checkbox"
-          checked={formData.is_active}
-          onChange={(e) =>
-            setFormData({ ...formData, is_active: e.target.checked })
-          }
-          className="rounded w-4 h-4 cursor-pointer accent-cyan-500"
-        />
-        <span className="text-sm sm:text-base">Active</span>
-      </label>
-      <div className="flex gap-2 sm:gap-3 pt-4 sm:pt-6">
+      <div className="bg-slate-700/20 rounded-xl p-4 border border-slate-600/30">
+        <label className="flex items-center gap-3 text-slate-300 cursor-pointer hover:text-cyan-300 transition-colors group">
+          <input
+            type="checkbox"
+            checked={formData.is_active}
+            onChange={(e) =>
+              setFormData({ ...formData, is_active: e.target.checked })
+            }
+            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-slate-600 group-hover:border-cyan-400"
+          />
+          <span className="text-sm sm:text-base font-medium">Active</span>
+        </label>
+      </div>
+      <div className="flex gap-3 pt-6 sm:pt-8">
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 text-white font-semibold py-2.5 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-cyan-500/30 disabled:opacity-50 transition-all text-sm sm:text-base"
+          className="flex-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-3 sm:py-4 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 disabled:opacity-50 disabled:shadow-none transition-all text-sm sm:text-base"
         >
-          {loading ? 'Saving...' : 'Save'}
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader size={16} className="animate-spin" /> Saving...
+            </span>
+          ) : (
+            'Save Category'
+          )}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 bg-slate-700 text-white font-semibold py-2.5 sm:py-3 rounded-lg hover:bg-slate-600 transition-all text-sm sm:text-base"
+          className="flex-1 bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold py-3 sm:py-4 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all text-sm sm:text-base"
         >
           Cancel
         </button>
@@ -733,13 +749,13 @@ function ProductForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 max-h-[70vh] overflow-y-auto">
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Category *</label>
+    <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6 max-h-[70vh] overflow-y-auto pr-2 sm:pr-0">
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Category <span className="text-cyan-400">*</span></label>
         <select
           value={formData.category}
           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
           required
         >
           <option value="">Select category</option>
@@ -757,54 +773,54 @@ function ProductForm({
         </select>
       </div>
 
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Name *</label>
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Product Name <span className="text-cyan-400">*</span></label>
         <input
           type="text"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
           placeholder="Product name"
           required
         />
       </div>
 
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Description *</label>
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Description <span className="text-cyan-400">*</span></label>
         <textarea
           value={formData.description}
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
           }
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors h-20 sm:h-24 resize-none"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all h-20 sm:h-24 resize-none"
           placeholder="Product description"
           required
         />
       </div>
 
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Application</label>
+      <div className="space-y-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Application</label>
         <input
           type="text"
           value={formData.application}
           onChange={(e) =>
             setFormData({ ...formData, application: e.target.value })
           }
-          className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 sm:py-2.5 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+          className="w-full bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-4 py-3 sm:py-3.5 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
           placeholder="Where it's used"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="block text-xs sm:text-sm text-slate-300">Specs</label>
-        <div className="grid grid-cols-2 gap-2">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Specifications</label>
+        <div className="grid grid-cols-2 gap-2.5">
           {[
             { key: 'spec_speed', label: 'Speed' },
             { key: 'spec_weight', label: 'Weight' },
             { key: 'spec_voltage', label: 'Voltage' },
             { key: 'spec_power', label: 'Power' },
             { key: 'spec_storage', label: 'Storage' },
-            { key: 'spec_connectivity', label: 'Connect' },
+            { key: 'spec_connectivity', label: 'Connectivity' },
           ].map(({ key, label }) => (
             <input
               key={key}
@@ -817,18 +833,18 @@ function ProductForm({
                   [key]: e.target.value,
                 })
               }
-              className="bg-slate-700 border border-slate-600 rounded px-2 py-1.5 sm:py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-colors"
+              className="bg-slate-700/50 border border-slate-600/50 hover:border-slate-500 focus:border-cyan-400 rounded-lg px-3 py-2.5 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
             />
           ))}
         </div>
       </div>
 
-      <div>
-        <label className="block text-xs sm:text-sm text-slate-300 mb-2">Image</label>
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
-          <div className="flex gap-2">
+      <div className="space-y-3 bg-slate-700/20 rounded-xl p-4 border border-slate-600/30">
+        <label className="block text-xs sm:text-sm font-semibold text-slate-200">Product Image</label>
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="flex gap-3">
             {product?.image_url && !newImageFile && (
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden bg-slate-700 border border-slate-600 flex-shrink-0 shadow-md">
                 <Image
                   src={product.image_url}
                   alt="Current"
@@ -841,48 +857,59 @@ function ProductForm({
               <img
                 src={URL.createObjectURL(newImageFile)}
                 alt="New"
-                className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-lg flex-shrink-0"
+                className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-lg border border-cyan-400/50 flex-shrink-0 shadow-md shadow-cyan-500/20"
               />
             )}
           </div>
-          <label className="flex-1 flex items-center justify-center px-3 py-2 sm:py-2.5 bg-slate-700 border-2 border-dashed border-slate-600 rounded-lg hover:border-cyan-400 transition-colors cursor-pointer group">
+          <label className="flex-1 flex items-center justify-center px-4 py-3 bg-slate-700/50 border-2 border-dashed border-slate-600/50 hover:border-cyan-400 rounded-lg transition-all cursor-pointer group">
             <input
               type="file"
               accept="image/*"
               onChange={(e) => setNewImageFile(e.target.files?.[0] || null)}
               className="hidden"
             />
-            <span className="text-xs sm:text-sm text-slate-400 group-hover:text-cyan-300 text-center">
-              {newImageFile ? 'Change image' : 'Choose image'}
-            </span>
+            <div className="text-center">
+              <p className="text-xs sm:text-sm text-slate-400 group-hover:text-cyan-300 font-medium">
+                {newImageFile ? '✓ Image selected' : 'Click to upload image'}
+              </p>
+              <p className="text-xs text-slate-500 mt-1">or drag and drop</p>
+            </div>
           </label>
         </div>
       </div>
 
-      <label className="flex items-center gap-3 text-slate-300 cursor-pointer hover:text-white transition-colors pt-2">
-        <input
-          type="checkbox"
-          checked={formData.is_active}
-          onChange={(e) =>
-            setFormData({ ...formData, is_active: e.target.checked })
-          }
-          className="rounded w-4 h-4 cursor-pointer accent-cyan-500"
-        />
-        <span className="text-sm sm:text-base">Active</span>
-      </label>
+      <div className="bg-slate-700/20 rounded-xl p-4 border border-slate-600/30">
+        <label className="flex items-center gap-3 text-slate-300 cursor-pointer hover:text-cyan-300 transition-colors group">
+          <input
+            type="checkbox"
+            checked={formData.is_active}
+            onChange={(e) =>
+              setFormData({ ...formData, is_active: e.target.checked })
+            }
+            className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-slate-600 group-hover:border-cyan-400"
+          />
+          <span className="text-sm sm:text-base font-medium">Active Product</span>
+        </label>
+      </div>
 
-      <div className="flex gap-2 sm:gap-3 pt-4 sm:pt-6">
+      <div className="flex gap-3 pt-6 sm:pt-8">
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 text-white font-semibold py-2.5 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-cyan-500/30 disabled:opacity-50 transition-all text-sm sm:text-base"
+          className="flex-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-3 sm:py-4 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 disabled:opacity-50 disabled:shadow-none transition-all text-sm sm:text-base"
         >
-          {loading ? 'Saving...' : 'Save'}
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader size={16} className="animate-spin" /> Saving...
+            </span>
+          ) : (
+            'Save Product'
+          )}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 bg-slate-700 text-white font-semibold py-2.5 sm:py-3 rounded-lg hover:bg-slate-600 transition-all text-sm sm:text-base"
+          className="flex-1 bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold py-3 sm:py-4 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all text-sm sm:text-base"
         >
           Cancel
         </button>
