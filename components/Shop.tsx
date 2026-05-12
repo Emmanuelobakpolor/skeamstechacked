@@ -700,6 +700,7 @@ export default function Shop() {
   const [searchResults, setSearchResults] = useState<AdminProduct[] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loadingTabs, setLoadingTabs] = useState(true);
+  const [currentImageIndices, setCurrentImageIndices] = useState<Record<number, number>>({});
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
 
@@ -1117,7 +1118,7 @@ export default function Shop() {
                       {adminCategory.products.map((product, productIdx) => {
                         const categoryKey = `admin-cat-${adminCategory.id}`;
                         const isSelected = selections[categoryKey]?.includes(product.name) ?? false;
-                        const [currentImageIdx, setCurrentImageIdx] = useState(0);
+                        const currentImageIdx = currentImageIndices[product.id] ?? 0;
 
                         const productImages = product.images && product.images.length > 0
                           ? product.images.map(img => img.image_url)
@@ -1126,11 +1127,17 @@ export default function Shop() {
                             : [];
 
                         const nextImage = () => {
-                          setCurrentImageIdx((prev) => (prev + 1) % productImages.length);
+                          setCurrentImageIndices(prev => ({
+                            ...prev,
+                            [product.id]: ((prev[product.id] ?? 0) + 1) % productImages.length
+                          }));
                         };
 
                         const prevImage = () => {
-                          setCurrentImageIdx((prev) => (prev - 1 + productImages.length) % productImages.length);
+                          setCurrentImageIndices(prev => ({
+                            ...prev,
+                            [product.id]: ((prev[product.id] ?? 0) - 1 + productImages.length) % productImages.length
+                          }));
                         };
 
                         return (
