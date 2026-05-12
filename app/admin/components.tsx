@@ -25,9 +25,7 @@ import {
   AdminTab,
   AdminCategory,
   AdminProduct,
-  AdminProductModel,
   ProductImageItem,
-  ProductModelImageItem,
   fetchTabs,
   fetchCategories,
   fetchProducts,
@@ -42,11 +40,6 @@ import {
   deleteProduct,
   addProductImage,
   deleteProductImage,
-  createProductModel,
-  updateProductModel,
-  deleteProductModel,
-  addProductModelImage,
-  deleteProductModelImage,
 } from './api';
 
 // ============================================================================
@@ -1016,316 +1009,6 @@ function ProductImageGallery({ productId, images, onChange }: ProductImageGaller
 // Product Model Image Gallery Component
 // ============================================================================
 
-interface ProductModelImageGalleryProps {
-  productId: number;
-  modelId: number;
-  images: ProductModelImageItem[];
-  onChange: (updated: ProductModelImageItem[]) => void;
-}
-
-function ProductModelImageGallery({
-  productId,
-  modelId,
-  images,
-  onChange,
-}: ProductModelImageGalleryProps) {
-  const [uploading, setUploading] = useState(false);
-
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []);
-    if (!files.length) return;
-    setUploading(true);
-    try {
-      const uploaded = await Promise.all(
-        files.map((f) => addProductModelImage(productId, modelId, f))
-      );
-      onChange([...images, ...uploaded]);
-    } catch (error) {
-      console.error('Error uploading model images:', error);
-      alert('Failed to upload images');
-    } finally {
-      setUploading(false);
-      e.target.value = '';
-    }
-  }
-
-  async function handleDelete(imageId: number) {
-    try {
-      await deleteProductModelImage(productId, modelId, imageId);
-      onChange(images.filter((img) => img.id !== imageId));
-    } catch (error) {
-      console.error('Error deleting model image:', error);
-      alert('Failed to delete image');
-    }
-  }
-
-  return (
-    <div className="space-y-2">
-      {images.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {images.map((img) => (
-            <div
-              key={img.id}
-              className="relative w-16 h-16 rounded-lg overflow-hidden border border-blue-700/40 group"
-            >
-              <Image src={img.image_url} alt="" fill className="object-cover" />
-              <button
-                type="button"
-                onClick={() => handleDelete(img.id)}
-                className="absolute top-0.5 right-0.5 p-0.5 bg-red-600/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <X size={8} className="text-white" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-      <label className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-blue-700/30 hover:border-cyan-400/60 bg-blue-900/10 hover:bg-blue-900/30 cursor-pointer transition-all">
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handleFileChange}
-          disabled={uploading}
-          className="hidden"
-        />
-        {uploading ? (
-          <>
-            <Loader size={12} className="animate-spin text-cyan-400" />
-            <span className="text-xs text-blue-300">Uploading...</span>
-          </>
-        ) : (
-          <>
-            <Upload size={12} className="text-blue-400" />
-            <span className="text-xs text-blue-300">Add images</span>
-          </>
-        )}
-      </label>
-    </div>
-  );
-}
-
-// ============================================================================
-// Product Models Section Component
-// ============================================================================
-
-interface ProductModelsSectionProps {
-  productId: number;
-  models: AdminProductModel[];
-  onChange: (updated: AdminProductModel[]) => void;
-}
-
-function ProductModelsSection({
-  productId,
-  models,
-  onChange,
-}: ProductModelsSectionProps) {
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [editingSpecs, setEditingSpecs] = useState<Record<number, AdminProductModel>>({});
-
-  const SPEC_FIELDS = [
-    { key: 'spec_speed', label: 'Speed' },
-    { key: 'spec_weight', label: 'Weight' },
-    { key: 'spec_voltage', label: 'Voltage' },
-    { key: 'spec_power', label: 'Power' },
-    { key: 'spec_storage', label: 'Storage' },
-    { key: 'spec_connectivity', label: 'Connectivity' },
-  ];
-
-  async function handleAddModel() {
-    setCreating(true);
-    try {
-      const newModel = await createProductModel(productId, {
-        name: 'New Model',
-        spec_speed: '',
-        spec_weight: '',
-        spec_voltage: '',
-        spec_power: '',
-        spec_storage: '',
-        spec_connectivity: '',
-        order: models.length,
-      });
-      const updated = [...models, newModel];
-      onChange(updated);
-      setExpandedId(newModel.id);
-      setEditingSpecs({ [newModel.id]: newModel });
-    } catch (error) {
-      console.error('Error creating model:', error);
-      alert('Failed to create model');
-    } finally {
-      setCreating(false);
-    }
-  }
-
-  async function handleSaveModel(modelId: number) {
-    const edited = editingSpecs[modelId];
-    if (!edited) return;
-    try {
-      const updated = await updateProductModel(productId, modelId, {
-        name: edited.name,
-        spec_speed: edited.spec_speed,
-        spec_weight: edited.spec_weight,
-        spec_voltage: edited.spec_voltage,
-        spec_power: edited.spec_power,
-        spec_storage: edited.spec_storage,
-        spec_connectivity: edited.spec_connectivity,
-        order: edited.order,
-      });
-      onChange(models.map((m) => (m.id === modelId ? updated : m)));
-      setEditingSpecs({ ...editingSpecs, [modelId]: updated });
-    } catch (error) {
-      console.error('Error saving model:', error);
-      alert('Failed to save model');
-    }
-  }
-
-  async function handleDeleteModel(modelId: number) {
-    if (!confirm('Delete this model and all its images?')) return;
-    try {
-      await deleteProductModel(productId, modelId);
-      onChange(models.filter((m) => m.id !== modelId));
-      setExpandedId(null);
-    } catch (error) {
-      console.error('Error deleting model:', error);
-      alert('Failed to delete model');
-    }
-  }
-
-  function handleModelImageChange(modelId: number, images: ProductModelImageItem[]) {
-    onChange(
-      models.map((m) =>
-        m.id === modelId ? { ...m, images } : m
-      )
-    );
-  }
-
-  return (
-    <div className="space-y-3">
-      {models.map((model) => {
-        const edited = editingSpecs[model.id] || model;
-        const isExpanded = expandedId === model.id;
-
-        return (
-          <div
-            key={model.id}
-            className="border border-blue-700/40 rounded-xl overflow-hidden bg-blue-900/20"
-          >
-            <button
-              type="button"
-              onClick={() => setExpandedId(isExpanded ? null : model.id)}
-              className="w-full p-3 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
-            >
-              <div className="text-left">
-                <p className="text-sm font-semibold text-blue-200">{edited.name}</p>
-                {Object.keys(edited)
-                  .filter((k) => k.startsWith('spec_'))
-                  .some((k) => (edited as any)[k]) && (
-                  <p className="text-xs text-blue-400 mt-1">
-                    {Object.keys(edited)
-                      .filter((k) => k.startsWith('spec_') && (edited as any)[k])
-                      .map((k) => `${k.replace('spec_', '')}: ${(edited as any)[k]}`)
-                      .join(' • ')}
-                  </p>
-                )}
-              </div>
-              <ChevronDown
-                size={16}
-                className={`text-blue-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-              />
-            </button>
-
-            {isExpanded && (
-              <div className="border-t border-blue-700/40 p-3 space-y-3 bg-blue-900/10">
-                {/* Model name */}
-                <div>
-                  <label className="text-xs font-semibold text-blue-300 block mb-1.5">
-                    Model Name
-                  </label>
-                  <input
-                    type="text"
-                    value={edited.name}
-                    onChange={(e) =>
-                      setEditingSpecs({ ...editingSpecs, [model.id]: { ...edited, name: e.target.value } })
-                    }
-                    className={INPUT_CLS}
-                    placeholder="e.g. Model X"
-                  />
-                </div>
-
-                {/* Specs grid */}
-                <div>
-                  <label className="text-xs font-semibold text-blue-300 block mb-1.5">
-                    Specifications
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {SPEC_FIELDS.map(({ key, label }) => (
-                      <input
-                        key={key}
-                        type="text"
-                        placeholder={label}
-                        value={(edited as any)[key] || ''}
-                        onChange={(e) =>
-                          setEditingSpecs({
-                            ...editingSpecs,
-                            [model.id]: { ...edited, [key]: e.target.value },
-                          })
-                        }
-                        className="bg-blue-900/40 border border-blue-700/40 hover:border-blue-600 focus:border-cyan-400 rounded-lg px-2 py-1.5 text-xs text-white placeholder-blue-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Images */}
-                <div>
-                  <label className="text-xs font-semibold text-blue-300 block mb-1.5">
-                    Model Images
-                  </label>
-                  <ProductModelImageGallery
-                    productId={productId}
-                    modelId={model.id}
-                    images={edited.images}
-                    onChange={(images) => handleModelImageChange(model.id, images)}
-                  />
-                </div>
-
-                {/* Action buttons */}
-                <div className="flex gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => handleSaveModel(model.id)}
-                    className="flex-1 px-3 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 hover:text-cyan-200 font-medium rounded-lg text-xs transition-colors"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteModel(model.id)}
-                    className="flex-1 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-red-200 font-medium rounded-lg text-xs transition-colors"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-
-      <button
-        type="button"
-        onClick={handleAddModel}
-        disabled={creating}
-        className="w-full p-2.5 border border-dashed border-blue-600/40 hover:border-cyan-400/60 rounded-lg text-blue-300 hover:text-cyan-300 font-medium text-xs transition-colors disabled:opacity-50"
-      >
-        {creating ? <Loader size={12} className="inline animate-spin mr-1" /> : '+'}
-        {' '}
-        Add Model
-      </button>
-    </div>
-  );
-}
 
 // ============================================================================
 // Product Form
@@ -1363,7 +1046,6 @@ function ProductForm({
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [galleryImages, setGalleryImages] = useState<ProductImageItem[]>(product?.images ?? []);
   const [pendingImages, setPendingImages] = useState<File[]>([]);
-  const [productModels, setProductModels] = useState<AdminProductModel[]>(product?.product_models ?? []);
   const [loading, setLoading] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -1371,7 +1053,6 @@ function ProductForm({
     basic: true,
     specs: true,
     images: true,
-    models: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -1658,39 +1339,6 @@ function ProductForm({
           </div>
         )}
       </div>
-
-      {/* Product Models Section */}
-      {savedProductId && (
-        <div className="border border-blue-700/40 rounded-xl overflow-hidden bg-blue-900/20">
-          <button
-            type="button"
-            onClick={() => toggleSection('models')}
-            className="w-full p-4 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <Package size={16} className="text-cyan-400" />
-              <span className="text-sm font-semibold text-blue-200">Product Models <span className="text-xs font-normal text-blue-400">(variants)</span></span>
-            </div>
-            <ChevronDown
-              size={16}
-              className={`text-blue-400 transition-transform ${expandedSections.models ? 'rotate-180' : ''}`}
-            />
-          </button>
-
-          {expandedSections.models && (
-            <div className="border-t border-blue-700/40 p-4 bg-blue-900/10 space-y-3">
-              <p className="text-xs text-blue-400">
-                Add named variants of <span className="font-semibold text-blue-200">{formData.name || 'this product'}</span> (e.g. different sizes or configurations). To add a <span className="font-semibold text-blue-200">separate product</span>, close this modal and click <span className="font-semibold text-cyan-400">+ Add Product</span>.
-              </p>
-              <ProductModelsSection
-                productId={savedProductId}
-                models={productModels}
-                onChange={setProductModels}
-              />
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Action Buttons */}
       <div className="flex gap-2 sm:gap-3 pt-2">

@@ -31,13 +31,6 @@ interface AdminProduct {
   specs: Record<string, string>;
   category_name: string;
   images?: Array<{ id: number; image_url: string; order: number }>;
-  product_models?: Array<{
-    id: number;
-    name: string;
-    specs: Record<string, string>;
-    images: Array<{ id: number; image_url: string; order: number }>;
-    order: number;
-  }>;
 }
 
 interface AdminCategory {
@@ -448,21 +441,17 @@ function ProductCarousel({ products }: { products: (Product | AdminProduct)[] })
 
 interface AdminProductCarouselProps {
   product: AdminProduct;
-  activeModelId: number | null;
 }
 
-function AdminProductCarousel({ product, activeModelId }: AdminProductCarouselProps) {
+function AdminProductCarousel({ product }: AdminProductCarouselProps) {
   const [currentImage, setCurrentImage] = useState(0);
 
-  // Determine which images to show: model images (if active) or product images
-  const activeModel = product.product_models?.find(m => m.id === activeModelId) ?? null;
-  const rawImages = (activeModel && activeModel.images.length > 0)
-    ? activeModel.images
-    : (product.images && product.images.length > 0)
-      ? product.images
-      : product.image_url
-        ? [{ id: -1, image_url: product.image_url, order: 0 }]
-        : [];
+  // Use product gallery images, or fall back to hero image
+  const rawImages = (product.images && product.images.length > 0)
+    ? product.images
+    : product.image_url
+      ? [{ id: -1, image_url: product.image_url, order: 0 }]
+      : [];
 
   const imageUrls: string[] = rawImages
     .slice()
@@ -470,10 +459,10 @@ function AdminProductCarousel({ product, activeModelId }: AdminProductCarouselPr
     .map(img => img.image_url)
     .filter(Boolean);
 
-  // Reset image index when product or active model changes
+  // Reset image index when product changes
   useEffect(() => {
     setCurrentImage(0);
-  }, [product.id, activeModelId]);
+  }, [product.id]);
 
   // Auto-slide images every 4 seconds
   useEffect(() => {
@@ -482,7 +471,7 @@ function AdminProductCarousel({ product, activeModelId }: AdminProductCarouselPr
       setCurrentImage(prev => (prev + 1) % imageUrls.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, [imageUrls.length, product.id, activeModelId]);
+  }, [imageUrls.length, product.id]);
 
   const nextImage = () => {
     if (imageUrls.length > 0) {
@@ -572,12 +561,6 @@ function AdminProductCarousel({ product, activeModelId }: AdminProductCarouselPr
           </div>
         )}
 
-        {/* Model Name Badge — bottom-right when active */}
-        {activeModel && (
-          <div className="absolute bottom-4 right-4 bg-cyan-500/80 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs text-white font-medium z-20">
-            {activeModel.name}
-          </div>
-        )}
       </div>
 
       {/* Product Info — below carousel */}
@@ -719,25 +702,15 @@ export default function Shop() {
   const [loadingTabs, setLoadingTabs] = useState(true);
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Dynamic tab: selected product per category and selected model per product
+  // Dynamic tab: selected product per category
   const [selectedProductIndexMap, setSelectedProductIndexMap] = useState<Record<number, number>>({});
-  const [selectedModelIdMap, setSelectedModelIdMap] = useState<Record<number, number | null>>({});
 
   // Helper accessors
   const getSelectedProductIndex = (categoryId: number) => selectedProductIndexMap[categoryId] ?? 0;
-  const getSelectedModelId = (productId: number) => selectedModelIdMap[productId] ?? null;
 
   // Helper setters
-  const setSelectedProduct = (categoryId: number, index: number, oldProductId: number) => {
+  const setSelectedProduct = (categoryId: number, index: number) => {
     setSelectedProductIndexMap(prev => ({ ...prev, [categoryId]: index }));
-    setSelectedModelIdMap(prev => ({ ...prev, [oldProductId]: null })); // reset model on product change
-  };
-
-  const toggleModel = (productId: number, modelId: number) => {
-    setSelectedModelIdMap(prev => ({
-      ...prev,
-      [productId]: prev[productId] === modelId ? null : modelId, // click again to deselect
-    }));
   };
 
   // Remove trailing /api if present, since we add it ourselves in the fetch URLs
@@ -1164,7 +1137,6 @@ export default function Shop() {
                               <>
                                 <AdminProductCarousel
                                   product={selectedProduct}
-                                  activeModelId={activeModelId}
                                 />
 
                                 {/* Product selector dots — only if multiple products */}
@@ -1174,7 +1146,7 @@ export default function Shop() {
                                       {adminCategory.products.map((p, i) => (
                                         <button
                                           key={p.id}
-                                          onClick={() => setSelectedProduct(adminCategory.id, i, selectedProduct?.id ?? -1)}
+                                          onClick={() => setSelectedProduct(adminCategory.id, i)}
                                           title={p.name}
                                           className={`rounded-full transition-all duration-300 ${
                                             i === productIndex
@@ -1199,101 +1171,28 @@ export default function Shop() {
                           })()}
                         </div>
 
-                        {/* RIGHT PANEL */}
+                        {/* RIGHT PANEL - Product Specifications */}
                         <div className="space-y-4">
                           {(() => {
                             const productIndex = getSelectedProductIndex(adminCategory.id);
                             const selectedProduct = adminCategory.products[productIndex] ?? adminCategory.products[0];
-                            const activeModelId = selectedProduct ? getSelectedModelId(selectedProduct.id) : null;
-                            const models = selectedProduct?.product_models?.slice().sort((a, b) => a.order - b.order) ?? [];
                             const categoryKey = `admin-cat-${adminCategory.id}`;
 
-                            return (
+                            return selectedProduct ? (
                               <>
-                                <div className="flex items-center justify-between mb-6">
-                                  <h3 className="text-2xl font-bold text-white">Available Models</h3>
-                                  {selections[categoryKey]?.length > 0 && (
-                                    <button
-                                      onClick={() => setSelections(prev => ({ ...prev, [categoryKey]: [] }))}
-                                      className="text-xs text-blue-400 hover:text-cyan-300 transition-colors underline"
-                                    >
-                                      Clear {selections[categoryKey].length} selected
-                                    </button>
-                                  )}
-                                </div>
-
-                                <div className="space-y-3">
-                                  {models.length === 0 ? (
-                                    <p className="text-slate-500 text-sm italic">No models available for this product.</p>
-                                  ) : (
-                                    models.map((model) => {
-                                      const isModelActive = activeModelId === model.id;
-                                      const isSelected = selections[categoryKey]?.includes(model.name) ?? false;
-
-                                      return (
-                                        <motion.button
-                                          key={model.id}
-                                          onClick={() => {
-                                            // Toggle carousel to show model images
-                                            if (selectedProduct) toggleModel(selectedProduct.id, model.id);
-                                            // Toggle quote selection
-                                            if (!selections[categoryKey]) {
-                                              setSelections(prev => ({ ...prev, [categoryKey]: [] }));
-                                            }
-                                            toggleProduct(categoryKey, model.name);
-                                          }}
-                                          className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 group ${
-                                            isModelActive
-                                              ? 'bg-cyan-500/15 border-cyan-500 shadow-lg shadow-cyan-500/10'
-                                              : 'bg-gradient-to-r from-blue-800/40 to-blue-700/20 border-blue-600/40 hover:border-blue-400 hover:from-blue-700/60 hover:to-blue-600/40'
-                                          }`}
-                                          whileHover={{ scale: 1.02 }}
-                                          whileTap={{ scale: 0.98 }}
-                                          aria-pressed={isModelActive}
-                                          aria-label={`Select model ${model.name}`}
-                                        >
-                                          <div className="flex items-start gap-3">
-                                            {/* Checkbox for quote selection */}
-                                            <div className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
-                                              isSelected
-                                                ? 'bg-cyan-500 border-cyan-500'
-                                                : 'border-blue-400 bg-transparent group-hover:border-cyan-400'
-                                            }`}>
-                                              {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
-                                            </div>
-
-                                            {/* Model content */}
-                                            <div className="flex-1 min-w-0">
-                                              <div className="flex items-center justify-between mb-1">
-                                                <h4 className={`text-base font-semibold transition-colors ${
-                                                  isModelActive ? 'text-cyan-300' : 'text-white group-hover:text-cyan-300'
-                                                }`}>
-                                                  {model.name}
-                                                </h4>
-                                                {isSelected && (
-                                                  <span className="text-xs text-cyan-400 font-medium bg-cyan-500/10 px-2 py-0.5 rounded-full">
-                                                    Selected
-                                                  </span>
-                                                )}
-                                              </div>
-                                              {Object.keys(model.specs).length > 0 && (
-                                                <div className="grid grid-cols-2 gap-1.5 text-xs">
-                                                  {Object.entries(model.specs).map(([key, value]) => (
-                                                    <div key={key} className="text-blue-200">
-                                                      <span className="text-cyan-300 font-semibold capitalize">{key}:</span> {value}
-                                                    </div>
-                                                  ))}
-                                                </div>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </motion.button>
-                                      );
-                                    })
-                                  )}
-                                </div>
+                                <h3 className="text-2xl font-bold text-white">Product Specifications</h3>
+                                {Object.keys(selectedProduct.specs).length > 0 && (
+                                  <div className="space-y-3">
+                                    {Object.entries(selectedProduct.specs).map(([key, value]) => (
+                                      <div key={key} className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-lg p-3">
+                                        <p className="text-blue-300 text-xs font-semibold uppercase mb-1">{key}</p>
+                                        <p className="text-white text-sm">{value}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                               </>
-                            );
+                            ) : null;
                           })()}
                         </div>
                       </div>

@@ -42,26 +42,6 @@ export interface ProductImageItem {
   order: number;
 }
 
-export interface ProductModelImageItem {
-  id: number;
-  image_url: string;
-  order: number;
-}
-
-export interface AdminProductModel {
-  id: number;
-  name: string;
-  spec_speed: string;
-  spec_weight: string;
-  spec_voltage: string;
-  spec_power: string;
-  spec_storage: string;
-  spec_connectivity: string;
-  order: number;
-  created_at: string;
-  images: ProductModelImageItem[];
-}
-
 export interface AdminProduct {
   id: number;
   category: number;
@@ -72,7 +52,6 @@ export interface AdminProduct {
   image: File | null;
   image_url: string | null;
   images: ProductImageItem[];
-  product_models: AdminProductModel[];
   spec_speed: string;
   spec_weight: string;
   spec_voltage: string;
@@ -97,14 +76,11 @@ export type UpdateCategoryInput = Partial<CreateCategoryInput>;
 
 export type CreateProductInput = Omit<
   AdminProduct,
-  'id' | 'created_at' | 'category_name' | 'image_url' | 'images' | 'product_models'
+  'id' | 'created_at' | 'category_name' | 'image_url' | 'images'
 > & {
   image?: File;
 };
 export type UpdateProductInput = Partial<CreateProductInput>;
-
-export type CreateProductModelInput = Omit<AdminProductModel, 'id' | 'created_at' | 'images'>;
-export type UpdateProductModelInput = Partial<CreateProductModelInput>;
 
 // ============================================================================
 // Tab API Helpers
@@ -296,74 +272,3 @@ export async function deleteProductImage(
   if (!res.ok) throw new Error(`Failed to delete product image: ${res.status}`);
 }
 
-// ============================================================================
-// Product Model API Helpers
-// ============================================================================
-
-export async function createProductModel(
-  productId: number,
-  data: CreateProductModelInput
-): Promise<AdminProductModel> {
-  const res = await fetch(`${ADMIN}/products/${productId}/models/`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error(`Failed to create product model: ${res.status}`);
-  return res.json();
-}
-
-export async function updateProductModel(
-  productId: number,
-  modelId: number,
-  data: UpdateProductModelInput
-): Promise<AdminProductModel> {
-  const res = await fetch(`${ADMIN}/products/${productId}/models/${modelId}/`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error(`Failed to update product model: ${res.status}`);
-  return res.json();
-}
-
-export async function deleteProductModel(
-  productId: number,
-  modelId: number
-): Promise<void> {
-  const res = await fetch(`${ADMIN}/products/${productId}/models/${modelId}/`, {
-    method: 'DELETE',
-  });
-  if (!res.ok) throw new Error(`Failed to delete product model: ${res.status}`);
-}
-
-// ============================================================================
-// Product Model Image API Helpers
-// ============================================================================
-
-export async function addProductModelImage(
-  productId: number,
-  modelId: number,
-  file: File
-): Promise<ProductModelImageItem> {
-  const fd = new FormData();
-  fd.append('image', file);
-  const res = await fetch(
-    `${ADMIN}/products/${productId}/models/${modelId}/images/`,
-    { method: 'POST', body: fd }
-  );
-  if (!res.ok) throw new Error(`Failed to add model image: ${res.status}`);
-  return res.json();
-}
-
-export async function deleteProductModelImage(
-  productId: number,
-  modelId: number,
-  imageId: number
-): Promise<void> {
-  const res = await fetch(
-    `${ADMIN}/products/${productId}/models/${modelId}/images/${imageId}/`,
-    { method: 'DELETE' }
-  );
-  if (!res.ok) throw new Error(`Failed to delete model image: ${res.status}`);
-}
