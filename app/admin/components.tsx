@@ -43,9 +43,9 @@ function Modal({ title, isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 px-3 sm:px-4">
-      <div className="bg-gradient-to-br from-slate-800 via-slate-800 to-slate-900 border border-slate-700/50 shadow-2xl rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[90vh] sm:max-h-none overflow-y-auto">
-        <div className="sticky top-0 flex justify-between items-center px-4 sm:px-8 py-5 sm:py-7 border-b border-slate-700/50 bg-gradient-to-r from-slate-800 via-slate-800 to-slate-900/50 backdrop-blur-xl rounded-t-3xl">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-3 sm:px-4">
+      <div className="bg-gradient-to-br from-slate-800 via-slate-800 to-slate-900 border border-slate-700/50 shadow-2xl rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 flex justify-between items-center px-4 sm:px-8 py-5 sm:py-7 border-b border-slate-700/50 bg-gradient-to-r from-slate-800 via-slate-800 to-slate-900/50 backdrop-blur-xl rounded-t-3xl sm:rounded-t-3xl">
           <h2 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate">{title}</h2>
           <button
             onClick={onClose}
