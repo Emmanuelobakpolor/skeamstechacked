@@ -95,7 +95,7 @@ interface EmptyStateProps {
 
 function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
-    <div className="glass-effect-dark rounded-2xl p-12 text-center flex flex-col items-center gap-4">
+    <div className=" p-12 text-center flex flex-col items-center gap-4">
       <div className="w-16 h-16 rounded-2xl bg-blue-900/40 border border-blue-700/40 flex items-center justify-center text-blue-400">
         {icon}
       </div>
@@ -198,7 +198,7 @@ function Modal({ title, isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 overflow-y-auto pt-20">
+    <div className=" overflow-y-auto pt-20">
       <div className="flex justify-center px-4 pb-8">
         <div className="bg-slate-900/80 backdrop-blur-md max-w-lg w-full rounded-2xl animate-scale-up">
           <div className="flex justify-between items-center px-5 sm:px-8 py-4 sm:py-5 border-b border-blue-400/20 bg-blue-900/20">
