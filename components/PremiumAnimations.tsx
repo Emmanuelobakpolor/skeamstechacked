@@ -46,14 +46,12 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     lg: 'px-8 py-4 text-lg',
   };
 
-  const { onDrag, onDragStart, onDragEnd, ...safeProps } = props;
-
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.98 }}
       className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
-      {...safeProps}
+      {...props}
     >
       {children}
     </motion.button>
