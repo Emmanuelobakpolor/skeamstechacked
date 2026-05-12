@@ -30,6 +30,14 @@ interface AdminProduct {
   image_url: string | null;
   specs: Record<string, string>;
   category_name: string;
+  images?: Array<{ id: number; image_url: string; order: number }>;
+  product_models?: Array<{
+    id: number;
+    name: string;
+    specs: Record<string, string>;
+    images: Array<{ id: number; image_url: string; order: number }>;
+    order: number;
+  }>;
 }
 
 interface AdminCategory {
@@ -277,7 +285,7 @@ function ProductCarousel({ products }: { products: (Product | AdminProduct)[] })
             style={{ transform: `translateX(-${currentImage * 100}%)` }}
           >
             {allImages.length > 0 ? (
-              allImages.map((imageUrl, idx) => (
+              allImages.map((imageUrl: string, idx: number) => (
                 <div
                   key={idx}
                   className="relative w-full h-full flex-shrink-0 bg-blue-950 flex items-center justify-center p-4 sm:p-8"
@@ -332,7 +340,7 @@ function ProductCarousel({ products }: { products: (Product | AdminProduct)[] })
           {/* Image Indicator Dots - Bottom left */}
           {allImages.length > 1 && (
             <div className="absolute bottom-4 left-4 flex gap-1.5 z-20">
-              {allImages.map((_, index) => (
+              {allImages.map((_: string, index: number) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImage(index)}
@@ -429,6 +437,179 @@ function ProductCarousel({ products }: { products: (Product | AdminProduct)[] })
             </div>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Admin Product Carousel Component
+// ============================================================================
+
+interface AdminProductCarouselProps {
+  product: AdminProduct;
+  activeModelId: number | null;
+}
+
+function AdminProductCarousel({ product, activeModelId }: AdminProductCarouselProps) {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  // Determine which images to show: model images (if active) or product images
+  const activeModel = product.product_models?.find(m => m.id === activeModelId) ?? null;
+  const rawImages = (activeModel && activeModel.images.length > 0)
+    ? activeModel.images
+    : (product.images && product.images.length > 0)
+      ? product.images
+      : product.image_url
+        ? [{ id: -1, image_url: product.image_url, order: 0 }]
+        : [];
+
+  const imageUrls: string[] = rawImages
+    .slice()
+    .sort((a, b) => a.order - b.order)
+    .map(img => img.image_url)
+    .filter(Boolean);
+
+  // Reset image index when product or active model changes
+  useEffect(() => {
+    setCurrentImage(0);
+  }, [product.id, activeModelId]);
+
+  // Auto-slide images every 4 seconds
+  useEffect(() => {
+    if (imageUrls.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentImage(prev => (prev + 1) % imageUrls.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [imageUrls.length, product.id, activeModelId]);
+
+  const nextImage = () => {
+    if (imageUrls.length > 0) {
+      setCurrentImage(prev => (prev + 1) % imageUrls.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (imageUrls.length > 0) {
+      setCurrentImage(prev => (prev - 1 + imageUrls.length) % imageUrls.length);
+    }
+  };
+
+  return (
+    <div className="relative w-full group">
+      {/* Image Carousel */}
+      <div className="relative h-80 sm:h-96 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900/20 to-slate-900/40">
+        {/* Image Track */}
+        <div
+          className="flex h-full transition-transform duration-500 ease-out"
+          style={{ transform: `translateX(-${currentImage * 100}%)` }}
+        >
+          {imageUrls.length > 0 ? (
+            imageUrls.map((url, idx) => (
+              <div
+                key={idx}
+                className="relative w-full h-full flex-shrink-0 bg-blue-950 flex items-center justify-center p-4 sm:p-8"
+              >
+                <Image
+                  src={url}
+                  alt={`${product.name} - Image ${idx + 1}`}
+                  fill
+                  className="object-contain p-4"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority={idx === currentImage}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="relative w-full h-full bg-blue-950 flex items-center justify-center">
+              <span className="text-blue-600">No image available</span>
+            </div>
+          )}
+        </div>
+
+        {/* Left Gradient */}
+        <div className="absolute inset-y-0 left-0 w-12 sm:w-16 bg-gradient-to-r from-black/40 to-transparent z-10 pointer-events-none" />
+
+        {/* Right Gradient */}
+        <div className="absolute inset-y-0 right-0 w-12 sm:w-16 bg-gradient-to-l from-black/40 to-transparent z-10 pointer-events-none" />
+
+        {/* Image Navigation Arrows — only if multiple images */}
+        {imageUrls.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 backdrop-blur-sm text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+              aria-label="Previous image"
+            >
+              ‹
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 backdrop-blur-sm text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+              aria-label="Next image"
+            >
+              ›
+            </button>
+          </>
+        )}
+
+        {/* Image Indicator Dots — bottom-left */}
+        {imageUrls.length > 1 && (
+          <div className="absolute bottom-4 left-4 flex gap-1.5 z-20">
+            {imageUrls.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentImage(index)}
+                className={`rounded-full transition-all duration-300 ${
+                  index === currentImage
+                    ? 'bg-cyan-400 w-5 h-2'
+                    : 'bg-white/40 w-2 h-2 hover:bg-white/60'
+                }`}
+                aria-label={`Image ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Model Name Badge — bottom-right when active */}
+        {activeModel && (
+          <div className="absolute bottom-4 right-4 bg-cyan-500/80 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs text-white font-medium z-20">
+            {activeModel.name}
+          </div>
+        )}
+      </div>
+
+      {/* Product Info — below carousel */}
+      <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
+        <div>
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{product.name}</h3>
+          {product.description && (
+            <p className="text-blue-200 text-sm sm:text-base mb-2 sm:mb-3 line-clamp-2">
+              {product.description}
+            </p>
+          )}
+          {product.application && (
+            <p className="text-xs sm:text-sm text-cyan-300 font-semibold">✓ {product.application}</p>
+          )}
+        </div>
+
+        {/* Specs Grid — dynamic rendering */}
+        {Object.keys(product.specs).length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+            {Object.entries(product.specs).map(([key, value]) =>
+              value ? (
+                <div
+                  key={key}
+                  className="bg-gradient-to-br from-blue-600/30 to-cyan-600/20 border border-blue-500/40 rounded-lg sm:rounded-xl p-2 sm:p-3"
+                >
+                  <p className="text-blue-300 text-xs font-semibold uppercase">{key}</p>
+                  <p className="text-cyan-300 font-bold text-xs sm:text-sm mt-1">{value}</p>
+                </div>
+              ) : null
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -537,6 +718,27 @@ export default function Shop() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loadingTabs, setLoadingTabs] = useState(true);
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Dynamic tab: selected product per category and selected model per product
+  const [selectedProductIndexMap, setSelectedProductIndexMap] = useState<Record<number, number>>({});
+  const [selectedModelIdMap, setSelectedModelIdMap] = useState<Record<number, number | null>>({});
+
+  // Helper accessors
+  const getSelectedProductIndex = (categoryId: number) => selectedProductIndexMap[categoryId] ?? 0;
+  const getSelectedModelId = (productId: number) => selectedModelIdMap[productId] ?? null;
+
+  // Helper setters
+  const setSelectedProduct = (categoryId: number, index: number, oldProductId: number) => {
+    setSelectedProductIndexMap(prev => ({ ...prev, [categoryId]: index }));
+    setSelectedModelIdMap(prev => ({ ...prev, [oldProductId]: null })); // reset model on product change
+  };
+
+  const toggleModel = (productId: number, modelId: number) => {
+    setSelectedModelIdMap(prev => ({
+      ...prev,
+      [productId]: prev[productId] === modelId ? null : modelId, // click again to deselect
+    }));
+  };
 
   // Remove trailing /api if present, since we add it ourselves in the fetch URLs
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api';
@@ -948,102 +1150,161 @@ export default function Shop() {
                         {adminCategory.subtitle && <p className="text-lg text-blue-200">{adminCategory.subtitle}</p>}
                       </div>
 
-                      {/* Products Grid - Same as hardcoded */}
+                      {/* Products Grid */}
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        {/* Product Carousel */}
-                        <div>
-                          <ProductCarousel products={adminCategory.products} />
+                        {/* LEFT PANEL */}
+                        <div className="space-y-4">
+                          {/* Admin Product Carousel — single product */}
+                          {(() => {
+                            const productIndex = getSelectedProductIndex(adminCategory.id);
+                            const selectedProduct = adminCategory.products[productIndex] ?? adminCategory.products[0];
+                            const activeModelId = selectedProduct ? getSelectedModelId(selectedProduct.id) : null;
+
+                            return selectedProduct ? (
+                              <>
+                                <AdminProductCarousel
+                                  product={selectedProduct}
+                                  activeModelId={activeModelId}
+                                />
+
+                                {/* Product selector dots — only if multiple products */}
+                                {adminCategory.products.length > 1 && (
+                                  <>
+                                    <div className="flex items-center justify-center gap-3 pt-2">
+                                      {adminCategory.products.map((p, i) => (
+                                        <button
+                                          key={p.id}
+                                          onClick={() => setSelectedProduct(adminCategory.id, i, selectedProduct?.id ?? -1)}
+                                          title={p.name}
+                                          className={`rounded-full transition-all duration-300 ${
+                                            i === productIndex
+                                              ? 'bg-cyan-400 w-6 h-3'
+                                              : 'bg-white/30 w-3 h-3 hover:bg-white/60'
+                                          }`}
+                                          aria-label={`Select product: ${p.name}`}
+                                          aria-pressed={i === productIndex}
+                                        />
+                                      ))}
+                                    </div>
+
+                                    {/* Product name label under dots */}
+                                    <p className="text-center text-sm text-blue-300 font-medium">
+                                      {selectedProduct.name}
+                                      <span className="text-slate-500 ml-2">({productIndex + 1} / {adminCategory.products.length})</span>
+                                    </p>
+                                  </>
+                                )}
+                              </>
+                            ) : null;
+                          })()}
                         </div>
 
-                        {/* Product List */}
+                        {/* RIGHT PANEL */}
                         <div className="space-y-4">
-                          <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-2xl font-bold text-white">Available Models</h3>
-                            {selections[`admin-cat-${adminCategory.id}`]?.length > 0 && (
-                              <button
-                                onClick={() => setSelections(prev => ({ ...prev, [`admin-cat-${adminCategory.id}`]: [] }))}
-                                className="text-xs text-blue-400 hover:text-cyan-300 transition-colors underline"
-                              >
-                                Clear {selections[`admin-cat-${adminCategory.id}`]?.length} selected
-                              </button>
-                            )}
-                          </div>
-                          <div className="space-y-3">
-                          {adminCategory.products.map((product) => {
+                          {(() => {
+                            const productIndex = getSelectedProductIndex(adminCategory.id);
+                            const selectedProduct = adminCategory.products[productIndex] ?? adminCategory.products[0];
+                            const activeModelId = selectedProduct ? getSelectedModelId(selectedProduct.id) : null;
+                            const models = selectedProduct?.product_models?.slice().sort((a, b) => a.order - b.order) ?? [];
                             const categoryKey = `admin-cat-${adminCategory.id}`;
-                            const isSelected = selections[categoryKey]?.includes(product.name) ?? false;
+
                             return (
-                              <motion.button
-                                key={product.id}
-                                onClick={() => {
-                                  if (!selections[categoryKey]) {
-                                    setSelections(prev => ({ ...prev, [categoryKey]: [] }));
-                                  }
-                                  toggleProduct(categoryKey, product.name);
-                                }}
-                                className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 group ${
-                                  isSelected
-                                    ? 'bg-cyan-500/15 border-cyan-500 shadow-lg shadow-cyan-500/10'
-                                    : 'bg-gradient-to-r from-blue-800/40 to-blue-700/20 border-blue-600/40 hover:border-blue-400 hover:from-blue-700/60 hover:to-blue-600/40'
-                                }`}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                              >
-                                {product.image_url && (
-                                  <div className="relative w-full h-40 mb-3 bg-slate-900 rounded-lg overflow-hidden">
-                                    <Image
-                                      src={product.image_url}
-                                      alt={product.name}
-                                      fill
-                                      className="object-contain p-2"
-                                    />
-                                  </div>
-                                )}
-                                <div className="flex items-start gap-3">
-                                  <div
-                                    className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
-                                      isSelected
-                                        ? 'bg-cyan-500 border-cyan-500'
-                                        : 'border-blue-400 bg-transparent group-hover:border-cyan-400'
-                                    }`}
-                                  >
-                                    {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-1">
-                                      <h4 className={`text-base font-semibold transition-colors ${
-                                        isSelected ? 'text-cyan-300' : 'text-white group-hover:text-cyan-300'
-                                      }`}>
-                                        {product.name}
-                                      </h4>
-                                      {isSelected && (
-                                        <span className="text-xs text-cyan-400 font-medium bg-cyan-500/10 px-2 py-0.5 rounded-full">
-                                          Selected
-                                        </span>
-                                      )}
-                                    </div>
-                                    <p className="text-xs text-blue-300 mb-2">{product.application}</p>
-                                    {Object.entries(product.specs).length > 0 && (
-                                      <div className="grid grid-cols-2 gap-1.5 text-xs">
-                                        {Object.entries(product.specs).map(([key, value]) => (
-                                          <div key={key} className="text-blue-200">
-                                            <span className="text-cyan-300 font-semibold capitalize">{key}:</span> {value}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
+                              <>
+                                <div className="flex items-center justify-between mb-6">
+                                  <h3 className="text-2xl font-bold text-white">Available Models</h3>
+                                  {selections[categoryKey]?.length > 0 && (
+                                    <button
+                                      onClick={() => setSelections(prev => ({ ...prev, [categoryKey]: [] }))}
+                                      className="text-xs text-blue-400 hover:text-cyan-300 transition-colors underline"
+                                    >
+                                      Clear {selections[categoryKey].length} selected
+                                    </button>
+                                  )}
                                 </div>
-                              </motion.button>
+
+                                <div className="space-y-3">
+                                  {models.length === 0 ? (
+                                    <p className="text-slate-500 text-sm italic">No models available for this product.</p>
+                                  ) : (
+                                    models.map((model) => {
+                                      const isModelActive = activeModelId === model.id;
+                                      const isSelected = selections[categoryKey]?.includes(model.name) ?? false;
+
+                                      return (
+                                        <motion.button
+                                          key={model.id}
+                                          onClick={() => {
+                                            // Toggle carousel to show model images
+                                            if (selectedProduct) toggleModel(selectedProduct.id, model.id);
+                                            // Toggle quote selection
+                                            if (!selections[categoryKey]) {
+                                              setSelections(prev => ({ ...prev, [categoryKey]: [] }));
+                                            }
+                                            toggleProduct(categoryKey, model.name);
+                                          }}
+                                          className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 group ${
+                                            isModelActive
+                                              ? 'bg-cyan-500/15 border-cyan-500 shadow-lg shadow-cyan-500/10'
+                                              : 'bg-gradient-to-r from-blue-800/40 to-blue-700/20 border-blue-600/40 hover:border-blue-400 hover:from-blue-700/60 hover:to-blue-600/40'
+                                          }`}
+                                          whileHover={{ scale: 1.02 }}
+                                          whileTap={{ scale: 0.98 }}
+                                          aria-pressed={isModelActive}
+                                          aria-label={`Select model ${model.name}`}
+                                        >
+                                          <div className="flex items-start gap-3">
+                                            {/* Checkbox for quote selection */}
+                                            <div className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
+                                              isSelected
+                                                ? 'bg-cyan-500 border-cyan-500'
+                                                : 'border-blue-400 bg-transparent group-hover:border-cyan-400'
+                                            }`}>
+                                              {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
+                                            </div>
+
+                                            {/* Model content */}
+                                            <div className="flex-1 min-w-0">
+                                              <div className="flex items-center justify-between mb-1">
+                                                <h4 className={`text-base font-semibold transition-colors ${
+                                                  isModelActive ? 'text-cyan-300' : 'text-white group-hover:text-cyan-300'
+                                                }`}>
+                                                  {model.name}
+                                                </h4>
+                                                {isSelected && (
+                                                  <span className="text-xs text-cyan-400 font-medium bg-cyan-500/10 px-2 py-0.5 rounded-full">
+                                                    Selected
+                                                  </span>
+                                                )}
+                                              </div>
+                                              {Object.keys(model.specs).length > 0 && (
+                                                <div className="grid grid-cols-2 gap-1.5 text-xs">
+                                                  {Object.entries(model.specs).map(([key, value]) => (
+                                                    <div key={key} className="text-blue-200">
+                                                      <span className="text-cyan-300 font-semibold capitalize">{key}:</span> {value}
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </motion.button>
+                                      );
+                                    })
+                                  )}
+                                </div>
+                              </>
                             );
-                          })}
+                          })()}
                         </div>
                       </div>
-                    </div>
 
                       <div className="flex justify-center mt-8">
                         <motion.button
-                          onClick={() => openQuoteModal(adminCategory.id.toString(), selections[`admin-cat-${adminCategory.id}`] ?? [])}
+                          onClick={() => {
+                            const productIndex = getSelectedProductIndex(adminCategory.id);
+                            const categoryKey = `admin-cat-${adminCategory.id}`;
+                            openQuoteModal(adminCategory.id.toString(), selections[categoryKey] ?? []);
+                          }}
                           className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-cyan-500/30"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
