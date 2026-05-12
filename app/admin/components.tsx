@@ -198,20 +198,18 @@ function Modal({ title, isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-100 overflow-y-auto pt-20">
-      <div className="flex justify-center px-4 pb-8">
-        <div className="bg-slate-900/80 backdrop-blur-md max-w-lg w-full rounded-2xl animate-scale-up">
-          <div className="flex justify-between items-center px-5 sm:px-8 py-4 sm:py-5 border-b border-blue-400/20 bg-blue-900/20">
-            <h2 className="gradient-text text-lg sm:text-xl font-bold truncate">{title}</h2>
-            <button
-              onClick={onClose}
-              className="text-blue-400 hover:text-cyan-300 hover:bg-blue-800/60 rounded-xl p-1.5 transition-all flex-shrink-0 ml-4"
-            >
-              <X size={18} />
-            </button>
-          </div>
-          <div className="p-5 sm:p-7 custom-scrollbar max-h-[75vh] overflow-y-auto">{children}</div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-black/40 backdrop-blur-sm">
+      <div className="w-full max-w-2xl max-h-[90vh] bg-slate-900/95 backdrop-blur-md rounded-2xl animate-scale-up flex flex-col shadow-2xl shadow-black/50">
+        <div className="flex justify-between items-center px-5 sm:px-8 py-4 sm:py-5 border-b border-blue-400/20 bg-blue-900/30 flex-shrink-0">
+          <h2 className="gradient-text text-xl sm:text-2xl font-bold flex-1 truncate">{title}</h2>
+          <button
+            onClick={onClose}
+            className="text-blue-400 hover:text-cyan-300 hover:bg-blue-800/60 rounded-xl p-2 transition-all flex-shrink-0 ml-4"
+          >
+            <X size={20} />
+          </button>
         </div>
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-5 sm:p-8">{children}</div>
       </div>
     </div>
   );
@@ -1369,6 +1367,12 @@ function ProductForm({
   const [loading, setLoading] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [expandedSections, setExpandedSections] = useState({
+    basic: true,
+    specs: true,
+    images: true,
+    models: false,
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1413,201 +1417,284 @@ function ProductForm({
     }
   };
 
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 max-h-[70vh] overflow-y-auto pr-2 sm:pr-0">
-      <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Category <span className="text-cyan-400">*</span></label>
-        <select
-          value={formData.category}
-          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-          className={INPUT_CLS}
-          required
+    <form onSubmit={handleSubmit} className="space-y-3">
+      {/* Basic Information Section */}
+      <div className="border border-blue-700/40 rounded-xl overflow-hidden bg-blue-900/20">
+        <button
+          type="button"
+          onClick={() => toggleSection('basic')}
+          className="w-full p-4 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
         >
-          <option value="">Select category</option>
-          {tabs.map((tab) => (
-            <optgroup key={tab.id} label={tab.display_name}>
-              {categories
-                .filter((cat) => cat.tab === tab.id)
-                .map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-            </optgroup>
-          ))}
-        </select>
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Product Name <span className="text-cyan-400">*</span></label>
-        <input
-          type="text"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          onBlur={() => setTouched((p) => ({ ...p, name: true }))}
-          className={`${INPUT_CLS} ${touched.name && !formData.name ? 'border-red-500/70 focus:border-red-500' : ''}`}
-          placeholder="Product name"
-          required
-        />
-        {touched.name && !formData.name && (
-          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-            <AlertCircle size={10} /> Required
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Description <span className="text-cyan-400">*</span></label>
-        <textarea
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-          onBlur={() => setTouched((p) => ({ ...p, description: true }))}
-          className={`${INPUT_CLS} h-20 sm:h-24 resize-none`}
-          placeholder="Product description"
-          required
-        />
-        {touched.description && !formData.description && (
-          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-            <AlertCircle size={10} /> Required
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Application</label>
-        <input
-          type="text"
-          value={formData.application}
-          onChange={(e) =>
-            setFormData({ ...formData, application: e.target.value })
-          }
-          className={INPUT_CLS}
-          placeholder="Where it's used"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <p className="text-xs font-semibold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
-          <Zap size={12} className="text-cyan-400" /> Technical Specifications
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          {[
-            { key: 'spec_speed', label: 'Speed' },
-            { key: 'spec_weight', label: 'Weight' },
-            { key: 'spec_voltage', label: 'Voltage' },
-            { key: 'spec_power', label: 'Power' },
-            { key: 'spec_storage', label: 'Storage' },
-            { key: 'spec_connectivity', label: 'Connectivity' },
-          ].map(({ key, label }) => (
-            <input
-              key={key}
-              type="text"
-              placeholder={label}
-              value={formData[key as keyof typeof formData] as string}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  [key]: e.target.value,
-                })
-              }
-              className={INPUT_CLS}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-xs sm:text-sm font-semibold text-blue-200 flex items-center gap-1.5">
-          <ImageIcon size={14} className="text-cyan-400" /> Product Images
-        </label>
-
-        {savedProductId ? (
-          <>
-            <ProductImageGallery
-              productId={savedProductId}
-              images={galleryImages}
-              onChange={setGalleryImages}
-            />
-            {uploadingImages && (
-              <p className="text-xs text-blue-300 flex items-center gap-1">
-                <Loader size={12} className="animate-spin" /> Uploading...
-              </p>
-            )}
-          </>
-        ) : (
-          <>
-            {pendingImages.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {pendingImages.map((file, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-2 px-2.5 py-1.5 bg-blue-900/40 border border-blue-600/40 rounded-lg"
-                  >
-                    <span className="text-xs text-blue-300">{file.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => setPendingImages((p) => p.filter((_, i) => i !== idx))}
-                      className="text-red-400 hover:text-red-300"
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <label className="flex flex-col items-center justify-center w-full h-24 rounded-xl border-2 border-dashed border-blue-600/50 hover:border-cyan-400/60 bg-blue-900/20 hover:bg-blue-900/40 transition-all cursor-pointer group">
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={(e) =>
-                  setPendingImages((p) => [...p, ...Array.from(e.target.files ?? [])])
-                }
-                className="hidden"
-              />
-              <Upload size={20} className="text-blue-400 group-hover:text-cyan-400 transition-colors mb-1.5" />
-              <p className="text-xs text-blue-400 group-hover:text-cyan-300 font-medium">
-                Add images (will upload after saving)
-              </p>
-            </label>
-          </>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <p className="text-xs font-semibold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
-          <Package size={12} className="text-cyan-400" /> Available Models
-        </p>
-        {savedProductId ? (
-          <ProductModelsSection
-            productId={savedProductId}
-            models={productModels}
-            onChange={setProductModels}
+          <div className="flex items-center gap-2">
+            <Package size={16} className="text-cyan-400" />
+            <span className="text-sm font-semibold text-blue-200">Basic Information</span>
+          </div>
+          <ChevronDown
+            size={16}
+            className={`text-blue-400 transition-transform ${expandedSections.basic ? 'rotate-180' : ''}`}
           />
-        ) : (
-          <p className="text-xs text-blue-400/60">Save the product first to add models.</p>
+        </button>
+
+        {expandedSections.basic && (
+          <div className="border-t border-blue-700/40 p-4 space-y-4 bg-blue-900/10">
+            <div className="space-y-1.5">
+              <label className="block text-xs sm:text-sm font-semibold text-blue-200">Category <span className="text-cyan-400">*</span></label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className={INPUT_CLS}
+                required
+              >
+                <option value="">Select category</option>
+                {tabs.map((tab) => (
+                  <optgroup key={tab.id} label={tab.display_name}>
+                    {categories
+                      .filter((cat) => cat.tab === tab.id)
+                      .map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs sm:text-sm font-semibold text-blue-200">Product Name <span className="text-cyan-400">*</span></label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onBlur={() => setTouched((p) => ({ ...p, name: true }))}
+                className={`${INPUT_CLS} ${touched.name && !formData.name ? 'border-red-500/70 focus:border-red-500' : ''}`}
+                placeholder="Product name"
+                required
+              />
+              {touched.name && !formData.name && (
+                <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle size={10} /> Required
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs sm:text-sm font-semibold text-blue-200">Description <span className="text-cyan-400">*</span></label>
+              <textarea
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                onBlur={() => setTouched((p) => ({ ...p, description: true }))}
+                className={`${INPUT_CLS} h-20 sm:h-24 resize-none`}
+                placeholder="Product description"
+                required
+              />
+              {touched.description && !formData.description && (
+                <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle size={10} /> Required
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs sm:text-sm font-semibold text-blue-200">Application</label>
+              <input
+                type="text"
+                value={formData.application}
+                onChange={(e) =>
+                  setFormData({ ...formData, application: e.target.value })
+                }
+                className={INPUT_CLS}
+                placeholder="Where it's used"
+              />
+            </div>
+
+            <div className="flex items-center gap-3 pt-2 border-t border-blue-700/30">
+              <input
+                id="active_checkbox"
+                type="checkbox"
+                checked={formData.is_active}
+                onChange={(e) =>
+                  setFormData({ ...formData, is_active: e.target.checked })
+                }
+                className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-blue-600 hover:border-cyan-400 transition-colors"
+              />
+              <label htmlFor="active_checkbox" className="text-xs sm:text-sm font-medium text-blue-300 cursor-pointer">
+                Active Product
+              </label>
+            </div>
+          </div>
         )}
       </div>
 
-      <label className="flex items-center gap-3 text-blue-300 cursor-pointer hover:text-cyan-300 transition-colors group">
-        <input
-          type="checkbox"
-          checked={formData.is_active}
-          onChange={(e) =>
-            setFormData({ ...formData, is_active: e.target.checked })
-          }
-          className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-blue-600 group-hover:border-cyan-400"
-        />
-        <span className="text-xs sm:text-sm font-medium">Active Product</span>
-      </label>
+      {/* Technical Specifications Section */}
+      <div className="border border-blue-700/40 rounded-xl overflow-hidden bg-blue-900/20">
+        <button
+          type="button"
+          onClick={() => toggleSection('specs')}
+          className="w-full p-4 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Zap size={16} className="text-cyan-400" />
+            <span className="text-sm font-semibold text-blue-200">Technical Specifications</span>
+          </div>
+          <ChevronDown
+            size={16}
+            className={`text-blue-400 transition-transform ${expandedSections.specs ? 'rotate-180' : ''}`}
+          />
+        </button>
 
-      <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
+        {expandedSections.specs && (
+          <div className="border-t border-blue-700/40 p-4 bg-blue-900/10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { key: 'spec_speed', label: 'Speed' },
+                { key: 'spec_weight', label: 'Weight' },
+                { key: 'spec_voltage', label: 'Voltage' },
+                { key: 'spec_power', label: 'Power' },
+                { key: 'spec_storage', label: 'Storage' },
+                { key: 'spec_connectivity', label: 'Connectivity' },
+              ].map(({ key, label }) => (
+                <input
+                  key={key}
+                  type="text"
+                  placeholder={label}
+                  value={formData[key as keyof typeof formData] as string}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      [key]: e.target.value,
+                    })
+                  }
+                  className={INPUT_CLS}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Product Images Section */}
+      <div className="border border-blue-700/40 rounded-xl overflow-hidden bg-blue-900/20">
+        <button
+          type="button"
+          onClick={() => toggleSection('images')}
+          className="w-full p-4 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <ImageIcon size={16} className="text-cyan-400" />
+            <span className="text-sm font-semibold text-blue-200">Product Images</span>
+          </div>
+          <ChevronDown
+            size={16}
+            className={`text-blue-400 transition-transform ${expandedSections.images ? 'rotate-180' : ''}`}
+          />
+        </button>
+
+        {expandedSections.images && (
+          <div className="border-t border-blue-700/40 p-4 space-y-4 bg-blue-900/10">
+            {savedProductId ? (
+              <>
+                <ProductImageGallery
+                  productId={savedProductId}
+                  images={galleryImages}
+                  onChange={setGalleryImages}
+                />
+                {uploadingImages && (
+                  <p className="text-xs text-blue-300 flex items-center gap-1">
+                    <Loader size={12} className="animate-spin" /> Uploading...
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                {pendingImages.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {pendingImages.map((file, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 px-2.5 py-1.5 bg-blue-900/40 border border-blue-600/40 rounded-lg text-xs"
+                      >
+                        <span className="text-blue-300 truncate max-w-xs">{file.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => setPendingImages((p) => p.filter((_, i) => i !== idx))}
+                          className="text-red-400 hover:text-red-300 flex-shrink-0"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <label className="flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed border-blue-600/50 hover:border-cyan-400/60 bg-blue-900/20 hover:bg-blue-900/40 transition-all cursor-pointer group">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) =>
+                      setPendingImages((p) => [...p, ...Array.from(e.target.files ?? [])])
+                    }
+                    className="hidden"
+                  />
+                  <div className="flex flex-col items-center gap-2">
+                    <Upload size={24} className="text-blue-400 group-hover:text-cyan-400 transition-colors" />
+                    <div className="text-center">
+                      <p className="text-xs sm:text-sm text-blue-300 group-hover:text-cyan-300 font-medium">
+                        Drag images here or click to select
+                      </p>
+                      <p className="text-xs text-blue-400 mt-1">Upload after saving</p>
+                    </div>
+                  </div>
+                </label>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Product Models Section */}
+      {savedProductId && (
+        <div className="border border-blue-700/40 rounded-xl overflow-hidden bg-blue-900/20">
+          <button
+            type="button"
+            onClick={() => toggleSection('models')}
+            className="w-full p-4 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Package size={16} className="text-cyan-400" />
+              <span className="text-sm font-semibold text-blue-200">Product Models</span>
+            </div>
+            <ChevronDown
+              size={16}
+              className={`text-blue-400 transition-transform ${expandedSections.models ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {expandedSections.models && (
+            <div className="border-t border-blue-700/40 p-4 bg-blue-900/10">
+              <ProductModelsSection
+                productId={savedProductId}
+                models={productModels}
+                onChange={setProductModels}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex gap-2 sm:gap-3 pt-2">
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-2.5 sm:py-3 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 disabled:opacity-50 disabled:shadow-none transition-all text-xs sm:text-base"
+          className="flex-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-3 sm:py-3 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 disabled:opacity-50 disabled:shadow-none transition-all text-xs sm:text-base"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
@@ -1620,7 +1707,7 @@ function ProductForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold py-2.5 sm:py-3 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all text-xs sm:text-base"
+          className="flex-1 bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold py-3 sm:py-3 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all text-xs sm:text-base"
         >
           Cancel
         </button>
