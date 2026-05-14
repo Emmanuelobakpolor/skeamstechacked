@@ -398,6 +398,44 @@ main {
   }
 }
 
+/* ===== PRELOADER ANIMATIONS ===== */
+@keyframes preloader-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes preloader-spin-reverse {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+@keyframes preloader-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@keyframes preloader-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 0.8; transform: scale(1.15); }
+}
+
+@keyframes preloader-bg-pulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+}
+
+@keyframes preloader-bar-shimmer {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+.preloader-spin         { animation: preloader-spin 2.5s linear infinite; }
+.preloader-spin-reverse { animation: preloader-spin-reverse 3.5s linear infinite; }
+.preloader-float        { animation: preloader-float 2.5s ease-in-out infinite; }
+.preloader-glow         { animation: preloader-glow 2.5s ease-in-out infinite; }
+.preloader-bg-pulse     { animation: preloader-bg-pulse 4s ease-in-out infinite; }
+.preloader-bg-pulse-delay { animation: preloader-bg-pulse 4s ease-in-out 1s infinite; }
+
 /* Responsive animations - reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .glow-pulse,
@@ -405,7 +443,13 @@ main {
   .shimmer,
   .gradient-shift,
   .pulse-border,
-  .animate-text-gradient {
+  .animate-text-gradient,
+  .preloader-spin,
+  .preloader-spin-reverse,
+  .preloader-float,
+  .preloader-glow,
+  .preloader-bg-pulse,
+  .preloader-bg-pulse-delay {
     animation: none !important;
   }
 }

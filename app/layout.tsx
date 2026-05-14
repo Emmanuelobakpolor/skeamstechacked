@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import WhatsAppSupport from '@/components/WhatsAppSupport';
 import GlobalBackground from '@/components/GlobalBackground';
+import Preloader from '@/components/Preloader';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -34,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body className="relative bg-slate-950 overflow-x-hidden">
+        <Preloader />
         <GlobalBackground />
         <div className="relative z-0">
           {children}
