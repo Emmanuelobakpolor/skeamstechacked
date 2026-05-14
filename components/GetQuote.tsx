@@ -423,6 +423,8 @@ Please provide a detailed quote for the above products.
                             </button>
                           )}
 
+                          <p className="text-xs text-slate-400">Select one or more products from any category</p>
+
                           {loadingCategories ? (
                             <div className="flex items-center justify-center py-4">
                               <Loader className="animate-spin text-cyan-500" size={18} />
@@ -444,13 +446,24 @@ Please provide a detailed quote for the above products.
                                     }`}
                                   >
                                     <div className="flex-1 min-w-0">
-                                      <h4 className={`font-semibold text-sm ${
-                                        selectedManualCategory === category.id
-                                          ? 'text-cyan-300'
-                                          : 'text-white'
-                                      }`}>
-                                        {category.name}
-                                      </h4>
+                                      <div className="flex items-center gap-1.5">
+                                        <h4 className={`font-semibold text-sm ${
+                                          selectedManualCategory === category.id
+                                            ? 'text-cyan-300'
+                                            : 'text-white'
+                                        }`}>
+                                          {category.name}
+                                        </h4>
+                                        {category.products?.length > 0 && (
+                                          <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                            selectedManualCategory === category.id
+                                              ? 'bg-cyan-500/30 text-cyan-200'
+                                              : 'bg-slate-700 text-slate-300'
+                                          }`}>
+                                            {category.products.length} items
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
                                     <ChevronRight
                                       size={14}
@@ -527,14 +540,29 @@ Please provide a detailed quote for the above products.
                       </div>
 
                       <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-2.5">
-                        <h4 className="text-blue-300 font-semibold text-xs mb-1.5">Products ({formData.products.length})</h4>
+                        <h4 className="text-blue-300 font-semibold text-xs mb-1.5">Selected Products ({formData.products.length})</h4>
                         <div className="space-y-0.5 max-h-24 overflow-y-auto">
-                          {formData.products.map((product, idx) => (
-                            <div key={idx} className="flex items-center gap-1.5 text-xs text-slate-300">
-                              <Check size={10} className="text-blue-400 flex-shrink-0" />
-                              <span className="truncate">{product}</span>
-                            </div>
-                          ))}
+                          {formData.products.length > 0 ? (
+                            formData.products.map((product, idx) => {
+                              // Find which category this product belongs to
+                              const category = allCategories.find(cat =>
+                                cat.products?.some((p: any) => p.name === product)
+                              );
+                              return (
+                                <div key={idx} className="flex items-center gap-1.5 text-xs text-slate-300">
+                                  <Check size={10} className="text-blue-400 flex-shrink-0" />
+                                  <span className="truncate flex-1">{product}</span>
+                                  {category && (
+                                    <span className="text-xs text-blue-400 bg-blue-500/20 px-1.5 py-0.5 rounded flex-shrink-0 whitespace-nowrap">
+                                      {category.name}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })
+                          ) : (
+                            <p className="text-xs text-slate-400">No products selected</p>
+                          )}
                         </div>
                       </div>
 

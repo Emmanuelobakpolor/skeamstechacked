@@ -640,7 +640,7 @@ function FloatingQuoteBar({ selections, categories: cats, onRequestQuote, onClea
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3 flex-shrink-0 flex-wrap justify-end">
             <button
               onClick={onClearAll}
               className="text-sm text-blue-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-slate-800"
@@ -648,34 +648,15 @@ function FloatingQuoteBar({ selections, categories: cats, onRequestQuote, onClea
               Clear all
             </button>
 
-            {/* If single category, show one button; if multiple, show per-category buttons */}
-            {activeCategoryEntries.length === 1 ? (
-              <motion.button
-                onClick={() => onRequestQuote(activeCategoryEntries[0][0])}
-                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold rounded-xl transition-all shadow-lg text-sm"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Request Quote
-              </motion.button>
-            ) : (
-              <div className="flex gap-2">
-                {activeCategoryEntries.map(([catId]) => {
-                  const cat = cats.find(c => c.id === catId);
-                  return (
-                    <motion.button
-                      key={catId}
-                      onClick={() => onRequestQuote(catId)}
-                      className="px-3 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold rounded-xl transition-all shadow-lg text-xs"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Quote {cat?.title.split(' ')[0]}
-                    </motion.button>
-                  );
-                })}
-              </div>
-            )}
+            {/* Always show main "Request Quote" button for all selections */}
+            <motion.button
+              onClick={() => onRequestQuote('multiple')}
+              className="px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-500 hover:from-cyan-500 hover:to-blue-400 text-white font-semibold rounded-xl transition-all shadow-lg text-sm"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Request Quote
+            </motion.button>
           </div>
         </div>
       </div>
@@ -1070,7 +1051,7 @@ export default function Shop() {
               </div>
 
               {/* Get Quote Button at Bottom */}
-              <div className="flex justify-center mt-8">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
                 <motion.button
                   onClick={() => openQuoteModal(category.id, selections[category.id])}
                   className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-cyan-500/30"
@@ -1079,6 +1060,16 @@ export default function Shop() {
                 >
                   Get Quote for {category.title}
                 </motion.button>
+                {totalSelected > 0 && (
+                  <motion.button
+                    onClick={() => openQuoteModal('', Object.values(selections).flat())}
+                    className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-500 hover:from-cyan-500 hover:to-blue-400 text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-cyan-600/30"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Get Quote for All {totalSelected} Selected
+                  </motion.button>
+                )}
               </div>
             </motion.div>
             );
