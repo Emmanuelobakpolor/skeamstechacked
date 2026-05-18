@@ -10,27 +10,32 @@ interface Content {
   url: string;
 }
 
-// HARDCODED BANNERS - SKEAM Technologies product and service banners
+// HARDCODED BANNERS - WhatsApp videos
 const HARDCODED_BANNERS: Content[] = [
   {
-    id: 'banner-1',
-    name: 'Welcome to SKEAM Technologies',
+    id: 'video-1',
+    name: 'WhatsApp Video 1',
     type: 'banner',
-    url: '/images/1-4SXHVHRLvDJYzYSxf29Gpw.png',
+    url: '/images/WhatsApp Video 2026-05-18 at 21.03.52.mp4',
   },
   {
-    id: 'banner-2',
-    name: 'Sliding Gate Operators',
+    id: 'video-2',
+    name: 'WhatsApp Video 2',
     type: 'banner',
-    url: '/images/CD8E2313-E0FB-415E-8E76-F70260B81FB7 (2).PNG',
+    url: '/images/WhatsApp Video 2026-05-18 at 21.03.53.mp4',
   },
   {
-    id: 'banner-3',
-    name: 'Solar and Inverter Solutions',
+    id: 'video-3',
+    name: 'WhatsApp Video 3',
     type: 'banner',
-    url: '/images/F99A93C7-0219-49EA-B2D9-76D753CC72E6.PNG',
+    url: '/images/WhatsApp Video 2026-05-18 at 21.03.54 (1).mp4',
   },
-  
+  {
+    id: 'video-4',
+    name: 'WhatsApp Video 4',
+    type: 'banner',
+    url: '/images/WhatsApp Video 2026-05-18 at 21.03.54.mp4',
+  },
 ];
 
 function Carousel({ items, interval = 4500 }: { items: Content[]; interval?: number }) {
@@ -72,12 +77,13 @@ function Carousel({ items, interval = 4500 }: { items: Content[]; interval?: num
             key={item.id}
             className="relative w-full h-full flex-shrink-0"
           >
-            <Image
+            <video
               src={item.url}
-              alt={item.name}
-              fill
-              className="object-cover"
-              priority={item.id === items[current].id}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="object-cover w-full h-full"
             />
           </div>
         ))}
