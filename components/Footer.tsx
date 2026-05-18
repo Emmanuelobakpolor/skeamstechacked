@@ -111,7 +111,7 @@ export default function Footer() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Email */}
                 <a
-                  href="mailto:info@skeamtechnologies.com?subject=SKEAM Technologies Inquiry"
+                  href="mailto:Skeamtechnologies@mail.com ?subject=SKEAM Technologies Inquiry"
                   className="group p-5 rounded-xl bg-gradient-to-br from-blue-900/20 to-cyan-900/10 border border-blue-600/30 hover:border-blue-400/70 hover:bg-blue-900/40 transition-all duration-200"
                 >
                   <div className="flex items-start gap-3 mb-3">
@@ -120,7 +120,7 @@ export default function Footer() {
                     </div>
                     <div>
                       <p className="font-semibold text-white text-sm">Email</p>
-                      <p className="text-xs text-blue-400 group-hover:text-blue-300 mt-1 transition-colors duration-150">info@skeamtechnologies.com</p>
+                      <p className="text-xs text-blue-400 group-hover:text-blue-300 mt-1 transition-colors duration-150">Skeamtechnologies@mail.com </p>
                     </div>
                   </div>
                 </a>

@@ -22,13 +22,13 @@ const services: Service[] = [
     id: 1,
     title: 'Gate Automation Systems',
     description: 'Professional installation and maintenance of automated gate systems for residential and commercial properties. Reliable, secure, and convenient access control.',
-    image: '/images/Gate .PNG',
+    image: '/images/6CFD9663-D800-4C1C-904B-D189DE4CCA1C.PNG',
   },
   {
     id: 2,
     title: 'CCTV Surveillance',
     description: 'Complete CCTV camera installation, configuration, and monitoring solutions. Keep your property secure with professional surveillance systems.',
-    image: '/images/CCTV .PNG',
+    image: '/images/C9FABEAC-B7A0-42E6-B0EB-E9600FB8F61D.PNG',
   },
   {
     id: 3,
@@ -46,7 +46,7 @@ const services: Service[] = [
     id: 5,
     title: 'System Integration',
     description: 'Comprehensive integration of security and power systems. We design solutions that work together seamlessly for maximum efficiency.',
-    image: '/images/Inverter .PNG',
+    image: '/images/CE9C4598-F444-4204-B43D-7BEBBD6FDA4D.PNG',
   },
   {
     id: 6,

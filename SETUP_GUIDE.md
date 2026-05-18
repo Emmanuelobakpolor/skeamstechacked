@@ -218,7 +218,7 @@ Navigate to: `http://localhost:3000/admin`
 2. Note the code (e.g., "SUMMER2024")
 3. Contact SKEAM Technologies via:
    - WhatsApp: +234 712 000 2022
-   - Email: info@skeamtechnologies.com
+   - Email: Skeamtechnologies@mail.com 
    - Phone: (use website contact)
 4. Mention the promo code when requesting a quote
 

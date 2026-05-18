@@ -19,28 +19,20 @@ const item = {
 
 const slides = [
   {
-    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=80',
-    label: 'Advanced Solar Technology for a Sustainable Future',
+    video: '/images/WhatsApp Video 2026-05-18 at 21.03.52.mp4',
+    label: '',
   },
   {
-    image: 'https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=1920&q=80',
-    label: 'Precision Solar Installations Engineered for Maximum Yield',
+    video: '/images/WhatsApp Video 2026-05-18 at 21.03.53.mp4',
+    label: '',
   },
   {
-    image: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=1920&q=80',
-    label: 'Clean Energy Solutions Built to Last',
+    video: '/images/WhatsApp Video 2026-05-18 at 21.03.54 (1).mp4',
+    label: '',
   },
   {
-    image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1920&q=80',
-    label: 'Powering Tomorrow with Renewable Energy Today',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=1920&q=80',
-    label: 'Smart Automation & Security for the Modern Home',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=1920&q=80',
-    label: 'Intelligent Energy Management at Your Fingertips',
+    video: '/images/WhatsApp Video 2026-05-18 at 21.03.54.mp4',
+    label: '',
   },
 ];
 
@@ -68,19 +60,22 @@ export default function Hero() {
         {/* ── LAYER 0: Crossfading background slides ── */}
         <div className="absolute inset-0 z-0">
           <AnimatePresence initial={false}>
-            <motion.div
+            <video
               key={currentSlide}
               className="absolute inset-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.4, ease: 'easeInOut' }}
+              autoPlay
+              muted
+              loop
+              playsInline
               style={{
-                backgroundImage: `url('${slides[currentSlide].image}')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                objectFit: 'cover',
+                width: '100%',
+                height: '100%',
               }}
-            />
+            >
+              <source src={slides[currentSlide].video} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </AnimatePresence>
 
           {/* Dark vignette overlays — deepen edges so text pops on any image */}

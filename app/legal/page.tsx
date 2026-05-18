@@ -167,7 +167,7 @@ export default function LegalPage() {
                 Important Notice
               </h3>
               <p className="text-blue-200 leading-relaxed">
-                These legal documents are provided for informational purposes. For specific legal questions or concerns regarding SKEAM Technologies services, please contact us directly at <span className="font-semibold text-white">info@skeamtechnologies.com</span> or call <span className="font-semibold text-white">+234 712 000 2022</span>. Last updated: January 2024.
+                These legal documents are provided for informational purposes. For specific legal questions or concerns regarding SKEAM Technologies services, please contact us directly at <span className="font-semibold text-white">Skeamtechnologies@mail.com </span> or call <span className="font-semibold text-white">+234 712 000 2022</span>. Last updated: January 2024.
               </p>
             </div>
           </motion.div>

@@ -331,7 +331,7 @@
    - Terms of Service
 
 **Contact Section** (separate grid, 3 items):
-- **Email**: `info@skeamtechnologies.com`
+- **Email**: `Skeamtechnologies@mail.com `
 - **WhatsApp**: `+234 712 000 2022`
 - **Location**: Lagos, Nigeria
 

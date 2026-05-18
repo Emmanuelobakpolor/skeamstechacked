@@ -175,7 +175,7 @@ export default function SupportPage() {
               viewport={{ once: true, margin: '-100px' }}
             >
               {[
-                { icon: Mail, title: 'Email', value: 'info@skeamtechnologies.com', href: 'mailto:info@skeamtechnologies.com' },
+                { icon: Mail, title: 'Email', value: 'Skeamtechnologies@mail.com ', href: 'mailto:Skeamtechnologies@mail.com ' },
                 { icon: Phone, title: 'WhatsApp', value: '+234 712 000 2022', href: 'https://wa.me/2347120002022' },
                 { icon: Clock, title: 'Call Us', value: '+234 712 000 2022', href: 'tel:+2347120002022' },
               ].map((contact, idx) => {
