@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Search, Loader } from 'lucide-react';
+import { Check, Search, Loader, Minus, Plus } from 'lucide-react';
 import GetQuote from './GetQuote';
 
 interface Product {
@@ -599,18 +599,18 @@ function AdminProductCarousel({ product }: AdminProductCarouselProps) {
 }
 
 interface FloatingQuoteBarProps {
-  selections: Record<string, string[]>;
+  selections: Record<string, Record<string, number>>;
   categories: typeof categories;
   onRequestQuote: (categoryId: string) => void;
   onClearAll: () => void;
 }
 
 function FloatingQuoteBar({ selections, categories: cats, onRequestQuote, onClearAll }: FloatingQuoteBarProps) {
-  const totalSelected = Object.values(selections).reduce((sum, arr) => sum + arr.length, 0);
+  const totalSelected = Object.values(selections).reduce((sum, obj) => sum + Object.keys(obj).length, 0);
 
   if (totalSelected === 0) return null;
 
-  const activeCategoryEntries = Object.entries(selections).filter(([, arr]) => arr.length > 0);
+  const activeCategoryEntries = Object.entries(selections).filter(([, obj]) => Object.keys(obj).length > 0);
 
   return (
     <motion.div
@@ -628,11 +628,11 @@ function FloatingQuoteBar({ selections, categories: cats, onRequestQuote, onClea
               {totalSelected} product{totalSelected !== 1 ? 's' : ''} selected
             </p>
             <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-              {activeCategoryEntries.map(([catId, products]) => {
+              {activeCategoryEntries.map(([catId, productsObj]) => {
                 const catLabel = cats.find(c => c.id === catId)?.title ?? catId;
                 return (
                   <span key={catId} className="text-xs text-cyan-300">
-                    {catLabel}: {products.length}
+                    {catLabel}: {Object.keys(productsObj).length}
                   </span>
                 );
               })}
@@ -668,10 +668,10 @@ export default function Shop() {
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [quoteCategory, setQuoteCategory] = useState('');
   const [quoteProducts, setQuoteProducts] = useState<string[]>([]);
-  const [selections, setSelections] = useState<Record<string, string[]>>({
-    'sliding-gate': [],
-    'swing-gate': [],
-    'garage-door': [],
+  const [selections, setSelections] = useState<Record<string, Record<string, number>>>({
+    'sliding-gate': {},
+    'swing-gate': {},
+    'garage-door': {},
   });
 
   // Tabs and filters
@@ -689,7 +689,7 @@ export default function Shop() {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api';
   const apiUrl = baseUrl.endsWith('/api') ? baseUrl.slice(0, -4) : baseUrl;
 
-  const totalSelected = Object.values(selections).reduce((sum, arr) => sum + arr.length, 0);
+  const totalSelected = Object.values(selections).reduce((sum, obj) => sum + Object.keys(obj).length, 0);
 
   // Fetch tabs with their categories on mount
   useEffect(() => {
@@ -747,20 +747,32 @@ export default function Shop() {
 
   const toggleProduct = (categoryId: string, productName: string) => {
     setSelections(prev => {
-      const current = prev[categoryId] ?? [];
-      const isSelected = current.includes(productName);
-      return {
-        ...prev,
-        [categoryId]: isSelected
-          ? current.filter(p => p !== productName)
-          : [...current, productName],
-      };
+      const current = prev[categoryId] ?? {};
+      const isSelected = productName in current;
+      if (isSelected) {
+        const { [productName]: _, ...rest } = current;
+        return { ...prev, [categoryId]: rest };
+      }
+      return { ...prev, [categoryId]: { ...current, [productName]: 1 } };
     });
   };
 
-  const openQuoteModal = (categoryId: string, products: string[] = []) => {
+  const updateQuantity = (categoryId: string, productName: string, qty: number) => {
+    if (qty < 1) return;
+    setSelections(prev => {
+      const current = prev[categoryId] ?? {};
+      return { ...prev, [categoryId]: { ...current, [productName]: qty } };
+    });
+  };
+
+  const openQuoteModal = (categoryId: string, products: string[] = [], quantities: Record<string, number> = {}) => {
+    // Build product strings with quantities
+    const productsWithQty = products.map(p => {
+      const qty = quantities[p];
+      return qty && qty > 1 ? `${p} (x${qty})` : p;
+    });
     setQuoteCategory(categoryId);
-    setQuoteProducts(products);
+    setQuoteProducts(productsWithQty);
     setQuoteOpen(true);
   };
 
@@ -884,13 +896,13 @@ export default function Shop() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {searchResults.map((product) => {
                     const categoryKey = `admin-${product.id}`;
-                    const isSelected = selections[categoryKey]?.includes(product.name) ?? false;
+                    const isSelected = product.name in (selections[categoryKey] ?? {});
                     return (
                       <motion.button
                         key={product.id}
                         onClick={() => {
                           if (!selections[categoryKey]) {
-                            setSelections(prev => ({ ...prev, [categoryKey]: [] }));
+                            setSelections(prev => ({ ...prev, [categoryKey]: {} }));
                           }
                           toggleProduct(categoryKey, product.name);
                         }}
@@ -979,71 +991,103 @@ export default function Shop() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-2xl font-bold text-white">Available Models</h3>
-                    {selections[category.id].length > 0 && (
+                    {Object.keys(selections[category.id] ?? {}).length > 0 && (
                       <button
-                        onClick={() => setSelections(prev => ({ ...prev, [category.id]: [] }))}
+                        onClick={() => setSelections(prev => ({ ...prev, [category.id]: {} }))}
                         className="text-xs text-blue-400 hover:text-cyan-300 transition-colors underline"
                       >
-                        Clear {selections[category.id].length} selected
+                        Clear {Object.keys(selections[category.id]).length} selected
                       </button>
                     )}
                   </div>
                   <div className="space-y-3">
                     {category.products.map((product) => {
-                      const isSelected = selections[category.id].includes(product.name);
+                      const isSelected = product.name in (selections[category.id] ?? {});
+                      const qty = selections[category.id]?.[product.name] ?? 1;
                       return (
-                        <motion.button
+                        <motion.div
                           key={product.id}
-                          onClick={() => toggleProduct(category.id, product.name)}
                           className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 group ${
                             isSelected
                               ? 'bg-cyan-500/15 border-cyan-500 shadow-lg shadow-cyan-500/10'
                               : 'bg-gradient-to-r from-blue-800/40 to-blue-700/20 border-blue-600/40 hover:border-blue-400 hover:from-blue-700/60 hover:to-blue-600/40'
                           }`}
                           whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          aria-pressed={isSelected}
-                          aria-label={`${isSelected ? 'Deselect' : 'Select'} ${product.name}`}
                         >
-                          <div className="flex items-start gap-3">
-                            {/* Checkbox */}
-                            <div
-                              className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
-                                isSelected
-                                  ? 'bg-cyan-500 border-cyan-500'
-                                  : 'border-blue-400 bg-transparent group-hover:border-cyan-400'
-                              }`}
-                            >
-                              {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
-                            </div>
+                          <button
+                            onClick={() => toggleProduct(category.id, product.name)}
+                            className="w-full text-left"
+                            aria-pressed={isSelected}
+                            aria-label={`${isSelected ? 'Deselect' : 'Select'} ${product.name}`}
+                          >
+                            <div className="flex items-start gap-3">
+                              {/* Checkbox */}
+                              <div
+                                className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
+                                  isSelected
+                                    ? 'bg-cyan-500 border-cyan-500'
+                                    : 'border-blue-400 bg-transparent group-hover:border-cyan-400'
+                                }`}
+                              >
+                                {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
+                              </div>
 
-                            {/* Content */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between mb-1">
-                                <h4 className={`text-base font-semibold transition-colors ${
-                                  isSelected ? 'text-cyan-300' : 'text-white group-hover:text-cyan-300'
-                                }`}>
-                                  {product.name}
-                                </h4>
-                                {isSelected && (
-                                  <span className="text-xs text-cyan-400 font-medium bg-cyan-500/10 px-2 py-0.5 rounded-full">
-                                    Selected
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-xs text-blue-300 mb-2">{product.application}</p>
-                              <div className="grid grid-cols-2 gap-1.5 text-xs">
-                                {Object.entries(product.specs).map(([key, value]) =>
-                                  value ? (
-                                    <div key={key} className="text-blue-200">
-                                      <span className="text-cyan-300 font-semibold capitalize">{key}:</span> {value}
-                                    </div>
-                                  ) : null
-                                )}
+                              {/* Content */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-1">
+                                  <h4 className={`text-base font-semibold transition-colors ${
+                                    isSelected ? 'text-cyan-300' : 'text-white group-hover:text-cyan-300'
+                                  }`}>
+                                    {product.name}
+                                  </h4>
+                                  {isSelected && (
+                                    <span className="text-xs text-cyan-400 font-medium bg-cyan-500/10 px-2 py-0.5 rounded-full">
+                                      Selected
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-blue-300 mb-2">{product.application}</p>
+                                <div className="grid grid-cols-2 gap-1.5 text-xs">
+                                  {Object.entries(product.specs).map(([key, value]) =>
+                                    value ? (
+                                      <div key={key} className="text-blue-200">
+                                        <span className="text-cyan-300 font-semibold capitalize">{key}:</span> {value}
+                                      </div>
+                                    ) : null
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </motion.button>
+                          </button>
+
+                          {/* Quantity Picker — shown when selected */}
+                          {isSelected && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="mt-3 pt-3 border-t border-cyan-500/20 flex items-center justify-between"
+                            >
+                              <span className="text-xs text-cyan-300 font-medium">Quantity</span>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); updateQuantity(category.id, product.name, qty - 1); }}
+                                  className="w-7 h-7 rounded-lg bg-slate-700 hover:bg-slate-600 text-white flex items-center justify-center transition-colors"
+                                  disabled={qty <= 1}
+                                >
+                                  <Minus size={14} />
+                                </button>
+                                <span className="text-white font-bold text-sm w-8 text-center">{qty}</span>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); updateQuantity(category.id, product.name, qty + 1); }}
+                                  className="w-7 h-7 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center transition-colors"
+                                >
+                                  <Plus size={14} />
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </motion.div>
                       );
                     })}
                   </div>
@@ -1053,7 +1097,7 @@ export default function Shop() {
               {/* Get Quote Button at Bottom */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
                 <motion.button
-                  onClick={() => openQuoteModal(category.id, selections[category.id])}
+                  onClick={() => openQuoteModal(category.id, Object.keys(selections[category.id] ?? {}), selections[category.id] ?? {})}
                   className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-cyan-500/30"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -1062,7 +1106,11 @@ export default function Shop() {
                 </motion.button>
                 {totalSelected > 0 && (
                   <motion.button
-                    onClick={() => openQuoteModal('', Object.values(selections).flat())}
+                    onClick={() => {
+                      const allProducts = Object.values(selections).flatMap(obj => Object.keys(obj));
+                      const allQuantities = Object.values(selections).reduce((acc, obj) => ({ ...acc, ...obj }), {});
+                      openQuoteModal('', allProducts, allQuantities);
+                    }}
                     className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-500 hover:from-cyan-500 hover:to-blue-400 text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-cyan-600/30"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -1108,7 +1156,7 @@ export default function Shop() {
                       {/* Products with Carousel */}
                       {adminCategory.products.map((product, productIdx) => {
                         const categoryKey = `admin-cat-${adminCategory.id}`;
-                        const isSelected = selections[categoryKey]?.includes(product.name) ?? false;
+                        const isSelected = product.name in (selections[categoryKey] ?? {});
                         const currentImageIdx = currentImageIndices[product.id] ?? 0;
 
                         const productImages = product.images && product.images.length > 0
@@ -1240,17 +1288,12 @@ export default function Shop() {
                             <div className="flex justify-center">
                               <motion.button
                                 onClick={() => {
-                                  setSelections(prev => ({
-                                    ...prev,
-                                    [categoryKey]: isSelected
-                                      ? selections[categoryKey]?.filter(name => name !== product.name) ?? []
-                                      : [...(selections[categoryKey] ?? []), product.name]
-                                  }));
-                                  openQuoteModal(adminCategory.id.toString(),
-                                    isSelected
-                                      ? selections[categoryKey]?.filter(name => name !== product.name) ?? []
-                                      : [...(selections[categoryKey] ?? []), product.name]
-                                  );
+                                  const current = selections[categoryKey] ?? {};
+                                  const updated = isSelected
+                                    ? (() => { const { [product.name]: _, ...rest } = current; return rest; })()
+                                    : { ...current, [product.name]: 1 };
+                                  setSelections(prev => ({ ...prev, [categoryKey]: updated }));
+                                  openQuoteModal(adminCategory.id.toString(), Object.keys(updated), updated);
                                 }}
                                 className={`px-8 py-3 rounded-lg font-bold transition-all duration-200 ${
                                   isSelected
@@ -1304,8 +1347,8 @@ export default function Shop() {
           <FloatingQuoteBar
             selections={selections}
             categories={categories}
-            onRequestQuote={(categoryId) => openQuoteModal(categoryId, selections[categoryId])}
-            onClearAll={() => setSelections({ 'sliding-gate': [], 'swing-gate': [], 'garage-door': [] })}
+            onRequestQuote={(categoryId) => openQuoteModal(categoryId, Object.keys(selections[categoryId] ?? {}), selections[categoryId] ?? {})}
+            onClearAll={() => setSelections({ 'sliding-gate': {}, 'swing-gate': {}, 'garage-door': {} })}
           />
         )}
       </AnimatePresence>

@@ -108,19 +108,19 @@ export default function Footer() {
               transition={{ duration: 0.4, delay: 0.05 }}
             >
               <h4 className="text-lg font-bold text-white mb-8">Get In Touch</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {/* Email */}
                 <a
-                  href="mailto:Skeamtechnologies@mail.com ?subject=SKEAM Technologies Inquiry"
-                  className="group p-5 rounded-xl bg-gradient-to-br from-blue-900/20 to-cyan-900/10 border border-blue-600/30 hover:border-blue-400/70 hover:bg-blue-900/40 transition-all duration-200"
+                  href="mailto:Skeamtechnologies@mail.com?subject=SKEAM Technologies Inquiry"
+                  className="group p-4 rounded-xl bg-gradient-to-br from-blue-900/20 to-cyan-900/10 border border-blue-600/30 hover:border-blue-400/70 hover:bg-blue-900/40 transition-all duration-200"
                 >
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2.5 rounded-lg bg-gradient-to-br from-blue-500/40 to-cyan-500/20 group-hover:from-blue-500/60 group-hover:to-cyan-500/40 transition-all duration-150">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-lg bg-gradient-to-br from-blue-500/40 to-cyan-500/20 group-hover:from-blue-500/60 group-hover:to-cyan-500/40 transition-all duration-150 shrink-0">
                       <Mail className="w-5 h-5 text-blue-300 group-hover:text-blue-200 transition-colors duration-150" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold text-white text-sm">Email</p>
-                      <p className="text-xs text-blue-400 group-hover:text-blue-300 mt-1 transition-colors duration-150">Skeamtechnologies@mail.com </p>
+                      <p className="text-xs text-blue-400 group-hover:text-blue-300 mt-1 transition-colors duration-150 truncate">Skeamtechnologies@mail.com</p>
                     </div>
                   </div>
                 </a>
@@ -130,13 +130,13 @@ export default function Footer() {
                   href="https://wa.me/2347120002022?text=Hi%20SKEAM%20Technologies%2C%20I%20would%20like%20to%20inquire%20about%20your%20services"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group p-5 rounded-xl bg-gradient-to-br from-blue-900/20 to-cyan-900/10 border border-blue-600/30 hover:border-blue-400/70 hover:bg-blue-900/40 transition-all duration-200"
+                  className="group p-4 rounded-xl bg-gradient-to-br from-blue-900/20 to-cyan-900/10 border border-blue-600/30 hover:border-blue-400/70 hover:bg-blue-900/40 transition-all duration-200"
                 >
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2.5 rounded-lg bg-gradient-to-br from-blue-500/40 to-cyan-500/20 group-hover:from-blue-500/60 group-hover:to-cyan-500/40 transition-all duration-150">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-lg bg-gradient-to-br from-blue-500/40 to-cyan-500/20 group-hover:from-blue-500/60 group-hover:to-cyan-500/40 transition-all duration-150 shrink-0">
                       <Phone className="w-5 h-5 text-blue-300 group-hover:text-blue-200 transition-colors duration-150" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold text-white text-sm">WhatsApp</p>
                       <p className="text-xs text-blue-400 group-hover:text-blue-300 mt-1 transition-colors duration-150">+234 712 000 2022</p>
                     </div>
@@ -148,13 +148,13 @@ export default function Footer() {
                   href="https://www.google.com/maps/search/2+Oluwatozin+Dada+Street,+Lagos+State,+Nigeria"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group p-5 rounded-xl bg-gradient-to-br from-blue-900/20 to-cyan-900/10 border border-blue-600/30 hover:border-blue-400/70 hover:bg-blue-900/40 transition-all duration-200"
+                  className="group p-4 rounded-xl bg-gradient-to-br from-blue-900/20 to-cyan-900/10 border border-blue-600/30 hover:border-blue-400/70 hover:bg-blue-900/40 transition-all duration-200"
                 >
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2.5 rounded-lg bg-gradient-to-br from-blue-500/40 to-cyan-500/20 group-hover:from-blue-500/60 group-hover:to-cyan-500/40 transition-all duration-150">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-lg bg-gradient-to-br from-blue-500/40 to-cyan-500/20 group-hover:from-blue-500/60 group-hover:to-cyan-500/40 transition-all duration-150 shrink-0">
                       <MapPin className="w-5 h-5 text-blue-300 group-hover:text-blue-200 transition-colors duration-150" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold text-white text-sm">Location</p>
                       <p className="text-xs text-blue-400 group-hover:text-blue-300 mt-1 transition-colors duration-150">Lagos, Nigeria</p>
                     </div>

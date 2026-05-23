@@ -10,7 +10,6 @@ interface QuoteFormData {
   phone: string;
   category: string;
   products: string[];
-  quantity: string;
   message: string;
 }
 
@@ -85,7 +84,6 @@ export default function GetQuote({ isOpen, onClose, defaultCategory, defaultProd
     phone: '',
     category: defaultCategory || '',
     products: [],
-    quantity: '',
     message: '',
   });
 
@@ -138,7 +136,6 @@ export default function GetQuote({ isOpen, onClose, defaultCategory, defaultProd
         phone: '',
         category: defaultCategory || '',
         products: defaultProducts ?? [],
-        quantity: '',
         message: '',
       });
       setErrors({});
@@ -171,7 +168,6 @@ export default function GetQuote({ isOpen, onClose, defaultCategory, defaultProd
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     if (!formData.phone.trim()) newErrors.phone = 'Phone is required';
     if (formData.products.length === 0) newErrors.products = 'Please select at least one product';
-    if (!formData.quantity.trim()) newErrors.quantity = 'Quantity is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -195,8 +191,6 @@ Phone: ${formData.phone}
 *Selected Products:*
 • ${selectedProducts}
 
-*Quantity: ${formData.quantity}
-
 ${formData.message ? `*Additional Details:*\n${formData.message}` : ''}
 
 Please provide a detailed quote for the above products.
@@ -214,7 +208,6 @@ Please provide a detailed quote for the above products.
       phone: '',
       category: defaultCategory || '',
       products: [],
-      quantity: '',
       message: '',
     });
     setErrors({});
@@ -544,9 +537,10 @@ Please provide a detailed quote for the above products.
                         <div className="space-y-0.5 max-h-24 overflow-y-auto">
                           {formData.products.length > 0 ? (
                             formData.products.map((product, idx) => {
-                              // Find which category this product belongs to
+                              // Strip quantity suffix like " (x3)" for category lookup
+                              const baseName = product.replace(/\s*\(x\d+\)$/, '');
                               const category = allCategories.find(cat =>
-                                cat.products?.some((p: any) => p.name === product)
+                                cat.products?.some((p: any) => p.name === baseName)
                               );
                               return (
                                 <div key={idx} className="flex items-center gap-1.5 text-xs text-slate-300">
@@ -564,24 +558,6 @@ Please provide a detailed quote for the above products.
                             <p className="text-xs text-slate-400">No products selected</p>
                           )}
                         </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-slate-300 text-xs font-medium mb-1">Quantity *</label>
-                        <input
-                          type="number"
-                          value={formData.quantity}
-                          onChange={e => {
-                            setFormData(prev => ({ ...prev, quantity: e.target.value }));
-                            if (errors.quantity) setErrors(prev => ({ ...prev, quantity: '' }));
-                          }}
-                          placeholder="e.g., 2"
-                          min="1"
-                          className={`w-full px-3 py-2 bg-slate-800 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm ${
-                            errors.quantity ? 'border-red-500/70' : 'border-white/10'
-                          }`}
-                        />
-                        {errors.quantity && <p className="text-red-400 text-xs mt-0.5">{errors.quantity}</p>}
                       </div>
 
                       <div>

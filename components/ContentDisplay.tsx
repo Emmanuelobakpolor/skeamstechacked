@@ -86,7 +86,8 @@ function Carousel({ items, interval = 7000 }: { items: Content[]; interval?: num
     <div
       className="relative w-full overflow-hidden bg-black"
       style={{
-        height: 'clamp(200px, 56vw, 300px)',
+        aspectRatio: '16 / 9',
+        maxHeight: '80vh',
       }}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
@@ -113,7 +114,7 @@ function Carousel({ items, interval = 7000 }: { items: Content[]; interval?: num
               style={{
                 width: '100%',
                 height: '100%',
-                objectFit: 'cover',
+                objectFit: 'contain',
                 objectPosition: 'center center',
                 display: 'block',
               }}
