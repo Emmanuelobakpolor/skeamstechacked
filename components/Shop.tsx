@@ -1120,7 +1120,7 @@ export default function Shop() {
             );
           })}
 
-          {/* Dynamic Tabs (Non-Hardcoded) — same layout as Automation tab */}
+          {/* Dynamic Tabs (Non-Hardcoded) — each product standalone with select + quantity */}
           {!searchResults && !isAutomationTab && (
             <>
               {loadingTabs ? (
@@ -1148,127 +1148,91 @@ export default function Shop() {
                     >
                       {/* Category Header */}
                       <div className="border-b border-gray-200 pb-6">
-                        <h2 className="text-2xl font-semibold text-gray-900 mb-2">{adminCategory.name}</h2>
-                        {adminCategory.subtitle && <p className="text-lg text-gray-500">{adminCategory.subtitle}</p>}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h2 className="text-2xl font-semibold text-gray-900 mb-2">{adminCategory.name}</h2>
+                            {adminCategory.subtitle && <p className="text-lg text-gray-500">{adminCategory.subtitle}</p>}
+                          </div>
+                          {Object.keys(selections[categoryKey] ?? {}).length > 0 && (
+                            <button
+                              onClick={() => setSelections(prev => ({ ...prev, [categoryKey]: {} }))}
+                              className="text-sm text-blue-600 hover:text-blue-700 transition-colors underline"
+                            >
+                              Clear {Object.keys(selections[categoryKey]).length} selected
+                            </button>
+                          )}
+                        </div>
                       </div>
 
-                      {/* Products Grid — Carousel left, Product list right */}
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        {/* Product Carousel */}
-                        <div>
-                          <ProductCarousel products={adminCategory.products} />
-                        </div>
+                      {/* Each product displayed individually */}
+                      {adminCategory.products.map((product, productIdx) => {
+                        const isSelected = product.name in (selections[categoryKey] ?? {});
+                        const qty = selections[categoryKey]?.[product.name] ?? 1;
 
-                        {/* Product List with checkboxes + quantity */}
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-xl font-semibold text-gray-900">Available Products</h3>
-                            {Object.keys(selections[categoryKey] ?? {}).length > 0 && (
-                              <button
-                                onClick={() => setSelections(prev => ({ ...prev, [categoryKey]: {} }))}
-                                className="text-xs text-blue-600 hover:text-blue-700 transition-colors underline"
-                              >
-                                Clear {Object.keys(selections[categoryKey]).length} selected
-                              </button>
+                        return (
+                          <div key={product.id} className="space-y-4">
+                            {/* Product Carousel */}
+                            <AdminProductCarousel product={product} />
+
+                            {/* Select + Quantity Bar */}
+                            <div className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                              isSelected
+                                ? 'bg-blue-50 border-blue-600'
+                                : 'bg-white border-gray-200'
+                            }`}>
+                              <div className="flex items-center justify-between gap-4">
+                                <button
+                                  onClick={() => toggleProduct(categoryKey, product.name)}
+                                  className="flex items-center gap-3 flex-1 min-w-0"
+                                  aria-pressed={isSelected}
+                                  aria-label={`${isSelected ? 'Deselect' : 'Select'} ${product.name}`}
+                                >
+                                  <div
+                                    className={`w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
+                                      isSelected
+                                        ? 'bg-blue-600 border-blue-600'
+                                        : 'border-gray-300 bg-transparent hover:border-blue-400'
+                                    }`}
+                                  >
+                                    {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
+                                  </div>
+                                  <span className={`text-base font-semibold transition-colors ${
+                                    isSelected ? 'text-blue-600' : 'text-gray-900'
+                                  }`}>
+                                    {isSelected ? 'Selected' : 'Select this product'}
+                                  </span>
+                                </button>
+
+                                {/* Quantity — always visible when selected */}
+                                {isSelected && (
+                                  <div className="flex items-center gap-2 flex-shrink-0">
+                                    <span className="text-xs text-blue-600 font-medium mr-1">Qty</span>
+                                    <button
+                                      onClick={() => updateQuantity(categoryKey, product.name, qty - 1)}
+                                      className="w-7 h-7 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 flex items-center justify-center transition-colors"
+                                      disabled={qty <= 1}
+                                    >
+                                      <Minus size={14} />
+                                    </button>
+                                    <span className="text-gray-900 font-semibold text-sm w-8 text-center">{qty}</span>
+                                    <button
+                                      onClick={() => updateQuantity(categoryKey, product.name, qty + 1)}
+                                      className="w-7 h-7 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition-colors"
+                                    >
+                                      <Plus size={14} />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Divider between products */}
+                            {productIdx < adminCategory.products.length - 1 && (
+                              <div className="border-t border-gray-200 pt-8" />
                             )}
                           </div>
-                          <div className="space-y-3">
-                            {adminCategory.products.map((product) => {
-                              const isSelected = product.name in (selections[categoryKey] ?? {});
-                              const qty = selections[categoryKey]?.[product.name] ?? 1;
-                              return (
-                                <motion.div
-                                  key={product.id}
-                                  className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 group ${
-                                    isSelected
-                                      ? 'bg-blue-50 border-blue-600'
-                                      : 'bg-white border-gray-200 hover:border-blue-400'
-                                  }`}
-                                  whileHover={{ scale: 1.02 }}
-                                >
-                                  <button
-                                    onClick={() => toggleProduct(categoryKey, product.name)}
-                                    className="w-full text-left"
-                                    aria-pressed={isSelected}
-                                    aria-label={`${isSelected ? 'Deselect' : 'Select'} ${product.name}`}
-                                  >
-                                    <div className="flex items-start gap-3">
-                                      {/* Checkbox */}
-                                      <div
-                                        className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all ${
-                                          isSelected
-                                            ? 'bg-blue-600 border-blue-600'
-                                            : 'border-gray-300 bg-transparent group-hover:border-blue-400'
-                                        }`}
-                                      >
-                                        {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
-                                      </div>
-
-                                      {/* Content */}
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center justify-between mb-1">
-                                          <h4 className={`text-base font-semibold transition-colors ${
-                                            isSelected ? 'text-blue-600' : 'text-gray-900 group-hover:text-blue-600'
-                                          }`}>
-                                            {product.name}
-                                          </h4>
-                                          {isSelected && (
-                                            <span className="text-xs text-blue-600 font-medium bg-blue-50 px-2 py-0.5 rounded-full">
-                                              Selected
-                                            </span>
-                                          )}
-                                        </div>
-                                        {product.application && (
-                                          <p className="text-xs text-gray-500 mb-2">{product.application}</p>
-                                        )}
-                                        {Object.keys(product.specs).length > 0 && (
-                                          <div className="grid grid-cols-2 gap-1.5 text-xs">
-                                            {Object.entries(product.specs).map(([key, value]) =>
-                                              value ? (
-                                                <div key={key} className="text-gray-500">
-                                                  <span className="text-blue-600 font-semibold capitalize">{key}:</span> {value}
-                                                </div>
-                                              ) : null
-                                            )}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </button>
-
-                                  {/* Quantity Picker — shown when selected */}
-                                  {isSelected && (
-                                    <motion.div
-                                      initial={{ opacity: 0, height: 0 }}
-                                      animate={{ opacity: 1, height: 'auto' }}
-                                      exit={{ opacity: 0, height: 0 }}
-                                      className="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between"
-                                    >
-                                      <span className="text-xs text-blue-600 font-medium">Quantity</span>
-                                      <div className="flex items-center gap-2">
-                                        <button
-                                          onClick={(e) => { e.stopPropagation(); updateQuantity(categoryKey, product.name, qty - 1); }}
-                                          className="w-7 h-7 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 flex items-center justify-center transition-colors"
-                                          disabled={qty <= 1}
-                                        >
-                                          <Minus size={14} />
-                                        </button>
-                                        <span className="text-gray-900 font-semibold text-sm w-8 text-center">{qty}</span>
-                                        <button
-                                          onClick={(e) => { e.stopPropagation(); updateQuantity(categoryKey, product.name, qty + 1); }}
-                                          className="w-7 h-7 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition-colors"
-                                        >
-                                          <Plus size={14} />
-                                        </button>
-                                      </div>
-                                    </motion.div>
-                                  )}
-                                </motion.div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
+                        );
+                      })}
 
                       {/* Get Quote Button at Bottom */}
                       <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
