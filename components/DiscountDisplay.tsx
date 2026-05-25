@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { Tag, Percent, Clock } from 'lucide-react';
 
 interface Discount {
@@ -81,16 +80,11 @@ export default function DiscountDisplay({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.92 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.25 }}
-      className={`inline-flex items-center gap-2 ${className}`}
-    >
+    <div className={`inline-flex items-center gap-2 ${className}`}>
       {showBadge && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-full shadow-lg border-2 border-white/20 hover:shadow-xl transition-shadow duration-200">
+        <div className="flex items-center gap-2 px-4 py-2 bg-red-500 rounded-full">
           <Percent className="w-4 h-4 text-white" />
-          <span className="text-white font-bold text-sm md:text-base">
+          <span className="text-white font-medium text-sm">
             {bestDiscount.discount_percentage.toFixed(0)}% OFF
           </span>
         </div>
@@ -101,28 +95,28 @@ export default function DiscountDisplay({
         <span className="text-sm text-gray-500 line-through">
           ₦{bestDiscount.original_price.toLocaleString()}
         </span>
-        <span className="text-lg font-bold text-green-400">
+        <span className="text-lg font-semibold text-green-600">
           ₦{bestDiscount.discount_price.toLocaleString()}
         </span>
       </div>
 
       {/* Promo code badge */}
       {bestDiscount.code && (
-        <div className="hidden md:flex items-center gap-1 px-3 py-1 bg-blue-900/40 border border-blue-500/50 rounded-full">
-          <Tag className="w-3 h-3 text-blue-300" />
-          <span className="text-xs text-blue-200 font-mono">
+        <div className="hidden md:flex items-center gap-1 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full">
+          <Tag className="w-3 h-3 text-blue-600" />
+          <span className="text-xs text-blue-600 font-mono">
             {bestDiscount.code}
           </span>
         </div>
       )}
 
       {/* Expiry indicator */}
-      <div className="hidden md:flex items-center gap-1 text-xs text-amber-400">
+      <div className="hidden md:flex items-center gap-1 text-xs text-gray-500">
         <Clock className="w-3 h-3" />
         <span>
           {new Date(bestDiscount.end_date).toLocaleDateString()}
         </span>
       </div>
-    </motion.div>
+    </div>
   );
 }

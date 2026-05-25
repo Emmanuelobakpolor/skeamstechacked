@@ -9,14 +9,12 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // If it's a hash link
     if (href.startsWith('#') || href.startsWith('/#')) {
       e.preventDefault();
       const sectionId = href.replace('/#', '').replace('#', '');
       scrollToSection(sectionId);
       setMobileMenuOpen(false);
     } else if (href === '/') {
-      // Home link
       e.preventDefault();
       window.location.href = '/';
     }
@@ -31,7 +29,7 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 w-full bg-gradient-to-r from-blue-900 to-blue-800 backdrop-blur-md border-b border-blue-600 z-50 shadow-lg">
+    <nav className="fixed top-0 left-0 right-0 w-full bg-blue-600 border-b border-blue-700 z-50 shadow-sm">
       <div className="section-inner flex items-center justify-between py-4 md:py-5 px-6 md:px-8">
         {/* Logo */}
         <div className="flex-shrink-0">
@@ -48,15 +46,14 @@ export default function Navigation() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
-          {navItems.map((item, idx) => (
+          {navItems.map((item) => (
             <a
               key={item.label}
               href={item.href}
               onClick={(e) => handleNavClick(e, item.href)}
-              className="text-blue-100 hover:text-white font-medium text-sm transition-colors duration-200 relative group"
+              className="text-blue-100 hover:text-white font-medium text-sm transition-colors duration-200"
             >
               {item.label}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-300 to-cyan-300 group-hover:w-full transition-all duration-300" />
             </a>
           ))}
         </div>
@@ -65,7 +62,7 @@ export default function Navigation() {
         <div className="hidden md:flex">
           <a
             href="/shop"
-            className="px-6 py-3 bg-white text-blue-900 font-semibold rounded-lg hover:bg-blue-50 transition-all duration-300 inline-block"
+            className="px-6 py-2.5 bg-white text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors duration-200 inline-block"
           >
             Get a Quote
           </a>
@@ -87,7 +84,7 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-blue-700 bg-gradient-to-r from-blue-900 to-blue-800">
+        <div className="md:hidden border-t border-blue-700 bg-blue-600">
           <div className="section-inner py-4 flex flex-col gap-4">
             {navItems.map((item) => (
               <a
@@ -104,7 +101,7 @@ export default function Navigation() {
             ))}
             <a
               href="/shop"
-              className="px-6 py-3 bg-white text-blue-900 font-semibold rounded-lg hover:bg-blue-50 w-full mt-2 transition-all duration-300 block text-center"
+              className="px-6 py-3 bg-white text-blue-600 font-medium rounded-lg hover:bg-blue-50 w-full mt-2 transition-colors duration-200 block text-center"
               onClick={() => setMobileMenuOpen(false)}
             >
               Get a Quote

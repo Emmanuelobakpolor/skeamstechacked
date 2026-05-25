@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Mail, Phone, Linkedin } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import PremiumBackground from './PremiumBackground';
 
 const teamMembers = [
   {
@@ -51,7 +50,6 @@ function getCardAnimate(distance: number) {
       height: 580,
       opacity: 1,
       scale: 1,
-      filter: 'brightness(1)',
     };
   }
   if (distance === 1) {
@@ -60,7 +58,6 @@ function getCardAnimate(distance: number) {
       height: 440,
       opacity: 0.6,
       scale: 0.95,
-      filter: 'brightness(0.75)',
     };
   }
   return {
@@ -68,7 +65,6 @@ function getCardAnimate(distance: number) {
     height: 360,
     opacity: 0.35,
     scale: 0.88,
-    filter: 'brightness(0.55)',
   };
 }
 
@@ -137,48 +133,27 @@ export default function Teams() {
   };
 
   return (
-    <section className="relative overflow-hidden py-24">
-      <PremiumBackground />
-
-      {/* Background Glow */}
-      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-cyan-500/10 blur-[120px] rounded-full" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-violet-500/10 blur-[120px] rounded-full" />
-
+    <section className="relative overflow-hidden py-20 bg-gray-50">
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header */}
-        <motion.div
-          className="max-w-3xl mx-auto text-center mb-20"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <span className="inline-flex items-center rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300 backdrop-blur-md">
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm text-blue-600 font-medium">
             Meet Our Professionals
           </span>
 
-          <h2 className="mt-6 text-4xl md:text-6xl font-bold text-white leading-tight">
-            Our Expert
-            <span className="bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
-              {' '}
-              Team
-            </span>
+          <h2 className="mt-6 text-3xl md:text-4xl font-semibold text-gray-900 leading-tight">
+            Our Expert{' '}
+            <span className="text-blue-600">Team</span>
           </h2>
 
-          <p className="mt-6 text-lg text-slate-300 leading-relaxed">
+          <p className="mt-4 text-base text-gray-500 leading-relaxed">
             Talented professionals dedicated to delivering excellence,
             innovation, and scalable technology solutions.
           </p>
-        </motion.div>
+        </div>
 
         {/* Carousel Container */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="space-y-8"
-        >
+        <div className="space-y-8">
           {/* Scroll Container */}
           <div
             ref={scrollRef}
@@ -209,7 +184,7 @@ export default function Teams() {
                   ref={(el) => {
                     cardRefs.current[index] = el;
                   }}
-                  className="flex-shrink-0 snap-center group relative overflow-hidden rounded-xl"
+                  className="flex-shrink-0 snap-center group relative overflow-hidden rounded-xl border border-gray-200"
                   initial={initialAnimate}
                   animate={animateProps}
                   transition={cardTransition}
@@ -225,17 +200,17 @@ export default function Teams() {
                     sizes="(max-width: 768px) 100vw,
                            (max-width: 1200px) 50vw,
                            25vw"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-contain"
                   />
 
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
                   {/* Social Icons */}
-                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center gap-4">
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
                     <a
                       href="#"
-                      className="p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-cyan-400 hover:text-black transition-all duration-300 hover:scale-110"
+                      className="p-3 rounded-full bg-white hover:bg-blue-600 hover:text-white text-gray-700 transition-colors duration-200"
                       aria-label={`Email ${member.name}`}
                     >
                       <Mail className="w-5 h-5" />
@@ -243,7 +218,7 @@ export default function Teams() {
 
                     <a
                       href="#"
-                      className="p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-cyan-400 hover:text-black transition-all duration-300 hover:scale-110"
+                      className="p-3 rounded-full bg-white hover:bg-blue-600 hover:text-white text-gray-700 transition-colors duration-200"
                       aria-label={`Call ${member.name}`}
                     >
                       <Phone className="w-5 h-5" />
@@ -251,7 +226,7 @@ export default function Teams() {
 
                     <a
                       href="#"
-                      className="p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-cyan-400 hover:text-black transition-all duration-300 hover:scale-110"
+                      className="p-3 rounded-full bg-white hover:bg-blue-600 hover:text-white text-gray-700 transition-colors duration-200"
                       aria-label={`LinkedIn ${member.name}`}
                     >
                       <Linkedin className="w-5 h-5" />
@@ -260,7 +235,7 @@ export default function Teams() {
 
                   {/* Active Card Name/Role Overlay */}
                   <motion.div
-                    className="absolute bottom-0 left-0 right-0 p-5 text-center bg-gradient-to-t from-black/90 via-black/50 to-transparent"
+                    className="absolute bottom-0 left-0 right-0 p-5 text-center bg-gradient-to-t from-black/80 to-transparent"
                     animate={{
                       opacity: distance === 0 ? 1 : 0,
                       y: distance === 0 ? 0 : 12,
@@ -268,10 +243,10 @@ export default function Teams() {
                     }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
                   >
-                    <p className="text-white font-bold text-lg drop-shadow-lg">
+                    <p className="text-white font-semibold text-lg">
                       {member.name}
                     </p>
-                    <p className="text-cyan-300 text-sm drop-shadow-md">
+                    <p className="text-white/70 text-sm">
                       {member.role}
                     </p>
                   </motion.div>
@@ -292,11 +267,11 @@ export default function Teams() {
             {teamMembers.map((_, i) => (
               <motion.button
                 key={i}
-                className="rounded-full focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+                className="rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
                 animate={{
                   width: i === activeIndex ? 28 : 8,
                   height: 8,
-                  backgroundColor: i === activeIndex ? '#22d3ee' : '#64748b',
+                  backgroundColor: i === activeIndex ? '#2563eb' : '#d1d5db',
                 }}
                 transition={cardTransition}
                 onClick={() => handleDotClick(i)}
@@ -305,7 +280,7 @@ export default function Teams() {
               />
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

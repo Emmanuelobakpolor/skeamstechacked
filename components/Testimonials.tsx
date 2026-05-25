@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import Image from 'next/image';
 
@@ -55,252 +54,77 @@ const testimonials = [
     quote:
       'Professional, affordable, and reliable. They upgraded our old security cameras to a modern HD system with remote monitoring. Now I can check my property from anywhere.',
     author: 'Ngozi Eze',
-    role: 'Property Developer, usa',
+    role: 'Property Developer, USA',
     rating: 5,
     image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-};
-
 export default function Testimonials() {
   return (
-    <section
-      className="relative z-10"
-      style={{ padding: '5rem 1.25rem', overflow: 'hidden' }}
-    >
-      {/* Background accents */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '10%',
-          left: '-5%',
-          width: '400px',
-          height: '400px',
-          background:
-            'radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '10%',
-          right: '-5%',
-          width: '350px',
-          height: '350px',
-          background:
-            'radial-gradient(circle, rgba(16,185,129,0.05) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative' }}>
+    <section className="py-20 px-5 bg-gray-50">
+      <div className="max-w-6xl mx-auto">
         {/* Section Header */}
-        <motion.div
-          style={{ textAlign: 'center', marginBottom: '3.5rem' }}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.4 }}
-        >
-          <span
-            style={{
-              display: 'inline-block',
-              fontSize: '11px',
-              fontWeight: 600,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: '#60a5fa',
-              background: 'rgba(59,130,246,0.1)',
-              border: '0.5px solid rgba(96,165,250,0.3)',
-              padding: '5px 16px',
-              borderRadius: '99px',
-              marginBottom: '1rem',
-            }}
-          >
+        <div className="text-center mb-12">
+          <span className="inline-block text-xs font-medium tracking-wide uppercase text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full mb-3">
             Testimonials
           </span>
-          <h2
-            style={{
-              fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
-              fontWeight: 700,
-              lineHeight: 1.2,
-              color: '#fff',
-              margin: '0 0 0.75rem',
-            }}
-          >
-            What Our{' '}
-            <span
-              style={{
-                background: 'linear-gradient(135deg, #60a5fa 0%, #34d399 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              Clients
-            </span>{' '}
-            Say
+          <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
+            What Our <span className="text-blue-600">Clients</span> Say
           </h2>
-          <p
-            style={{
-              fontSize: '15px',
-              lineHeight: 1.7,
-              color: '#93c5fd',
-              maxWidth: '550px',
-              margin: '0 auto',
-            }}
-          >
+          <p className="text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
             Trusted by homeowners and businesses across Nigeria for smart
             security, solar energy, and automation solutions.
           </p>
-        </motion.div>
+        </div>
 
         {/* Testimonials Grid */}
-        <motion.div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-            gap: '1.25rem',
-          }}
-          variants={container}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {testimonials.map((t) => (
-            <motion.div
+            <div
               key={t.id}
-              variants={item}
-              style={{
-                position: 'relative',
-                padding: '1.75rem',
-                borderRadius: '20px',
-                background: 'rgba(255,255,255,0.03)',
-                border: '0.5px solid rgba(255,255,255,0.08)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1.25rem',
-                cursor: 'default',
-                transition: 'border-color 0.2s, background 0.2s, transform 0.2s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(96,165,250,0.35)';
-                e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                e.currentTarget.style.transform = 'translateY(-4px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
-                e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
+              className="relative p-6 rounded-xl bg-white border border-gray-200 flex flex-col gap-4 hover:border-blue-300 hover:shadow-md transition-all duration-200"
             >
               {/* Quote icon */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '1.25rem',
-                  right: '1.25rem',
-                  opacity: 0.08,
-                }}
-              >
-                <Quote size={40} color="#fff" />
+              <div className="absolute top-5 right-5 opacity-5">
+                <Quote size={36} className="text-gray-900" />
               </div>
 
               {/* Stars */}
-              <div style={{ display: 'flex', gap: '3px' }}>
+              <div className="flex gap-0.5">
                 {[...Array(t.rating)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={16}
-                    fill="#fbbf24"
-                    color="#fbbf24"
-                  />
+                  <Star key={i} size={15} fill="#fbbf24" color="#fbbf24" />
                 ))}
               </div>
 
               {/* Quote text */}
-              <p
-                style={{
-                  fontSize: '14px',
-                  lineHeight: 1.85,
-                  color: '#d1e4f5',
-                  margin: 0,
-                  flex: 1,
-                }}
-              >
+              <p className="text-sm leading-relaxed text-gray-600 flex-1">
                 &ldquo;{t.quote}&rdquo;
               </p>
 
               {/* Author */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  borderTop: '0.5px solid rgba(255,255,255,0.07)',
-                  paddingTop: '1rem',
-                }}
-              >
-                {/* Profile picture */}
-                <div
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    overflow: 'hidden',
-                    flexShrink: 0,
-                    border: '2px solid rgba(96,165,250,0.4)',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
-                    position: 'relative',
-                  }}
-                >
+              <div className="flex items-center gap-3 border-t border-gray-100 pt-4">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-gray-200">
                   <Image
                     src={t.image}
                     alt={t.author}
                     fill
-                    sizes="48px"
+                    sizes="40px"
                     style={{ objectFit: 'cover' }}
                   />
                 </div>
                 <div>
-                  <p
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      color: '#fff',
-                      margin: 0,
-                      lineHeight: 1.3,
-                    }}
-                  >
+                  <p className="text-sm font-medium text-gray-900">
                     {t.author}
                   </p>
-                  <p
-                    style={{
-                      fontSize: '12px',
-                      color: '#7dd3fc',
-                      margin: '2px 0 0',
-                      lineHeight: 1.3,
-                    }}
-                  >
+                  <p className="text-xs text-gray-500">
                     {t.role}
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

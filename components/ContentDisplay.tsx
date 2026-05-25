@@ -123,23 +123,20 @@ function Carousel({ items, interval = 7000 }: { items: Content[]; interval?: num
         ))}
       </div>
 
-      {/* Gradients */}
-      <div className="absolute inset-y-0 left-0 w-10 md:w-20 bg-gradient-to-r from-black/30 to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-10 md:w-20 bg-gradient-to-l from-black/30 to-transparent z-10 pointer-events-none" />
 
       {/* Arrows — desktop only */}
       {items.length > 1 && (
         <>
           <button
             onClick={prev}
-            className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 backdrop-blur-sm text-white w-10 h-10 rounded-full items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+            className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/60 text-white w-10 h-10 rounded-full items-center justify-center transition-colors duration-200"
             aria-label="Previous slide"
           >
             <span className="text-xl leading-none">‹</span>
           </button>
           <button
             onClick={next}
-            className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 backdrop-blur-sm text-white w-10 h-10 rounded-full items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+            className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/60 text-white w-10 h-10 rounded-full items-center justify-center transition-colors duration-200"
             aria-label="Next slide"
           >
             <span className="text-xl leading-none">›</span>

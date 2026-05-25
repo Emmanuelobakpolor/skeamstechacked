@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ShieldCheck, Zap, Users, Clock } from 'lucide-react';
 
@@ -12,8 +11,7 @@ const stats = [
     label: 'Projects Completed',
     description: 'Homes & businesses secured across Nigeria',
     icon: ShieldCheck,
-    color: '#3b82f6',
-    gradient: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
+    color: '#2563eb',
   },
   {
     value: 10,
@@ -21,8 +19,7 @@ const stats = [
     label: 'Years Experience',
     description: 'Trusted expertise since day one',
     icon: Clock,
-    color: '#10b981',
-    gradient: 'linear-gradient(135deg, #10b981, #34d399)',
+    color: '#16a34a',
   },
   {
     value: 50,
@@ -30,8 +27,7 @@ const stats = [
     label: 'Trained Technicians',
     description: 'Certified professionals on our team',
     icon: Users,
-    color: '#8b5cf6',
-    gradient: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
+    color: '#7c3aed',
   },
   {
     value: 24,
@@ -39,8 +35,7 @@ const stats = [
     label: 'Customer Support',
     description: 'Always available when you need us',
     icon: Zap,
-    color: '#f59e0b',
-    gradient: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+    color: '#d97706',
   },
 ];
 
@@ -80,162 +75,41 @@ export default function Stats() {
     rootMargin: '-80px',
   });
 
-  const container = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-  };
-
   return (
-    <section
-      style={{
-        position: 'relative',
-        zIndex: 10,
-        padding: '4rem 1.25rem',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Subtle background glow */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '700px',
-          height: '300px',
-          background:
-            'radial-gradient(ellipse, rgba(59,130,246,0.06) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div
-        style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative' }}
-        ref={ref}
-      >
-        <motion.div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '1rem',
-          }}
-          variants={container}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-        >
+    <section className="py-16 px-5 bg-gray-50">
+      <div className="max-w-5xl mx-auto" ref={ref}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
             return (
-              <motion.div
+              <div
                 key={idx}
-                variants={item}
-                style={{
-                  position: 'relative',
-                  padding: '2rem 1.5rem',
-                  borderRadius: '20px',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '0.5px solid rgba(255,255,255,0.08)',
-                  textAlign: 'center',
-                  cursor: 'default',
-                  transition: 'border-color 0.25s, background 0.25s, transform 0.25s',
-                  overflow: 'hidden',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = `${stat.color}50`;
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                  e.currentTarget.style.transform = 'translateY(-6px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
+                className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:border-blue-300 transition-colors duration-200"
               >
-                {/* Glow ring behind icon */}
                 <div
-                  style={{
-                    position: 'absolute',
-                    top: '-30px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '120px',
-                    height: '120px',
-                    borderRadius: '50%',
-                    background: `radial-gradient(circle, ${stat.color}12 0%, transparent 70%)`,
-                    pointerEvents: 'none',
-                  }}
-                />
-
-                {/* Icon */}
-                <div
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '14px',
-                    background: `${stat.color}15`,
-                    border: `1px solid ${stat.color}30`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 1.25rem',
-                    position: 'relative',
-                  }}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-4"
+                  style={{ backgroundColor: `${stat.color}10`, border: `1px solid ${stat.color}30` }}
                 >
-                  <Icon size={22} color={stat.color} strokeWidth={2} />
+                  <Icon size={20} color={stat.color} strokeWidth={2} />
                 </div>
 
-                {/* Number */}
-                <p
-                  style={{
-                    fontSize: 'clamp(2rem, 4vw, 2.8rem)',
-                    fontWeight: 800,
-                    lineHeight: 1,
-                    background: stat.gradient,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    margin: '0 0 0.5rem',
-                    letterSpacing: '-0.02em',
-                  }}
-                >
+                <p className="text-3xl font-semibold text-gray-900 mb-1">
                   {inView && (
                     <CountUp end={stat.value} suffix={stat.suffix} duration={2} />
                   )}
                 </p>
 
-                {/* Label */}
-                <p
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    color: '#fff',
-                    margin: '0 0 0.35rem',
-                    letterSpacing: '0.01em',
-                  }}
-                >
+                <p className="text-sm font-medium text-gray-900 mb-1">
                   {stat.label}
                 </p>
 
-                {/* Description */}
-                <p
-                  style={{
-                    fontSize: '12px',
-                    lineHeight: 1.5,
-                    color: '#7dd3fc',
-                    margin: 0,
-                  }}
-                >
+                <p className="text-xs text-gray-500">
                   {stat.description}
                 </p>
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
-
+        </div>
       </div>
     </section>
   );

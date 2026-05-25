@@ -82,14 +82,14 @@ export default function UploadsSection() {
   const discountFiles = files.filter(f => f.type === 'discount-ad');
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <section className="py-20 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
             Content Management
           </h2>
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+          <p className="text-base text-gray-500 max-w-2xl mx-auto">
             Upload and manage your banners, discount ads, and promotional content
           </p>
         </div>
@@ -98,23 +98,23 @@ export default function UploadsSection() {
         <div className="flex gap-3 mb-12 justify-center flex-wrap">
           <button
             onClick={() => setUploadType('banner')}
-            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
+            className={`px-8 py-3 rounded-lg font-medium transition-colors duration-200 ${
               uploadType === 'banner'
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50 scale-105'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            🖼️ Banners
+            Banners
           </button>
           <button
             onClick={() => setUploadType('discount-ad')}
-            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
+            className={`px-8 py-3 rounded-lg font-medium transition-colors duration-200 ${
               uploadType === 'discount-ad'
-                ? 'bg-red-600 text-white shadow-lg shadow-red-600/50 scale-105'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            🏷️ Discount Ads
+            Discount Ads
           </button>
         </div>
 
@@ -124,10 +124,10 @@ export default function UploadsSection() {
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
-          className={`border-3 border-dashed rounded-2xl p-12 text-center transition-all duration-300 mb-12 ${
+          className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors duration-200 mb-12 ${
             dragActive
-              ? 'border-blue-500 bg-blue-500/20 scale-105'
-              : 'border-slate-600 bg-slate-800/50 hover:border-blue-400 hover:bg-slate-700/50'
+              ? 'border-blue-500 bg-blue-50'
+              : 'border-gray-300 bg-gray-50 hover:border-blue-400'
           }`}
         >
           <input
@@ -139,15 +139,14 @@ export default function UploadsSection() {
             id="file-input"
           />
           <label htmlFor="file-input" className="cursor-pointer block">
-            <div className="text-6xl mb-4">📤</div>
-            <h3 className="text-3xl font-bold text-white mb-2">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Drag & drop files here
             </h3>
-            <p className="text-slate-400 mb-6 text-lg">or click to browse</p>
+            <p className="text-gray-500 mb-6">or click to browse</p>
             <button
               type="button"
               onClick={() => document.getElementById('file-input')?.click()}
-              className="inline-block bg-gradient-to-r from-blue-600 to-blue-700 text-white px-10 py-3 rounded-full font-bold hover:from-blue-500 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl"
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200"
             >
               Choose Files
             </button>
@@ -161,37 +160,37 @@ export default function UploadsSection() {
             {bannerFiles.length > 0 && (
               <div>
                 <div className="flex items-center gap-3 mb-8">
-                  <h3 className="text-3xl font-bold text-white">🖼️ Banners</h3>
-                  <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-lg font-bold">
+                  <h3 className="text-2xl font-semibold text-gray-900">Banners</h3>
+                  <span className="bg-blue-600 text-white px-3 py-0.5 rounded-full text-sm font-medium">
                     {bannerFiles.length}
                   </span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {bannerFiles.map(file => (
                     <div
                       key={file.id}
-                      className="group bg-slate-700 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                      className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-200"
                     >
-                      <div className="relative w-full h-56 bg-slate-600 overflow-hidden">
+                      <div className="relative w-full h-48 bg-gray-100 overflow-hidden">
                         <Image
                           src={file.url}
                           alt={file.name}
                           fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                          className="object-cover"
                         />
                       </div>
-                      <div className="p-6">
-                        <p className="font-semibold text-white truncate mb-2 text-lg">
+                      <div className="p-4">
+                        <p className="font-medium text-gray-900 truncate mb-1">
                           {file.name}
                         </p>
-                        <p className="text-sm text-slate-400 mb-4">
+                        <p className="text-sm text-gray-500 mb-4">
                           {formatFileSize(file.size)} • {file.uploadedAt}
                         </p>
                         <button
                           onClick={() => deleteFile(file.id)}
-                          className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition-all duration-200"
+                          className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition-colors duration-200"
                         >
-                          🗑️ Delete
+                          Delete
                         </button>
                       </div>
                     </div>
@@ -204,37 +203,37 @@ export default function UploadsSection() {
             {discountFiles.length > 0 && (
               <div>
                 <div className="flex items-center gap-3 mb-8">
-                  <h3 className="text-3xl font-bold text-white">🏷️ Discount Ads</h3>
-                  <span className="bg-red-600 text-white px-4 py-1 rounded-full text-lg font-bold">
+                  <h3 className="text-2xl font-semibold text-gray-900">Discount Ads</h3>
+                  <span className="bg-blue-600 text-white px-3 py-0.5 rounded-full text-sm font-medium">
                     {discountFiles.length}
                   </span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {discountFiles.map(file => (
                     <div
                       key={file.id}
-                      className="group bg-slate-700 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                      className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-200"
                     >
-                      <div className="relative w-full h-56 bg-slate-600 overflow-hidden">
+                      <div className="relative w-full h-48 bg-gray-100 overflow-hidden">
                         <Image
                           src={file.url}
                           alt={file.name}
                           fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                          className="object-cover"
                         />
                       </div>
-                      <div className="p-6">
-                        <p className="font-semibold text-white truncate mb-2 text-lg">
+                      <div className="p-4">
+                        <p className="font-medium text-gray-900 truncate mb-1">
                           {file.name}
                         </p>
-                        <p className="text-sm text-slate-400 mb-4">
+                        <p className="text-sm text-gray-500 mb-4">
                           {formatFileSize(file.size)} • {file.uploadedAt}
                         </p>
                         <button
                           onClick={() => deleteFile(file.id)}
-                          className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition-all duration-200"
+                          className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition-colors duration-200"
                         >
-                          🗑️ Delete
+                          Delete
                         </button>
                       </div>
                     </div>
@@ -247,9 +246,9 @@ export default function UploadsSection() {
 
         {/* Empty State */}
         {files.length === 0 && (
-          <div className="text-center py-16 bg-slate-800/50 rounded-2xl border-2 border-dashed border-slate-600">
-            <p className="text-2xl text-slate-400 mb-2">No content uploaded yet</p>
-            <p className="text-slate-500">Start by uploading your first banner or discount ad</p>
+          <div className="text-center py-16 bg-gray-50 rounded-xl border border-gray-200">
+            <p className="text-lg text-gray-500 mb-2">No content uploaded yet</p>
+            <p className="text-gray-400">Start by uploading your first banner or discount ad</p>
           </div>
         )}
       </div>

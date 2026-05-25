@@ -47,7 +47,7 @@ import {
 // ============================================================================
 
 const INPUT_CLS =
-  'w-full bg-blue-900/50 border border-blue-700/50 hover:border-blue-600 focus:border-cyan-400 rounded-xl px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-blue-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all';
+  'w-full bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 rounded-xl px-4 py-2.5 sm:py-3 text-sm sm:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors';
 
 // ============================================================================
 // Shared Sub-Components
@@ -73,7 +73,7 @@ function StatusBadge({ active, labelOn = 'Active', labelOff = 'Inactive' }: Stat
 
 function HardcodedBadge() {
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/30">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/15 text-gray-600 border border-blue-500/30">
       <Shield size={10} /> Hardcoded
     </span>
   );
@@ -89,12 +89,12 @@ interface EmptyStateProps {
 function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
     <div className=" p-12 text-center flex flex-col items-center gap-4">
-      <div className="w-16 h-16 rounded-2xl bg-blue-900/40 border border-blue-700/40 flex items-center justify-center text-blue-400">
+      <div className="w-16 h-16 rounded-2xl bg-blue-900/40 border border-blue-700/40 flex items-center justify-center text-gray-500">
         {icon}
       </div>
       <div>
         <p className="text-blue-100 font-semibold text-base mb-1">{title}</p>
-        <p className="text-blue-400 text-sm">{description}</p>
+        <p className="text-gray-500 text-sm">{description}</p>
       </div>
       {action && <div className="mt-2">{action}</div>}
     </div>
@@ -154,19 +154,19 @@ function SectionHeader({ title, count, icon, onAdd, addLabel, children }: Sectio
     <div className="mb-6 space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-800/50 border border-blue-600/40 flex items-center justify-center text-cyan-400">
+          <div className="w-9 h-9 rounded-xl bg-blue-800/50 border border-blue-600/40 flex items-center justify-center text-blue-600">
             {icon}
           </div>
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight">{title}</h2>
           </div>
-          <span className="px-2.5 py-0.5 rounded-full bg-blue-800/60 border border-blue-600/40 text-blue-300 text-xs font-semibold">
+          <span className="px-2.5 py-0.5 rounded-full bg-blue-800/60 border border-blue-600/40 text-gray-600 text-xs font-semibold">
             {count}
           </span>
         </div>
         <button
           onClick={onAdd}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-4 py-2.5 rounded-xl hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-200 text-sm font-semibold"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl  transition-all duration-200 text-sm font-semibold"
         >
           <Plus size={15} /> {addLabel}
         </button>
@@ -197,7 +197,7 @@ function Modal({ title, isOpen, onClose, children }: ModalProps) {
           <h2 className="gradient-text text-xl sm:text-2xl font-bold flex-1 truncate">{title}</h2>
           <button
             onClick={onClose}
-            className="text-blue-400 hover:text-cyan-300 hover:bg-blue-800/60 rounded-xl p-2 transition-all flex-shrink-0 ml-4"
+            className="text-gray-500 hover:text-cyan-300 hover:bg-blue-800/60 rounded-xl p-2 transition-all flex-shrink-0 ml-4"
           >
             <X size={20} />
           </button>
@@ -290,7 +290,7 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Name <span className="text-cyan-400">*</span></label>
+        <label className="block text-xs sm:text-sm font-semibold text-gray-700">Name <span className="text-blue-600">*</span></label>
         <input
           type="text"
           value={formData.name}
@@ -307,7 +307,7 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
         )}
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Display Name <span className="text-cyan-400">*</span></label>
+        <label className="block text-xs sm:text-sm font-semibold text-gray-700">Display Name <span className="text-blue-600">*</span></label>
         <input
           type="text"
           value={formData.display_name}
@@ -326,7 +326,7 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
         )}
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Description</label>
+        <label className="block text-xs sm:text-sm font-semibold text-gray-700">Description</label>
         <input
           type="text"
           value={formData.description}
@@ -338,7 +338,7 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
         />
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Display Order</label>
+        <label className="block text-xs sm:text-sm font-semibold text-gray-700">Display Order</label>
         <input
           type="number"
           value={formData.order}
@@ -350,7 +350,7 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
         />
       </div>
       <div className="space-y-2 bg-blue-900/30 rounded-xl p-3 sm:p-4 border border-blue-700/40 mt-2">
-        <label className="flex items-center gap-3 text-blue-300 cursor-pointer hover:text-cyan-300 transition-colors group">
+        <label className="flex items-center gap-3 text-gray-600 cursor-pointer hover:text-cyan-300 transition-colors group">
           <input
             type="checkbox"
             checked={formData.is_active}
@@ -375,7 +375,7 @@ function TabForm({ tab, onSubmit, onCancel }: TabFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-2.5 sm:py-3 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 disabled:opacity-50 disabled:shadow-none transition-all text-xs sm:text-base"
+          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 sm:py-3 rounded-lg  disabled:opacity-50 disabled:shadow-none transition-all text-xs sm:text-base"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
@@ -511,7 +511,7 @@ export function TabsSection({ onCountChange }: TabsSectionProps) {
                   </button>
                   <button
                     onClick={() => setDeletingId(null)}
-                    className="px-3 py-1.5 bg-blue-800/50 hover:bg-blue-700 text-blue-300 rounded-lg text-xs font-semibold border border-blue-600/50 transition-colors"
+                    className="px-3 py-1.5 bg-blue-800/50 hover:bg-blue-700 text-gray-600 rounded-lg text-xs font-semibold border border-blue-600/50 transition-colors"
                   >
                     Cancel
                   </button>
@@ -522,7 +522,7 @@ export function TabsSection({ onCountChange }: TabsSectionProps) {
                 key={tab.id}
                 className="group bg-blue-800/40 border border-blue-600/50 hover:border-blue-400 hover:bg-blue-800/70 rounded-2xl p-4 transition-all duration-200 flex flex-col sm:flex-row sm:items-center gap-3"
               >
-                <div className="hidden sm:flex w-9 h-9 rounded-xl bg-blue-900/50 items-center justify-center text-cyan-400 flex-shrink-0">
+                <div className="hidden sm:flex w-9 h-9 rounded-xl bg-blue-900/50 items-center justify-center text-blue-600 flex-shrink-0">
                   <LayoutList size={15} />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -531,7 +531,7 @@ export function TabsSection({ onCountChange }: TabsSectionProps) {
                     <StatusBadge active={tab.is_active} />
                     {tab.is_hardcoded && <HardcodedBadge />}
                   </div>
-                  <p className="text-xs text-blue-400 truncate">{tab.description || 'No description'}</p>
+                  <p className="text-xs text-gray-500 truncate">{tab.description || 'No description'}</p>
                   <p className="text-xs text-blue-500 mt-0.5">Order: {tab.order}</p>
                 </div>
                 <div className="flex gap-1.5 flex-shrink-0">
@@ -540,14 +540,14 @@ export function TabsSection({ onCountChange }: TabsSectionProps) {
                       setEditingTab(tab);
                       setIsModalOpen(true);
                     }}
-                    className="p-2 rounded-lg text-blue-300 hover:text-cyan-300 hover:bg-blue-700/50 transition-all"
+                    className="p-2 rounded-lg text-gray-600 hover:text-cyan-300 hover:bg-blue-700/50 transition-all"
                     title="Edit"
                   >
                     <Pencil size={15} />
                   </button>
                   <button
                     onClick={() => setDeletingId(tab.id)}
-                    className="p-2 rounded-lg text-blue-400 hover:text-red-400 hover:bg-red-900/20 transition-all"
+                    className="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-900/20 transition-all"
                     title="Delete"
                   >
                     <Trash2 size={15} />
@@ -629,7 +629,7 @@ function CategoryForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Tab</label>
+        <label className="block text-xs sm:text-sm font-semibold text-gray-700">Tab</label>
         <select
           value={formData.tab || ''}
           onChange={(e) =>
@@ -649,7 +649,7 @@ function CategoryForm({
         </select>
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Name <span className="text-cyan-400">*</span></label>
+        <label className="block text-xs sm:text-sm font-semibold text-gray-700">Name <span className="text-blue-600">*</span></label>
         <input
           type="text"
           value={formData.name}
@@ -666,7 +666,7 @@ function CategoryForm({
         )}
       </div>
       <div className="space-y-1.5">
-        <label className="block text-xs sm:text-sm font-semibold text-blue-200">Subtitle</label>
+        <label className="block text-xs sm:text-sm font-semibold text-gray-700">Subtitle</label>
         <input
           type="text"
           value={formData.subtitle}
@@ -678,7 +678,7 @@ function CategoryForm({
         />
       </div>
       <div className="bg-blue-900/30 rounded-xl p-3 sm:p-4 border border-blue-700/40">
-        <label className="flex items-center gap-3 text-blue-300 cursor-pointer hover:text-cyan-300 transition-colors group">
+        <label className="flex items-center gap-3 text-gray-600 cursor-pointer hover:text-cyan-300 transition-colors group">
           <input
             type="checkbox"
             checked={formData.is_active}
@@ -694,7 +694,7 @@ function CategoryForm({
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-2.5 sm:py-3 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 disabled:opacity-50 disabled:shadow-none transition-all text-xs sm:text-base"
+          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 sm:py-3 rounded-lg  disabled:opacity-50 disabled:shadow-none transition-all text-xs sm:text-base"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
@@ -835,7 +835,7 @@ export function CategoriesSection({ onCountChange }: CategoriesSectionProps) {
                   </button>
                   <button
                     onClick={() => setDeletingId(null)}
-                    className="px-3 py-1.5 bg-blue-800/50 hover:bg-blue-700 text-blue-300 rounded-lg text-xs font-semibold border border-blue-600/50 transition-colors"
+                    className="px-3 py-1.5 bg-blue-800/50 hover:bg-blue-700 text-gray-600 rounded-lg text-xs font-semibold border border-blue-600/50 transition-colors"
                   >
                     Cancel
                   </button>
@@ -846,7 +846,7 @@ export function CategoriesSection({ onCountChange }: CategoriesSectionProps) {
                 key={category.id}
                 className="group bg-blue-800/40 border border-blue-600/50 hover:border-blue-400 hover:bg-blue-800/70 rounded-2xl p-4 transition-all duration-200 flex flex-col sm:flex-row sm:items-center gap-3"
               >
-                <div className="hidden sm:flex w-9 h-9 rounded-xl bg-blue-900/50 items-center justify-center text-cyan-400 flex-shrink-0">
+                <div className="hidden sm:flex w-9 h-9 rounded-xl bg-blue-900/50 items-center justify-center text-blue-600 flex-shrink-0">
                   <FolderOpen size={15} />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -855,10 +855,10 @@ export function CategoriesSection({ onCountChange }: CategoriesSectionProps) {
                     <StatusBadge active={category.is_active} />
                   </div>
                   {category.subtitle && (
-                    <p className="text-xs text-blue-300 truncate">{category.subtitle}</p>
+                    <p className="text-xs text-gray-600 truncate">{category.subtitle}</p>
                   )}
                   {category.tab_name && (
-                    <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-blue-700/40 border border-blue-600/40 text-blue-300">
+                    <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-blue-700/40 border border-blue-600/40 text-gray-600">
                       {category.tab_name}
                     </span>
                   )}
@@ -869,14 +869,14 @@ export function CategoriesSection({ onCountChange }: CategoriesSectionProps) {
                       setEditingCategory(category);
                       setIsModalOpen(true);
                     }}
-                    className="p-2 rounded-lg text-blue-300 hover:text-cyan-300 hover:bg-blue-700/50 transition-all"
+                    className="p-2 rounded-lg text-gray-600 hover:text-cyan-300 hover:bg-blue-700/50 transition-all"
                     title="Edit"
                   >
                     <Pencil size={15} />
                   </button>
                   <button
                     onClick={() => setDeletingId(category.id)}
-                    className="p-2 rounded-lg text-blue-400 hover:text-red-400 hover:bg-red-900/20 transition-all"
+                    className="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-900/20 transition-all"
                     title="Delete"
                   >
                     <Trash2 size={15} />
@@ -991,13 +991,13 @@ function ProductImageGallery({ productId, images, onChange }: ProductImageGaller
         />
         {uploading ? (
           <>
-            <Loader size={14} className="animate-spin text-cyan-400" />
-            <span className="text-xs text-blue-300">Uploading...</span>
+            <Loader size={14} className="animate-spin text-blue-600" />
+            <span className="text-xs text-gray-600">Uploading...</span>
           </>
         ) : (
           <>
-            <Upload size={14} className="text-blue-400" />
-            <span className="text-xs text-blue-300">Add images</span>
+            <Upload size={14} className="text-gray-500" />
+            <span className="text-xs text-gray-600">Add images</span>
           </>
         )}
       </label>
@@ -1108,19 +1108,19 @@ function ProductForm({
           className="w-full p-4 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
         >
           <div className="flex items-center gap-2">
-            <Package size={16} className="text-cyan-400" />
-            <span className="text-sm font-semibold text-blue-200">Basic Information</span>
+            <Package size={16} className="text-blue-600" />
+            <span className="text-sm font-semibold text-gray-700">Basic Information</span>
           </div>
           <ChevronDown
             size={16}
-            className={`text-blue-400 transition-transform ${expandedSections.basic ? 'rotate-180' : ''}`}
+            className={`text-gray-500 transition-transform ${expandedSections.basic ? 'rotate-180' : ''}`}
           />
         </button>
 
         {expandedSections.basic && (
           <div className="border-t border-blue-700/40 p-4 space-y-4 bg-blue-900/10">
             <div className="space-y-1.5">
-              <label className="block text-xs sm:text-sm font-semibold text-blue-200">Category <span className="text-cyan-400">*</span></label>
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700">Category <span className="text-blue-600">*</span></label>
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -1143,7 +1143,7 @@ function ProductForm({
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs sm:text-sm font-semibold text-blue-200">Product Name <span className="text-cyan-400">*</span></label>
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700">Product Name <span className="text-blue-600">*</span></label>
               <input
                 type="text"
                 value={formData.name}
@@ -1161,7 +1161,7 @@ function ProductForm({
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs sm:text-sm font-semibold text-blue-200">Description <span className="text-cyan-400">*</span></label>
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700">Description <span className="text-blue-600">*</span></label>
               <textarea
                 value={formData.description}
                 onChange={(e) =>
@@ -1180,7 +1180,7 @@ function ProductForm({
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs sm:text-sm font-semibold text-blue-200">Application</label>
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700">Application</label>
               <input
                 type="text"
                 value={formData.application}
@@ -1202,7 +1202,7 @@ function ProductForm({
                 }
                 className="rounded-md w-5 h-5 cursor-pointer accent-cyan-500 border border-blue-600 hover:border-cyan-400 transition-colors"
               />
-              <label htmlFor="active_checkbox" className="text-xs sm:text-sm font-medium text-blue-300 cursor-pointer">
+              <label htmlFor="active_checkbox" className="text-xs sm:text-sm font-medium text-gray-600 cursor-pointer">
                 Active Product
               </label>
             </div>
@@ -1218,12 +1218,12 @@ function ProductForm({
           className="w-full p-4 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
         >
           <div className="flex items-center gap-2">
-            <Zap size={16} className="text-cyan-400" />
-            <span className="text-sm font-semibold text-blue-200">Technical Specifications</span>
+            <Zap size={16} className="text-blue-600" />
+            <span className="text-sm font-semibold text-gray-700">Technical Specifications</span>
           </div>
           <ChevronDown
             size={16}
-            className={`text-blue-400 transition-transform ${expandedSections.specs ? 'rotate-180' : ''}`}
+            className={`text-gray-500 transition-transform ${expandedSections.specs ? 'rotate-180' : ''}`}
           />
         </button>
 
@@ -1265,12 +1265,12 @@ function ProductForm({
           className="w-full p-4 flex items-center justify-between hover:bg-blue-900/40 transition-colors"
         >
           <div className="flex items-center gap-2">
-            <ImageIcon size={16} className="text-cyan-400" />
-            <span className="text-sm font-semibold text-blue-200">Product Images</span>
+            <ImageIcon size={16} className="text-blue-600" />
+            <span className="text-sm font-semibold text-gray-700">Product Images</span>
           </div>
           <ChevronDown
             size={16}
-            className={`text-blue-400 transition-transform ${expandedSections.images ? 'rotate-180' : ''}`}
+            className={`text-gray-500 transition-transform ${expandedSections.images ? 'rotate-180' : ''}`}
           />
         </button>
 
@@ -1284,7 +1284,7 @@ function ProductForm({
                   onChange={setGalleryImages}
                 />
                 {uploadingImages && (
-                  <p className="text-xs text-blue-300 flex items-center gap-1">
+                  <p className="text-xs text-gray-600 flex items-center gap-1">
                     <Loader size={12} className="animate-spin" /> Uploading...
                   </p>
                 )}
@@ -1298,7 +1298,7 @@ function ProductForm({
                         key={idx}
                         className="flex items-center gap-2 px-2.5 py-1.5 bg-blue-900/40 border border-blue-600/40 rounded-lg text-xs"
                       >
-                        <span className="text-blue-300 truncate max-w-xs">{file.name}</span>
+                        <span className="text-gray-600 truncate max-w-xs">{file.name}</span>
                         <button
                           type="button"
                           onClick={() => setPendingImages((p) => p.filter((_, i) => i !== idx))}
@@ -1321,12 +1321,12 @@ function ProductForm({
                     className="hidden"
                   />
                   <div className="flex flex-col items-center gap-2">
-                    <Upload size={24} className="text-blue-400 group-hover:text-cyan-400 transition-colors" />
+                    <Upload size={24} className="text-gray-500 group-hover:text-blue-600 transition-colors" />
                     <div className="text-center">
-                      <p className="text-xs sm:text-sm text-blue-300 group-hover:text-cyan-300 font-medium">
+                      <p className="text-xs sm:text-sm text-gray-600 group-hover:text-cyan-300 font-medium">
                         Drag images here or click to select
                       </p>
-                      <p className="text-xs text-blue-400 mt-1">Upload after saving</p>
+                      <p className="text-xs text-gray-500 mt-1">Upload after saving</p>
                     </div>
                   </div>
                 </label>
@@ -1341,7 +1341,7 @@ function ProductForm({
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-3 sm:py-3 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 disabled:opacity-50 disabled:shadow-none transition-all text-xs sm:text-base"
+          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 sm:py-3 rounded-lg  disabled:opacity-50 disabled:shadow-none transition-all text-xs sm:text-base"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
@@ -1474,7 +1474,7 @@ export function ProductsSection({ onCountChange }: ProductsSectionProps) {
       >
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
               placeholder="Search products..."
@@ -1529,7 +1529,7 @@ export function ProductsSection({ onCountChange }: ProductsSectionProps) {
                   </button>
                   <button
                     onClick={() => setDeletingId(null)}
-                    className="px-3 py-1.5 bg-blue-800/50 hover:bg-blue-700 text-blue-300 rounded-lg text-xs font-semibold border border-blue-600/50 transition-colors"
+                    className="px-3 py-1.5 bg-blue-800/50 hover:bg-blue-700 text-gray-600 rounded-lg text-xs font-semibold border border-blue-600/50 transition-colors"
                   >
                     Cancel
                   </button>
@@ -1555,8 +1555,8 @@ export function ProductsSection({ onCountChange }: ProductsSectionProps) {
 
                 <div className="p-4 flex-1 flex flex-col gap-1">
                   <h3 className="font-semibold text-white text-sm truncate">{product.name}</h3>
-                  <span className="text-xs text-cyan-400 font-medium">{product.category_name}</span>
-                  <p className="text-xs text-blue-400 line-clamp-2 mt-1 flex-1">{product.description}</p>
+                  <span className="text-xs text-blue-600 font-medium">{product.category_name}</span>
+                  <p className="text-xs text-gray-500 line-clamp-2 mt-1 flex-1">{product.description}</p>
                 </div>
 
                 <div className="absolute inset-0 bg-blue-950/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-3">

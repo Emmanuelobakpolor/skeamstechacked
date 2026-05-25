@@ -58,15 +58,15 @@ const hardcodedAutomationCategories = [
 const categories = {
   'sliding-gate': {
     label: 'Sliding Gate Automation',
-    icon: '🚪',
+    icon: '',
   },
   'swing-gate': {
     label: 'Swing Gate Automation',
-    icon: '🔓',
+    icon: '',
   },
   'garage-door': {
     label: 'Garage Door Operators',
-    icon: '🏠',
+    icon: '',
   },
 };
 
@@ -242,10 +242,10 @@ Please provide a detailed quote for the above products.
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
             {/* Bottom Sheet Content */}
-            <div className="h-full bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 rounded-t-3xl shadow-2xl border border-cyan-500/20 border-b-0 overflow-hidden flex flex-col">
+            <div className="h-full bg-white rounded-t-3xl shadow-2xl border border-gray-200 border-b-0 overflow-hidden flex flex-col">
 
               {/* Header with drag handle - Fixed */}
-              <div className="flex-shrink-0 px-6 pt-4 pb-3 bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-600 relative">
+              <div className="flex-shrink-0 px-6 pt-4 pb-3 bg-blue-600 relative">
                 {/* Drag Handle */}
                 <div className="flex justify-center mb-3">
                   <div className="w-12 h-1 bg-white/30 rounded-full" />
@@ -290,13 +290,13 @@ Please provide a detailed quote for the above products.
                       className="space-y-3"
                     >
                       <div>
-                        <h3 className="text-base font-semibold text-white mb-0.5">Contact Information</h3>
-                        <p className="text-slate-400 text-xs">We'll use this to send your quote</p>
+                        <h3 className="text-base font-semibold text-gray-900 mb-0.5">Contact Information</h3>
+                        <p className="text-gray-500 text-xs">We'll use this to send your quote</p>
                       </div>
 
                       <div className="space-y-2.5">
                         <div>
-                          <label className="block text-slate-300 text-xs font-medium mb-1">Full Name *</label>
+                          <label className="block text-gray-700 text-xs font-medium mb-1">Full Name *</label>
                           <input
                             type="text"
                             value={formData.name}
@@ -305,15 +305,15 @@ Please provide a detailed quote for the above products.
                               if (errors.name) setErrors(prev => ({ ...prev, name: '' }));
                             }}
                             placeholder="John Doe"
-                            className={`w-full px-3 py-2 bg-slate-800 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm ${
-                              errors.name ? 'border-red-500/70' : 'border-white/10'
+                            className={`w-full px-3 py-2 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm ${
+                              errors.name ? 'border-red-500/70' : 'border-gray-300'
                             }`}
                           />
                           {errors.name && <p className="text-red-400 text-xs mt-0.5">{errors.name}</p>}
                         </div>
 
                         <div>
-                          <label className="block text-slate-300 text-xs font-medium mb-1">Email Address *</label>
+                          <label className="block text-gray-700 text-xs font-medium mb-1">Email Address *</label>
                           <input
                             type="email"
                             value={formData.email}
@@ -322,15 +322,15 @@ Please provide a detailed quote for the above products.
                               if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
                             }}
                             placeholder="john@example.com"
-                            className={`w-full px-3 py-2 bg-slate-800 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm ${
-                              errors.email ? 'border-red-500/70' : 'border-white/10'
+                            className={`w-full px-3 py-2 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm ${
+                              errors.email ? 'border-red-500/70' : 'border-gray-300'
                             }`}
                           />
                           {errors.email && <p className="text-red-400 text-xs mt-0.5">{errors.email}</p>}
                         </div>
 
                         <div>
-                          <label className="block text-slate-300 text-xs font-medium mb-1">Phone Number *</label>
+                          <label className="block text-gray-700 text-xs font-medium mb-1">Phone Number *</label>
                           <input
                             type="tel"
                             value={formData.phone}
@@ -339,8 +339,8 @@ Please provide a detailed quote for the above products.
                               if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }));
                             }}
                             placeholder="+234 712 000 2022"
-                            className={`w-full px-3 py-2 bg-slate-800 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all text-sm ${
-                              errors.phone ? 'border-red-500/70' : 'border-white/10'
+                            className={`w-full px-3 py-2 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm ${
+                              errors.phone ? 'border-red-500/70' : 'border-gray-300'
                             }`}
                           />
                           {errors.phone && <p className="text-red-400 text-xs mt-0.5">{errors.phone}</p>}
@@ -359,8 +359,8 @@ Please provide a detailed quote for the above products.
                       className="space-y-3"
                     >
                       <div>
-                        <h3 className="text-base font-semibold text-white mb-0.5">Select Products</h3>
-                        <p className="text-slate-400 text-xs">Choose what you're interested in</p>
+                        <h3 className="text-base font-semibold text-gray-900 mb-0.5">Select Products</h3>
+                        <p className="text-gray-500 text-xs">Choose what you're interested in</p>
                       </div>
 
                       {!hasPreSelectedProducts && (
@@ -371,23 +371,23 @@ Please provide a detailed quote for the above products.
                       )}
 
                       {hasPreSelectedProducts && !showManualSelection && (
-                        <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-2.5">
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-2.5">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <Check size={14} className="text-cyan-400" />
-                              <span className="text-cyan-300 font-semibold text-xs">{formData.products.length} selected</span>
+                              <Check size={14} className="text-blue-600" />
+                              <span className="text-blue-600 font-semibold text-xs">{formData.products.length} selected</span>
                             </div>
                             <button
                               onClick={() => setShowManualSelection(true)}
-                              className="text-xs text-blue-400 hover:text-cyan-300 underline"
+                              className="text-xs text-blue-600 hover:text-blue-700 underline"
                             >
                               Change
                             </button>
                           </div>
                           <div className="space-y-1 max-h-28 overflow-y-auto">
                             {formData.products.map((product, idx) => (
-                              <div key={idx} className="flex items-center justify-between p-1.5 bg-cyan-500/5 rounded text-xs">
-                                <span className="text-cyan-200 truncate">{product}</span>
+                              <div key={idx} className="flex items-center justify-between p-1.5 bg-blue-50/50 rounded text-xs">
+                                <span className="text-gray-700 truncate">{product}</span>
                                 <button
                                   onClick={() => {
                                     setFormData(prev => ({
@@ -410,13 +410,13 @@ Please provide a detailed quote for the above products.
                           {hasPreSelectedProducts && showManualSelection && (
                             <button
                               onClick={() => setShowManualSelection(false)}
-                              className="text-xs text-blue-400 hover:text-cyan-300 underline"
+                              className="text-xs text-blue-600 hover:text-blue-700 underline"
                             >
                               ← Back to selection
                             </button>
                           )}
 
-                          <p className="text-xs text-slate-400">Select one or more products from any category</p>
+                          <p className="text-xs text-gray-500">Select one or more products from any category</p>
 
                           {loadingCategories ? (
                             <div className="flex items-center justify-center py-4">
@@ -434,15 +434,15 @@ Please provide a detailed quote for the above products.
                                     }
                                     className={`w-full p-2 rounded-lg border transition-all text-left flex items-center justify-between text-xs ${
                                       selectedManualCategory === category.id
-                                        ? 'border-cyan-500 bg-cyan-500/15'
-                                        : 'border-white/10 bg-slate-800/40 hover:border-white/20'
+                                        ? 'border-blue-500 bg-blue-50'
+                                        : 'border-gray-200 bg-white hover:border-gray-300'
                                     }`}
                                   >
                                     <div className="flex-1 min-w-0">
                                       <div className="flex items-center gap-1.5">
                                         <h4 className={`font-semibold text-sm ${
                                           selectedManualCategory === category.id
-                                            ? 'text-cyan-300'
+                                            ? 'text-blue-600'
                                             : 'text-white'
                                         }`}>
                                           {category.name}
@@ -450,8 +450,8 @@ Please provide a detailed quote for the above products.
                                         {category.products?.length > 0 && (
                                           <span className={`text-xs px-1.5 py-0.5 rounded ${
                                             selectedManualCategory === category.id
-                                              ? 'bg-cyan-500/30 text-cyan-200'
-                                              : 'bg-slate-700 text-slate-300'
+                                              ? 'bg-blue-100 text-blue-700'
+                                              : 'bg-gray-100 text-gray-600'
                                           }`}>
                                             {category.products.length} items
                                           </span>
@@ -472,7 +472,7 @@ Please provide a detailed quote for the above products.
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
                                         exit={{ opacity: 0, height: 0 }}
-                                        className="mt-1 ml-2 space-y-0.5 border-l-2 border-cyan-500/30 pl-2 overflow-hidden"
+                                        className="mt-1 ml-2 space-y-0.5 border-l-2 border-blue-200 pl-2 overflow-hidden"
                                       >
                                         {category.products?.map((product: any) => (
                                           <button
@@ -488,15 +488,15 @@ Please provide a detailed quote for the above products.
                                             }}
                                             className={`w-full p-1.5 rounded text-left flex items-center gap-1 text-xs transition-all ${
                                               formData.products.includes(product.name)
-                                                ? 'bg-cyan-500/20 text-cyan-300'
-                                                : 'text-slate-400 hover:text-slate-300'
+                                                ? 'bg-blue-50 text-blue-600'
+                                                : 'text-gray-500 hover:text-gray-700'
                                             }`}
                                           >
                                             <div
                                               className={`w-3 h-3 rounded border flex items-center justify-center flex-shrink-0 ${
                                                 formData.products.includes(product.name)
-                                                  ? 'bg-cyan-500 border-cyan-500'
-                                                  : 'border-slate-400'
+                                                  ? 'bg-blue-600 border-blue-600'
+                                                  : 'border-gray-300'
                                               }`}
                                             >
                                               {formData.products.includes(product.name) && (
@@ -528,8 +528,8 @@ Please provide a detailed quote for the above products.
                       className="space-y-3"
                     >
                       <div>
-                        <h3 className="text-base font-semibold text-white mb-0.5">Confirm Order</h3>
-                        <p className="text-slate-400 text-xs">Review before submitting</p>
+                        <h3 className="text-base font-semibold text-gray-900 mb-0.5">Confirm Order</h3>
+                        <p className="text-gray-500 text-xs">Review before submitting</p>
                       </div>
 
                       <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-2.5">
@@ -543,7 +543,7 @@ Please provide a detailed quote for the above products.
                                 cat.products?.some((p: any) => p.name === baseName)
                               );
                               return (
-                                <div key={idx} className="flex items-center gap-1.5 text-xs text-slate-300">
+                                <div key={idx} className="flex items-center gap-1.5 text-xs text-gray-700">
                                   <Check size={10} className="text-blue-400 flex-shrink-0" />
                                   <span className="truncate flex-1">{product}</span>
                                   {category && (
@@ -555,19 +555,19 @@ Please provide a detailed quote for the above products.
                               );
                             })
                           ) : (
-                            <p className="text-xs text-slate-400">No products selected</p>
+                            <p className="text-xs text-gray-500">No products selected</p>
                           )}
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-slate-300 text-xs font-medium mb-1">Additional Notes (Optional)</label>
+                        <label className="block text-gray-700 text-xs font-medium mb-1">Additional Notes (Optional)</label>
                         <textarea
                           value={formData.message}
                           onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
                           placeholder="Any special requirements..."
                           rows={1}
-                          className="w-full px-3 py-2 bg-slate-800 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all resize-none text-xs"
+                          className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none text-xs"
                         />
                       </div>
                     </motion.div>
@@ -576,11 +576,11 @@ Please provide a detailed quote for the above products.
               </div>
 
               {/* Footer - Fixed Buttons */}
-              <div className="flex-shrink-0 px-5 py-3 bg-slate-900/50 border-t border-white/10 flex gap-2">
+              <div className="flex-shrink-0 px-5 py-3 bg-gray-50 border-t border-gray-200 flex gap-2">
                 {step > 1 && (
                   <button
                     onClick={() => setStep(step - 1)}
-                    className="flex-1 py-2 bg-slate-700/50 hover:bg-slate-700 text-white font-semibold rounded-lg transition-all text-xs sm:text-sm"
+                    className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-all text-xs sm:text-sm"
                   >
                     Back
                   </button>
@@ -593,7 +593,7 @@ Please provide a detailed quote for the above products.
                       (step === 1 && (!formData.name || !formData.email || !formData.phone)) ||
                       (step === 2 && formData.products.length === 0)
                     }
-                    className={`flex-1 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-xs sm:text-sm ${
+                    className={`flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-xs sm:text-sm ${
                       (step === 1 && (!formData.name || !formData.email || !formData.phone)) ||
                       (step === 2 && formData.products.length === 0)
                         ? 'opacity-50 cursor-not-allowed'
@@ -608,7 +608,7 @@ Please provide a detailed quote for the above products.
                   <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 disabled:from-slate-600 disabled:to-slate-600 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
+                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
                   >
                     {loading ? (
                       <>

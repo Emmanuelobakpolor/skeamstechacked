@@ -45,7 +45,6 @@ function LoginScreen({ onLogin }: LoginScreenProps) {
     setLoading(true);
     setError('');
 
-    // Simulate a small delay for better UX
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
@@ -59,60 +58,60 @@ function LoginScreen({ onLogin }: LoginScreenProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-blue-950 to-[#0f172a] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="flex flex-col items-center max-w-md w-full">
         {/* Branding */}
-        <div className="text-center mb-8 animate-in">
+        <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <Image
               src="/images/SKEAM SYMBOL .png"
               alt="SKEAM Technologies"
               width={60}
               height={60}
-              className="object-contain drop-shadow-[0_0_16px_rgba(6,182,212,0.4)]"
+              className="object-contain"
             />
           </div>
-          <h1 className="bg-gradient-to-r from-blue-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent text-3xl sm:text-4xl font-bold">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900">
             SKEAM Technologies
           </h1>
-          <p className="text-blue-400 text-sm mt-1">Admin Management Portal</p>
+          <p className="text-gray-500 text-sm mt-1">Admin Management Portal</p>
         </div>
 
         {/* Form Card */}
-        <div className="glass-morphism-dark p-7 sm:p-8 w-full rounded-2xl animate-scale-up">
+        <div className="bg-white border border-gray-200 p-7 sm:p-8 w-full rounded-xl shadow-sm">
           <div className="mb-7">
-            <h2 className="text-xl font-bold text-white">Sign In</h2>
-            <p className="text-blue-400 text-sm mt-1">Enter your credentials to continue</p>
+            <h2 className="text-xl font-semibold text-gray-900">Sign In</h2>
+            <p className="text-gray-500 text-sm mt-1">Enter your credentials to continue</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-950/60 border border-red-500/40 rounded-xl p-3 flex items-center gap-2 text-red-300 text-sm animate-in">
-                <AlertCircle size={15} className="flex-shrink-0 text-red-400" />
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2 text-red-600 text-sm">
+                <AlertCircle size={15} className="flex-shrink-0 text-red-500" />
                 <span>{error}</span>
               </div>
             )}
 
             <div>
-              <label className="block text-sm text-blue-200 mb-2">Username</label>
+              <label className="block text-sm text-gray-700 mb-2">Username</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="admin"
-                className="w-full bg-blue-900/50 border border-blue-700/50 hover:border-blue-600 focus:border-cyan-400 rounded-xl px-4 py-2.5 text-white placeholder-blue-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+                className="w-full bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 rounded-xl px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors"
                 disabled={loading}
               />
             </div>
 
             <div>
-              <label className="block text-sm text-blue-200 mb-2">Password</label>
+              <label className="block text-sm text-gray-700 mb-2">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-blue-900/50 border border-blue-700/50 hover:border-blue-600 focus:border-cyan-400 rounded-xl px-4 py-2.5 text-white placeholder-blue-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all"
+                className="w-full bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 rounded-xl px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors"
                 disabled={loading}
               />
             </div>
@@ -120,7 +119,7 @@ function LoginScreen({ onLogin }: LoginScreenProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg hover:shadow-cyan-500/30 disabled:opacity-60 transition-all duration-300 flex items-center justify-center gap-2"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl disabled:opacity-60 transition-colors duration-200 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -132,7 +131,7 @@ function LoginScreen({ onLogin }: LoginScreenProps) {
             </button>
           </form>
 
-          <p className="text-center text-blue-500/70 text-xs mt-6">
+          <p className="text-center text-gray-400 text-xs mt-6">
             Demo credentials: admin / admin123
           </p>
         </div>
@@ -177,9 +176,9 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-blue-950 to-[#0f172a]">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-blue-950/60 backdrop-blur-md border-b border-blue-800/50 sticky top-0 z-40">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           {/* Left: Logo + title */}
           <div className="flex items-center gap-3">
@@ -191,19 +190,19 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
               className="object-contain"
             />
             <div>
-              <span className="text-white font-bold text-base sm:text-lg leading-tight">SKEAM Technologies</span>
-              <p className="text-blue-400 text-xs hidden sm:block">Admin Panel</p>
+              <span className="text-gray-900 font-semibold text-base sm:text-lg leading-tight">SKEAM Technologies</span>
+              <p className="text-gray-500 text-xs hidden sm:block">Admin Panel</p>
             </div>
           </div>
           {/* Right: User chip + logout */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden sm:flex items-center gap-2 bg-blue-900/40 border border-blue-700/40 rounded-xl px-3 py-1.5">
-              <ShieldCheck size={14} className="text-cyan-400" />
-              <span className="text-blue-200 text-xs font-medium">admin</span>
+            <div className="hidden sm:flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-xl px-3 py-1.5">
+              <ShieldCheck size={14} className="text-blue-600" />
+              <span className="text-gray-700 text-xs font-medium">admin</span>
             </div>
             <button
               onClick={onLogout}
-              className="flex items-center gap-1.5 text-blue-400 hover:text-red-400 hover:bg-red-900/20 rounded-xl px-2 py-1.5 transition-all text-sm"
+              className="flex items-center gap-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-xl px-2 py-1.5 transition-colors text-sm"
             >
               <LogOut size={15} />
               <span className="hidden sm:inline text-xs font-medium">Logout</span>
@@ -215,16 +214,16 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Mobile Nav Tabs */}
         <div className="lg:hidden mb-4">
-          <div className="glass-effect-dark p-1.5 flex gap-1 overflow-x-auto custom-scrollbar">
+          <div className="bg-white border border-gray-200 rounded-xl p-1.5 flex gap-1 overflow-x-auto">
             {sections.map((section) => (
               <button
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
-                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-xs transition-all whitespace-nowrap
+                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-medium text-xs transition-colors whitespace-nowrap
                   ${
                     activeSection === section.id
-                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg'
-                      : 'text-blue-300 hover:bg-blue-800/50'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
                   }`}
               >
                 {section.icon} {section.label}
@@ -239,24 +238,24 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-8">
           {/* Sidebar Navigation (Desktop) */}
           <aside className="hidden lg:block lg:col-span-1">
-            <nav className="glass-effect-dark p-4 space-y-1.5 sticky top-24">
-              <p className="text-blue-500 text-xs font-semibold uppercase tracking-wider px-3 mb-3">
+            <nav className="bg-white border border-gray-200 rounded-xl p-4 space-y-1.5 sticky top-24">
+              <p className="text-gray-400 text-xs font-medium uppercase tracking-wider px-3 mb-3">
                 Navigation
               </p>
               {sections.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-xl font-semibold transition-all flex items-center gap-2.5 text-sm
+                  className={`w-full text-left px-3 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-2.5 text-sm
                     ${
                       activeSection === section.id
-                        ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-cyan-500/20'
-                        : 'text-blue-300 hover:bg-blue-800/50 hover:text-white'
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                     }`}
                 >
                   <span
                     className={
-                      activeSection === section.id ? 'text-white' : 'text-cyan-500'
+                      activeSection === section.id ? 'text-white' : 'text-blue-600'
                     }
                   >
                     {section.icon}
@@ -267,7 +266,7 @@ function AdminDashboard({ onLogout }: AdminDashboardProps) {
                       className={`text-xs px-1.5 py-0.5 rounded-full ${
                         activeSection === section.id
                           ? 'bg-white/20 text-white'
-                          : 'bg-blue-800/60 text-blue-400'
+                          : 'bg-gray-100 text-gray-500'
                       }`}
                     >
                       {section.count}

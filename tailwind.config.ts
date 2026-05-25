@@ -66,12 +66,6 @@ const config: Config = {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
-      backgroundImage: {
-        'gradient-subtle': 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)',
-        'gradient-primary': 'linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)',
-        'gradient-blue': 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)',
-        'gradient-dark-blue': 'linear-gradient(180deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%)',
-      },
     },
   },
   plugins: [],
