@@ -17,7 +17,7 @@ const teamMembers = [
     id: 2,
     name: 'Project Manager',
     role: 'Project Manager',
-    image: '/images/EMMYK.PNG',
+    image: '/images/EmmyK.PNG',
     bio: 'Dedicated to delivering projects on time and on budget',
   },
   {
