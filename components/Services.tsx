@@ -105,7 +105,7 @@ export default function Services() {
               <div className={`absolute top-0 left-0 right-0 h-0.5 z-10 ${c.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-200`} />
 
               {/* Image */}
-              <div className="relative h-48 w-full overflow-hidden bg-gray-50">
+              <div className="relative w-full h-60 overflow-hidden bg-gradient-to-br from-blue-600/20 to-cyan-600/10 flex-shrink-0">
                 <Image
                   src={service.image}
                   alt={service.title}
