@@ -164,7 +164,7 @@ export default function ContentDisplay() {
     <>
       {HARDCODED_BANNERS.length > 0 && (
         <section className="w-full bg-white">
-          <Carousel items={HARDCODED_BANNERS} interval={4000} />
+          <Carousel items={HARDCODED_BANNERS} interval={5000} />
         </section>
       )}
     </>
