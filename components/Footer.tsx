@@ -45,10 +45,10 @@ export default function Footer() {
   ];
 
   return (
-    <footer id="contact" className="text-white bg-gray-900">
+    <footer id="contact" className="text-white bg-blue-600">
       <div className="py-16 px-6 md:px-8 max-w-7xl mx-auto">
         {/* Top Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-12 pb-12 border-b border-gray-700">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-12 pb-12 border-b border-blue-500">
           {/* Brand & Description */}
           <div className="lg:col-span-4">
             <div className="mb-6">
@@ -61,13 +61,13 @@ export default function Footer() {
                 style={{ width: 'auto', height: 'auto' }}
               />
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6">
+            <p className="text-blue-100 text-sm leading-relaxed mb-6">
               Your trusted partner for integrated security and power solutions across Nigeria. Professional expertise since 2014.
             </p>
 
             {/* Social Links */}
             <div className="flex items-center gap-4">
-              <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">Follow Us</span>
+              <span className="text-xs text-blue-200 font-medium uppercase tracking-wider">Follow Us</span>
               <div className="flex items-center gap-2">
                 {socialLinks.map((social) => {
                   const Icon = social.icon;
@@ -75,7 +75,7 @@ export default function Footer() {
                     <a
                       key={social.label}
                       href={social.href}
-                      className="w-9 h-9 rounded-lg bg-gray-800 hover:bg-blue-600 flex items-center justify-center transition-colors duration-200 border border-gray-700 hover:border-blue-600"
+                      className="w-9 h-9 rounded-lg bg-blue-700 hover:bg-white hover:text-blue-600 flex items-center justify-center transition-colors duration-200 border border-blue-500 hover:border-white"
                       aria-label={social.label}
                     >
                       <Icon className="w-4 h-4" />
@@ -93,15 +93,15 @@ export default function Footer() {
               {/* Email */}
               <a
                 href="mailto:Skeamtechnologies@mail.com?subject=SKEAM Technologies Inquiry"
-                className="group p-4 rounded-xl bg-gray-800 border border-gray-700 hover:border-blue-500 transition-colors duration-200"
+                className="group p-4 rounded-xl bg-blue-700 border border-blue-500 hover:border-white/70 transition-colors duration-200"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-blue-600/20 shrink-0">
-                    <Mail className="w-4 h-4 text-blue-400" />
+                  <div className="p-2 rounded-lg bg-white/20 shrink-0">
+                    <Mail className="w-4 h-4 text-white" />
                   </div>
                   <div className="min-w-0">
                     <p className="font-medium text-white text-sm">Email</p>
-                    <p className="text-xs text-gray-400 mt-0.5 truncate">Skeamtechnologies@mail.com</p>
+                    <p className="text-xs text-blue-100 mt-0.5 truncate">Skeamtechnologies@mail.com</p>
                   </div>
                 </div>
               </a>
@@ -111,15 +111,15 @@ export default function Footer() {
                 href="https://wa.me/2347120002022?text=Hi%20SKEAM%20Technologies%2C%20I%20would%20like%20to%20inquire%20about%20your%20services"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group p-4 rounded-xl bg-gray-800 border border-gray-700 hover:border-blue-500 transition-colors duration-200"
+                className="group p-4 rounded-xl bg-blue-700 border border-blue-500 hover:border-white/70 transition-colors duration-200"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-blue-600/20 shrink-0">
-                    <Phone className="w-4 h-4 text-blue-400" />
+                  <div className="p-2 rounded-lg bg-white/20 shrink-0">
+                    <Phone className="w-4 h-4 text-white" />
                   </div>
                   <div className="min-w-0">
                     <p className="font-medium text-white text-sm">WhatsApp</p>
-                    <p className="text-xs text-gray-400 mt-0.5">+234 712 000 2022</p>
+                    <p className="text-xs text-blue-100 mt-0.5">+234 712 000 2022</p>
                   </div>
                 </div>
               </a>
@@ -129,15 +129,15 @@ export default function Footer() {
                 href="https://www.google.com/maps/search/2+Oluwatozin+Dada+Street,+Lagos+State,+Nigeria"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group p-4 rounded-xl bg-gray-800 border border-gray-700 hover:border-blue-500 transition-colors duration-200"
+                className="group p-4 rounded-xl bg-blue-700 border border-blue-500 hover:border-white/70 transition-colors duration-200"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-blue-600/20 shrink-0">
-                    <MapPin className="w-4 h-4 text-blue-400" />
+                  <div className="p-2 rounded-lg bg-white/20 shrink-0">
+                    <MapPin className="w-4 h-4 text-white" />
                   </div>
                   <div className="min-w-0">
                     <p className="font-medium text-white text-sm">Location</p>
-                    <p className="text-xs text-gray-400 mt-0.5">Lagos, Nigeria</p>
+                    <p className="text-xs text-blue-100 mt-0.5">Lagos, Nigeria</p>
                   </div>
                 </div>
               </a>
@@ -146,7 +146,7 @@ export default function Footer() {
         </div>
 
         {/* Links Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12 pb-12 border-b border-gray-700">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12 pb-12 border-b border-blue-500">
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
               <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{category}</h4>
@@ -156,7 +156,7 @@ export default function Footer() {
                     <a
                       href={link.href}
                       onClick={(e) => handleFooterLink(e, link.href)}
-                      className="text-gray-400 text-sm hover:text-white transition-colors duration-200 inline-block"
+                      className="text-blue-100 text-sm hover:text-white transition-colors duration-200 inline-block"
                     >
                       {link.label}
                     </a>
@@ -169,10 +169,10 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-4">
-          <p className="text-gray-500 text-xs">
+          <p className="text-blue-200 text-xs">
             &copy; {currentYear} SKEAM Technologies. All rights reserved.
           </p>
-          <p className="text-gray-500 text-xs">
+          <p className="text-blue-200 text-xs">
             Crafted with excellence for your security and power needs.
           </p>
         </div>

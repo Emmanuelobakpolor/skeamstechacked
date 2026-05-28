@@ -84,24 +84,20 @@ function Carousel({ items, interval = 7000 }: { items: Content[]; interval?: num
 
   return (
     <div
-      className="relative w-full overflow-hidden bg-black"
-      style={{
-        aspectRatio: '16 / 9',
-        maxHeight: '80vh',
-      }}
+      className="relative w-full overflow-hidden bg-white"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
       {/* Slides */}
       <div
-        className="flex h-full transition-transform duration-500 ease-in-out"
+        className="flex transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative flex-shrink-0 h-full"
+            className="relative flex-shrink-0"
             style={{ width: '100%' }}
           >
             <video
@@ -113,9 +109,7 @@ function Carousel({ items, interval = 7000 }: { items: Content[]; interval?: num
               playsInline
               style={{
                 width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                objectPosition: 'center center',
+                height: 'auto',
                 display: 'block',
               }}
             />
@@ -169,7 +163,7 @@ export default function ContentDisplay() {
   return (
     <>
       {HARDCODED_BANNERS.length > 0 && (
-        <section className="w-full bg-black">
+        <section className="w-full bg-white">
           <Carousel items={HARDCODED_BANNERS} interval={2500} />
         </section>
       )}

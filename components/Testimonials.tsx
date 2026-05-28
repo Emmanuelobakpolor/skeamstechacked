@@ -36,7 +36,7 @@ const testimonials = [
     quote:
       'From consultation to installation, Skeam Technologies delivered beyond expectations. Our gate automation works flawlessly and customer support is always available.',
     author: 'Fatima Ibrahim',
-    role: 'Estate Manager, Kano',
+    role: 'Estate Manager',
     rating: 5,
     image: 'https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?w=150&h=150&fit=crop&crop=face',
   },
@@ -44,7 +44,7 @@ const testimonials = [
     id: 5,
     quote:
       'I\'ve worked with several tech companies in Nigeria but Skeam stands out. They installed solar panels for our warehouse and the system has been running perfectly for over a year.',
-    author: 'Oluwaseun Bakare',
+    author: 'Daniel Harrington',
     role: 'Logistics Manager',
     rating: 5,
     image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
@@ -53,7 +53,7 @@ const testimonials = [
     id: 6,
     quote:
       'Professional, affordable, and reliable. They upgraded our old security cameras to a modern HD system with remote monitoring. Now I can check my property from anywhere.',
-    author: 'Ngozi Eze',
+    author: 'Olivia Bennett',
     role: 'Property Developer, USA',
     rating: 5,
     image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',

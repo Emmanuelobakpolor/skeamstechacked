@@ -105,12 +105,12 @@ export default function Services() {
               <div className={`absolute top-0 left-0 right-0 h-0.5 z-10 ${c.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-200`} />
 
               {/* Image */}
-              <div className="relative w-full h-60 overflow-hidden bg-gradient-to-br from-blue-600/20 to-cyan-600/10 flex-shrink-0">
+              <div className="relative w-full h-56 overflow-hidden bg-white flex-shrink-0">
                 <Image
                   src={service.image}
                   alt={service.title}
                   fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 33vw"
                   className="object-contain"
                   loading={index === 0 ? 'eager' : 'lazy'}
                 />

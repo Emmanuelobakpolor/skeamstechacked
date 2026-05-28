@@ -203,8 +203,6 @@ export default function Teams() {
                     className="w-full h-full object-contain"
                   />
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
                   {/* Social Icons */}
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
@@ -235,7 +233,7 @@ export default function Teams() {
 
                   {/* Active Card Name/Role Overlay */}
                   <motion.div
-                    className="absolute bottom-0 left-0 right-0 p-5 text-center bg-gradient-to-t from-black/80 to-transparent"
+                    className="absolute bottom-0 left-0 right-0 p-5 text-center bg-white"
                     animate={{
                       opacity: distance === 0 ? 1 : 0,
                       y: distance === 0 ? 0 : 12,
@@ -243,10 +241,10 @@ export default function Teams() {
                     }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
                   >
-                    <p className="text-white font-semibold text-lg">
+                    <p className="text-blue-600 font-semibold text-lg">
                       {member.name}
                     </p>
-                    <p className="text-white/70 text-sm">
+                    <p className="text-blue-400 text-sm">
                       {member.role}
                     </p>
                   </motion.div>
